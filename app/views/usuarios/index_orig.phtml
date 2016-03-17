@@ -1,0 +1,57 @@
+  <style type="text/css" media="screen">
+  	.delete_usuarios{z-index: 999}	
+  </style>
+
+
+  <section class="panel panel-default">
+
+
+
+  <header class="panel-heading bg-light">
+    <ul class="nav nav-tabs nav-justified">
+      <li class="active"><a href="#tab1" data-toggle="tab">Administradores</a></li>
+      <li><a href="#tab2" data-toggle="tab">Negocios</a></li>
+      <li><a href="#tab2" data-toggle="tab">Sucursales</a></li>
+      <li><a href="#tab2" data-toggle="tab">Usuarios</a></li>
+    </ul>
+  </header>
+
+
+
+
+
+	<header class="panel-heading">
+		<div align="right">
+			<a href="usuarios/new" class="btn btn-sm btn-icon btn-success"><i class="fa fa-plus"></i></a>
+		</div>
+	</header>
+
+    <div class="table-responsive">
+
+
+
+      <table class="table table-striped m-b-none" data-ride="datatables" id="grid_listado">
+        <thead>
+          <tr>
+            <th width="5%">No</th>
+            <th width="15%">Nombre</th>
+            <th width="17%">E-mail</th>
+            <th width="15%">Usuario</th>
+            <th width="13%">Password</th>
+            <th width="14%">Tipo</th>
+            <th width="9%">Estatus</th>
+            <th width="12%">&nbsp;</th>
+          </tr>
+        </thead>
+        <tbody>
+        </tbody>
+      </table>
+    </div>
+  </section>
+<?php echo $msjResponse; ?>
+
+
+
+
+
+

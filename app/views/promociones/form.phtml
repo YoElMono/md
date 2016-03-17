@@ -1,0 +1,90 @@
+	<form class="form" id="formulario_registro" enctype="multipart/form-data" method="POST" data-validate="parsley" action="<?php echo $formAction ; ?>">
+		<section class="panel panel-default">
+			<header class="panel-heading bg-light">
+			  <ul class="nav nav-tabs nav-justified">
+			    <li class="active"><a href="#tab1" data-toggle="tab">Datos Generales</a></li>
+			    <li class=""><a href="#tab2" data-toggle="tab">Imagen</a></li>
+			    <!--<li class=""><a href="#tab3" data-toggle="tab">Locales</a></li>-->
+			  
+
+			  </ul>
+			</header>
+			<div class="panel-body">
+			  <div class="tab-content">
+			    <div class="tab-pane active" id="tab1">
+	            	<div class="panel-body">
+		              	<div class="form-group pull-in clearfix">
+			                <div class="col-sm-6">
+			                	 <p></p>			                
+				                  
+			                  	<label>Nombre (*)</label>
+			                  	<input type="text" id="nombre" name="nombre" class="form-control" data-required="true"> 
+
+			                  	<p></p>
+			                  	<label>Descripcion (*)</label>
+			                  	<textarea rows="4" cols="50" id="descripcion" name="descripcion" class="form-control" data-required="true">
+			                  	</textarea>
+			                  	<p></p>
+
+			                  	<p></p>
+			                  <label>Fecha de vencimiento (*)</label>
+			                  <input type="text" id="fecha_caducidad" name="fecha_caducidad" class="form-control" data-required="true"> 
+			               		<p></p>
+			               		<p></p>
+
+			                  	<label>Imagen</label>                     
+								<input type="file" class="filestyle" data-icon="false" data-classbutton="btn btn-default" data-classinput="form-control inline v-middle input-s" id="filestyle-0" style="position: fixed; left: -500px;" name="img" accept="image/*">
+								<div class="bootstrap-filestyle" style="display: inline;">
+								  <input type="text" class="form-control inline v-middle input-s" disabled=""> 
+								  <label for="filestyle-0" class="btn btn-default"><span>Elige una imagen</span></label>
+								</div> 
+
+
+			                  	
+			                </div>
+			                <div class="col-sm-6"> 
+
+		                	
+			                 <label>Contenido (*)</label>
+			                  	<textarea rows="4" cols="50" id="contenido" name="contenido" class="form-control" data-required="true">
+			                  	</textarea>
+			                  	<p></p>
+
+
+			                  <label>Estatus (*)</label>
+			                  <select class="form-control" id="status" name="status" data-required="true">			                    
+			                    <option value="1">Activo</option>
+			                    <option value="0">Inactivo</option>
+			                  </select>
+
+
+		                	</div>
+		                </div>
+		            </div>     	
+                </div>
+                <div class="tab-pane" id="tab2">
+                	<div class="col-sm-4">
+			             <center>
+			              <div class="marco_img">
+			                <img src="../tmp/promociones/<?php echo $img;?>">  
+			              </div>
+			              </center>
+			        </div>
+			         <div style=" margin-bottom:30px; clear:both; "></div>
+
+                </div>
+
+            </div>
+
+            <footer class="panel-footer text-right bg-light lter">
+              <button type="submit" class="btn btn-success btn-s-xs">Guardar</button>
+            </footer>
+
+           
+		</section>
+	</form>
+	<div style="clear: both;">&nbsp;</div>
+	<div style="clear: both;">&nbsp;</div>
+	<div style="clear: both;">&nbsp;</div>
+<script type="text/javascript">actionForm=1; $("#fecha_caducidad").datepicker({ format:"yyyy-mm-dd" }); </script>
+

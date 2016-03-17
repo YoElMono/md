@@ -1,0 +1,27 @@
+  <style type="text/css" media="screen">
+  	.delete_usuarios{z-index: 999}	
+  </style>
+  <section class="panel panel-default">
+	<header class="panel-heading">
+		<div align="right">
+			<a href="promociones/new" class="btn btn-sm btn-icon btn-success"><i class="fa fa-plus"></i></a>
+		</div><!---->
+	</header>
+    <div class="table-responsive">
+      <table class="table table-striped m-b-none" data-ride="datatables" id="grid_listado">
+        <thead>
+          <tr>
+            <th width="7%">No</th>
+            <th width="20%">Nombre</th>            
+            <th width="30%">Descripcion</th>
+            <th width="15%">F. caducidad</th>
+            <th width="10%">Estatus</th>
+            <th width="10%">&nbsp;</th>
+          </tr>
+        </thead>
+        <tbody>
+        </tbody>
+      </table>
+    </div>
+  </section>
+<?php echo $msjResponse; ?>

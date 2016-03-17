@@ -1,0 +1,116 @@
+	<form class="form" id="formulario_registro" enctype="multipart/form-data" method="POST" data-validate="parsley" action="<?php echo $formAction ; ?>">
+		<section class="panel panel-default">
+			<header class="panel-heading bg-light">
+			  <ul class="nav nav-tabs nav-justified">
+			    <li class="active"><a href="#tab1" data-toggle="tab">Datos Generales</a></li>
+			    <li class=""><a href="#tab2" data-toggle="tab">Contacto</a></li>
+			    <!--<li class=""><a href="#tab3" data-toggle="tab">Locales</a></li>-->
+			  
+
+			  </ul>
+			</header>
+			<div class="panel-body">
+			  <div class="tab-content">
+			    <div class="tab-pane active" id="tab1">
+	            	<div class="panel-body">
+		              	<div class="form-group pull-in clearfix">
+			                <div class="col-sm-6">
+			                	 <p></p>
+			                				                 
+			                  	<label>Nombre (*)</label>
+			                  	<input type="text" id="nombre" name="nombre" class="form-control" data-required="true"> 
+
+			                  	<p></p>
+			                    <label>Direccion (*)</label>
+			                    <input type="text" id="direccion" name="direccion" class="form-control" data-required="true"> 
+			               
+
+
+
+			                </div>
+			                <div class="col-sm-6"> 
+
+		                	
+			                  
+			                  <div class="col-sm-6"> 
+				                  <p></p>
+				                  <label>CP (*)</label>
+				                  <input type="text" id="cp" name="cp" class="form-control" data-required="true">
+				              </div>
+				              <div class="col-sm-6">     
+				                  <p></p>
+				                  <label>Teléfono (*)</label>
+				                  <input type="text" id="telefono" name="telefono" class="form-control" data-required="true">
+			                  </div>
+			                  <div style=" margin-bottom:10px; clear:both; "></div>
+
+			                 
+								<!--<label>Imagen</label>                     
+								<input type="file" class="filestyle" data-icon="false" data-classbutton="btn btn-default" data-classinput="form-control inline v-middle input-s" id="filestyle-0" style="position: fixed; left: -500px;" name="img" accept="image/*">
+								<div class="bootstrap-filestyle" style="display: inline;">
+								  <input type="text" class="form-control inline v-middle input-s" disabled=""> 
+								  <label for="filestyle-0" class="btn btn-default"><span>Elige una imagen</span></label>
+								</div> 
+								<div style=" margin-bottom:30px; clear:both; "></div>
+								--> 
+			                 
+			                  <label>Estatus (*)</label>
+			                  <select class="form-control" id="status" name="status" data-required="true">			                    
+			                    <option value="1">Activo</option>
+			                    <option value="0">Inactivo</option>
+			                  </select>
+
+			                  
+
+
+		                	</div>
+
+
+		                	<div style=" margin-bottom:30px; clear:both; "></div>
+
+			                  <div class="form-group pull-in clearfix">
+				                <div class="col-sm-12">
+				                  <label><b>Ubicación</b></label>
+				                  <div id="mapa" style="width:100%; height:350px;"></div>
+				                  <input type="hidden" id="longitud" name="longitud" value="<?php echo $longitud; ?>">
+				                  <input type="hidden" id="latitud" name="latitud" value="<?php echo $latitud; ?>">
+				                </div>
+				              </div>
+
+		                </div>
+		            </div>     	
+                </div>
+                <div class="tab-pane" id="tab2">
+                	<div class="col-sm-6"> 
+						<p></p>
+						<label>Nombre de Contacto (*)</label>
+						<input type="text" id="nombre_contacto" name="nombre_contacto" class="form-control" data-required="true">
+
+
+						<p></p>
+						<label>Teléfono  (*)</label>
+						<input type="text" id="telefono_contacto" name="telefono_contacto" class="form-control" data-required="true">
+
+						<p></p>
+						<label>Correo  (*)</label>
+						<input type="text" id="correo_contacto" name="correo_contacto" class="form-control" data-required="true">
+
+					</div>
+					 <div style=" margin-bottom:30px; clear:both; "></div>
+
+                </div>
+
+            </div>
+
+            <footer class="panel-footer text-right bg-light lter">
+              <button type="submit" class="btn btn-success btn-s-xs">Guardar</button>
+            </footer>
+
+           
+		</section>
+	</form>
+	<div style="clear: both;">&nbsp;</div>
+	<div style="clear: both;">&nbsp;</div>
+	<div style="clear: both;">&nbsp;</div>
+<script type="text/javascript">actionForm=1;</script>
+

@@ -1,0 +1,111 @@
+	<form class="form" id="formulario_registro" enctype="multipart/form-data" method="POST" data-validate="parsley" action="<?php echo $formAction ; ?>">
+		<section class="panel panel-default">
+			<header class="panel-heading bg-light">
+			  <ul class="nav nav-tabs nav-justified">
+			    <li class="active"><a href="#tab1" data-toggle="tab">Datos Generales</a></li>
+			   <!-- <li class=""><a href="#tab2" data-toggle="tab">Contacto</a></li>
+			    <li class=""><a href="#tab3" data-toggle="tab">Locales</a></li>-->
+			  
+
+			  </ul>
+			</header>
+			<div class="panel-body">
+			  <div class="tab-content">
+			    <div class="tab-pane active" id="tab1">
+	            	<div class="panel-body">
+		              	<div class="form-group pull-in clearfix">
+			                <div class="col-sm-6">
+			                	 <!--<p></p>
+			                
+				                  <label>Tipo de Negocio (*)</label>
+				                  <select class="form-control" id="id_tipo" name="id_tipo" data-required="true">
+				                    <option value="" selected="selected"> --- </option>
+				                    <?php //if(!empty($Tipos)){ for($i=0;$i<count($Tipos);$i++){?>
+				                    <option value="<?php //echo $Tipos[$i]['id']; ?>"><?php //echo $Tipos[$i]['nombre']; ?></option>
+				                    <?php //}}?>
+				                    
+				                  </select>-->
+
+				                  <p></p>
+				                  <label>Estado (*)</label>
+				                  <select class="form-control" id="id_estado" name="id_estado" data-required="true">
+				                    <option value="" selected="selected"> --- </option>				                  
+				                    <?php if(!empty($Estados)){ for($i=0;$i<count($Estados);$i++){?>
+				                    <option value="<?php echo $Estados[$i]['id']; ?>"><?php echo $Estados[$i]['nombre']; ?></option>
+				                    <?php }}?>
+				                  
+				                  </select>
+
+				                <p></p>
+			                  	<label>Nombre (*)</label>
+			                  	<input type="text" id="nombre" name="nombre" class="form-control" data-required="true"> 
+
+			                  	<p></p>
+			                  	<label>RFC (*)</label>
+			                  	<input type="text" id="rfc" name="rfc" class="form-control" data-required="true">
+                                
+                                <p></p>
+			                  <label>Direccion </label>
+			                  <input type="text" id="direccion" name="direccion" class="form-control" > 
+                              
+                              
+			                </div>
+			                <div class="col-sm-6"> 
+
+		                	
+			                  
+			               
+			                  <div class="col-sm-6"> 
+				                  <p></p>
+				                  <label>CP</label>
+				                  <input type="text" id="cp" name="cp" class="form-control"   onkeypress="return isNumberKey(event)">
+				              </div>
+				              <div class="col-sm-6">     
+				                  <p></p>
+				                  <label>Teléfono (*)</label>
+				                  <input type="text" id="telefono" name="telefono" class="form-control" data-required="true"  onkeypress="return isNumberKey(event)">
+			                  </div>
+			                  <div style=" margin-bottom:30px; clear:both; "></div>
+                              <p></p>
+                                <label>Correo  (*)</label>
+                                <input type="text" id="correo" name="correo" class="form-control" data-required="true">
+                                <p></p>
+
+			                 
+								<!--<label>Imagen</label>                     
+								<input type="file" class="filestyle" data-icon="false" data-classbutton="btn btn-default" data-classinput="form-control inline v-middle input-s" id="filestyle-0" style="position: fixed; left: -500px;" name="img" accept="image/*">
+								<div class="bootstrap-filestyle" style="display: inline;">
+								  <input type="text" class="form-control inline v-middle input-s" disabled=""> 
+								  <label for="filestyle-0" class="btn btn-default"><span>Elige una imagen</span></label>
+								</div> -->
+								<div style=" margin-bottom:30px; clear:both; "></div>                   
+		                		
+
+			                  <p></p>
+			                  <label>Estatus (*)</label>
+			                  <select class="form-control" id="status" name="status" data-required="true">			                    
+			                    <option value="1">Activo</option>
+			                    <option value="0">Inactivo</option>
+			                  </select>
+
+
+		                	</div>
+		                </div>
+		            </div>     	
+                </div>
+               
+
+            </div>
+
+            <footer class="panel-footer text-right bg-light lter">
+              <button type="submit" class="btn btn-success btn-s-xs">Guardar</button>
+            </footer>
+
+           
+		</section>
+	</form>
+	<div style="clear: both;">&nbsp;</div>
+	<div style="clear: both;">&nbsp;</div>
+	<div style="clear: both;">&nbsp;</div>
+<script type="text/javascript">actionForm=1;</script>
+

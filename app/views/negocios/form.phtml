@@ -1,0 +1,200 @@
+	 <?php //print_r($IdCliente); ?>
+	<form class="form" id="formulario_registro" enctype="multipart/form-data" method="POST" data-validate="parsley" action="<?php echo $formAction ; ?>">
+		<section class="panel panel-default">
+			<header class="panel-heading bg-light">
+			  <ul class="nav nav-tabs nav-justified">
+			    <li class="active"><a href="#tab1" data-toggle="tab">Datos Generales</a></li>
+			    <li class=""><a href="#tab2" data-toggle="tab">Contacto</a></li>
+			    <li class=""><a href="#tab3" data-toggle="tab">Socios</a></li><!---->
+			  
+
+			  </ul>
+			</header>
+			<div class="panel-body">
+			  <div class="tab-content">
+			    <div class="tab-pane active" id="tab1">
+	            	<div class="panel-body">
+		              	<div class="form-group pull-in clearfix">
+			                <div class="col-sm-6">
+			                	 <!----><p></p>
+
+			                	 <?php  if(empty($IdCliente)){?>
+			                
+				                  <label>Cliente (*)</label>
+				                  <select class="form-control" id="id_cliente" name="id_cliente" data-required="true">
+				                    <option value="" selected="selected"> --- </option>
+				                    <?php if(!empty($Cliente)){ for($i=0;$i<count($Cliente);$i++){?>
+				                    <option value="<?php echo $Cliente[$i]['id']; ?>"><?php echo $Cliente[$i]['nombre']; ?></option>
+				                    <?php }}?>
+				                    
+				                  </select>
+
+				                  <?php }else{ 
+
+				                  		echo '<input type="hidden" id="id_cliente" name="id_cliente"  value="'.$IdCliente.'" >';				                  
+				                  		}?>
+
+				                  <p></p>
+				                  <label>Estado (*)</label>
+				                  <select class="form-control" id="id_estado" name="id_estado" data-required="true">
+				                    <option value="" selected="selected"> --- </option>				                  
+				                    <?php if(!empty($Estados)){ for($i=0;$i<count($Estados);$i++){?>
+				                    <option value="<?php echo $Estados[$i]['id']; ?>"><?php echo $Estados[$i]['nombre']; ?></option>
+				                    <?php }}?>
+				                  
+				                  </select>
+
+				                <p></p>
+			                  	<label>Nombre Comercial (*)</label>
+			                  	<input type="text" id="nombre" name="nombre" class="form-control" data-required="true"> 
+
+			                  	<p></p>
+			                  	<label>Razon Social (*)</label>
+			                  	<input type="text" id="razon_social" name="razon_social" class="form-control" data-required="true">
+
+			                  	<p></p>
+			                  	<label>RFC (*)</label>
+			                  	<input type="text" id="rfc" name="rfc" class="form-control" data-required="true">
+                                
+                                <p></p>
+			                    <label>No. Registro (*)</label>
+			                    <input type="text" id="registro" name="registro" class="form-control" data-required="true"> 
+                              
+                              
+			                </div>
+			                <div class="col-sm-6">                 	
+			                  
+			               
+			                 
+				                 
+				                  <p></p>
+				                  <label>Teléfono (*)</label>
+				                  <input type="text" id="telefono" name="telefono" class="form-control" data-required="true">
+			                  
+
+
+
+			                   <div class="col-sm-4">     
+				                  <p></p>
+				                  <label>Fecha Disolución(*)</label>
+				                  <input type="text" id="fecha_disolucion" name="fecha_disolucion" class="form-control" data-required="true">
+			                  </div>
+			                  <div class="col-sm-4">     
+				                  <p></p>
+				                  <label>Fecha Liq. (*)</label>
+				                  <input type="text" id="fecha_liq" name="fecha_liq" class="form-control" data-required="true">
+			                  </div>
+
+
+			                  <div class="col-sm-4">     
+				                  <p></p>
+				                  <label>Fecha Balance (*)</label>
+				                  <input type="text" id="fecha_balance" name="fecha_balance" class="form-control" data-required="true">
+			                  </div>
+			                  <div style=" margin-bottom:30px; clear:both; "></div>
+
+			                  <p></p>
+				              <label>FIEL (*)</label>
+				              <input type="text" id="fiel" name="fiel" class="form-control" data-required="true">
+
+
+				              <p></p>
+				              <label>CIEC (*)</label>
+				              <input type="text" id="ciec" name="ciec" class="form-control" data-required="true">                 
+		                		
+
+			                  <p></p>
+			                  <label>Estatus (*)</label>
+			                  <select class="form-control" id="status" name="status" data-required="true">			                    
+			                    <option value="1">Activo</option>
+			                    <option value="0">Inactivo</option>
+			                  </select>
+
+
+		                	</div>
+		                </div>
+		            </div>     	
+                </div>
+                <div class="tab-pane" id="tab2">
+                	<div class="col-sm-6"> 
+						<p></p>
+						<label>Nombre de Contacto (*)</label>
+						<input type="text" id="nombre_contacto" name="nombre_contacto" class="form-control" data-required="true">
+
+
+						<p></p>
+						<label>Teléfono  (*)</label>
+						<input type="text" id="telefono_contacto" name="telefono_contacto" class="form-control" data-required="true">
+
+						<p></p>
+						<label>Correo  (*)</label>
+						<input type="text" id="correo_contacto" name="correo_contacto" class="form-control" data-required="true">
+
+
+
+						<!--<p></p>
+						<label>Password (*)</label>
+						<input type="password" id="password" name="password" class="form-control" data-required="true"> -->
+					</div>
+                    
+                    <div class="col-sm-6"> 
+                    <!--<p></p>-->
+                    
+                    </div>
+					 <div style=" margin-bottom:30px; clear:both; "></div>
+
+                </div>
+
+                <div class="tab-pane" id="tab3">
+
+                		<div class="col-sm-6"> 
+	                		<p></p>
+			                 <label>Acciones Total (*)</label>
+			                 <input type="text" id="acciones" name="acciones" class="form-control" data-required="true"> 
+		                 </div>
+		                 <div class="col-sm-6"> 	
+		                		 <p></p>
+		                 		<label>Suma Capital total (*)</label>
+		                 		<input type="text" id="acciones" name="acciones" class="form-control" data-required="true">
+		                  </div>
+		                 
+		                  <div style=" margin-bottom:30px; clear:both; "></div>
+		                  <hr></hr> 
+		                  <p></p>
+			              <label>Nombre del socio (*)</label>
+			              <input type="text" id="nombre_socio" name="nombre_socio" class="form-control" data-required="true">
+			              	 <p></p>
+			              <label>RFC (*)</label>
+			              <input type="text" id="rfc_socio" name="rfc_socio" class="form-control" data-required="true"> 
+			              	<p></p>
+			              <label>CURP (*)</label>
+			              <input type="text" id="curps_socio" name="curps_socio" class="form-control" data-required="true"> 
+			              <p></p>
+			              <label>Acciones (*)</label>
+			              <input type="text" id="curps_socio" name="curps_socio" class="form-control" data-required="true"> 
+
+
+
+
+                </div>
+
+            </div>
+
+            <footer class="panel-footer text-right bg-light lter">
+              <button type="submit" class="btn btn-success btn-s-xs">Guardar</button>
+            </footer>
+
+           
+		</section>
+	</form>
+	<div style="clear: both;">&nbsp;</div>
+	<div style="clear: both;">&nbsp;</div>
+	<div style="clear: both;">&nbsp;</div>
+<script type="text/javascript">
+actionForm=1; 
+$("#fecha_disolucion").datepicker();
+$("#fecha_liq").datepicker();
+$("#fecha_balance").datepicker();
+
+</script>
+

@@ -1,0 +1,24 @@
+ <?php 
+ //echo "<pre>";
+// print_r($_SESSION);
+
+   if($_SESSION['tipo']=='Administrador'){
+      $this->partial("home/admin"); 
+
+   } 
+
+
+   if($_SESSION['tipo']=='Negocio'){
+      $this->partial("home/negocios"); 
+
+   } 
+
+
+   if($_SESSION['tipo']=='Tablet'){
+      $this->partial("home/tablet"); 
+
+   } 
+   
+  
+
+?>      

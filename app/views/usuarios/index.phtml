@@ -1,0 +1,147 @@
+  <style type="text/css" media="screen">
+  	.delete_usuarios{z-index: 999}	
+  </style>
+
+
+  <section class="panel panel-default">
+
+
+
+  <header class="panel-heading bg-light">
+    <ul class="nav nav-tabs nav-justified">
+
+    <?php if($_SESSION['tipo']=='Negocio'){$tabactive='active';}else{$tabactive='';} ?>
+
+    <?php if($_SESSION['tipo']=='Administrador'){ ?>
+      <li class="active"><a href="#tab1" data-toggle="tab">Administradores</a></li>
+    <?php }?>
+
+
+      <li class="<?php echo $tabactive; ?>"><a href="#tab2" data-toggle="tab">Negocios</a></li>
+      <li><a href="#tab3" data-toggle="tab">Sucursales</a></li>
+
+    <?php if($_SESSION['tipo']=='Administrador'){?>
+      <li><a href="#tab4" data-toggle="tab">Usuarios</a></li>
+    <?php }?>
+    </ul>
+  </header>
+
+  <div class="table-responsive">
+
+    <div class="tab-content">
+      <?php if($_SESSION['tipo']=='Administrador'){ ?>
+      <div class="tab-pane active" id="tab1">
+
+          	<header class="panel-heading">
+          		<div align="right">
+          			<a href="usuarios/new" class="btn btn-sm btn-icon btn-success"><i class="fa fa-plus"></i></a>
+          		</div>
+          	</header>
+              <table class="table table-striped m-b-none" data-ride="datatables" id="grid_listado">
+                <thead>
+                  <tr>
+                    <th width="5%">No</th>
+                    <th width="15%">Nombre</th>
+                    <th width="17%">E-mail</th>
+                    <th width="15%">Usuario</th>                   
+                    <th width="14%">Tipo</th>
+                    <th width="9%">Estatus</th>
+                    <th width="12%">&nbsp;</th>
+                  </tr>
+                </thead>
+                <tbody>
+                </tbody>
+              </table>
+
+      </div>
+      <?php }?>
+      <div class="tab-pane <?php echo $tabactive; ?>" id="tab2">
+          <header class="panel-heading">
+              <div align="right">
+                <a href="usuarios/new" class="btn btn-sm btn-icon btn-success"><i class="fa fa-plus"></i></a>
+              </div>
+          </header>
+          <table class="table table-striped m-b-none" data-ride="datatables_negocios" id="grid_listado_negocios">
+                <thead>
+                  <tr>
+                    <th width="5%">No</th>
+                    <th width="15%">Estado</th>
+                    <th width="15%">Nombre</th>
+                    <th width="17%">E-mail</th>                  
+                    <th width="9%">Estatus</th>
+                    <th width="12%">&nbsp;</th>
+                  </tr>
+                </thead>
+                <tbody>
+                </tbody>
+              </table>
+
+      </div>
+
+      <div class="tab-pane" id="tab3">
+      
+          <header class="panel-heading">
+              <div align="right">
+                <a href="usuarios/new" class="btn btn-sm btn-icon btn-success"><i class="fa fa-plus"></i></a>
+              </div>
+          </header>
+          <table class="table table-striped m-b-none" data-ride="datatables_sucursales" id="grid_listado_sucursales">
+          <thead>
+            <tr>
+              <th width="5%">No</th>
+              <th width="10%">Estado</th>
+              <th width="15%">Negocio</th>
+              <th width="15%">Sucursal</th>
+              <th width="20%">Nombre</th>
+              <th width="20%">E-mail</th>
+              <th width="10%">Estatus</th>
+              <th width="10%">&nbsp;</th>
+            </tr>
+          </thead>
+          <tbody>
+          </tbody>
+          </table>
+
+      </div>
+      <?php if($_SESSION['tipo']=='Administrador'){?>
+      <div class="tab-pane" id="tab4">
+          <header class="panel-heading">
+              <div align="right">
+                <a href="usuarios/new" class="btn btn-sm btn-icon btn-success"><i class="fa fa-plus"></i></a>
+              </div>
+            </header>
+            <table class="table table-striped m-b-none" data-ride="datatables_usuarios" id="grid_listado_usuarios">
+            <thead>
+              <tr>
+                <th width="5%">No</th>
+                <th width="20%">Nombre</th>
+                <th width="20%">E-mail</th>                
+                <th width="15%">OS</th>
+                <th width="10%">Estatus</th>
+                <th width="15%">&nbsp;</th>
+              </tr>
+            </thead>
+            <tbody>
+            </tbody>
+            </table>
+
+      </div>
+      <?php }?>
+      
+
+
+
+
+
+
+    </div>
+
+    </div>
+  </section>
+<?php echo $msjResponse; ?>
+
+
+
+
+
+

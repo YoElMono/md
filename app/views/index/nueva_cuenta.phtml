@@ -1,0 +1,56 @@
+<div align="center" class="txt_verde txt_20 martop10 marbottom10">Regístrate</div>
+<div id="resul_registro"></div>
+<form action="" method="post" enctype="application/x-www-form-urlencoded" name="form_cuenta" id="form_cuenta" onsubmit="JsCuentaNueva(); return false;">
+<input name="key" id="key" type="hidden" value="registro" />
+<input class="input40" name="nombre" id="nombre" type="text" placeholder="Nombre"  onclick="JsClearErrorInput();">
+<input class="input40 marginleft10" name="apellidos" id="apellidos" type="text" placeholder="Apellido"  onclick="JsClearErrorInput();">
+<input  class="input95 martop10" name="celular" id="celular" type="text" placeholder="No. Celular (opcional)" onkeypress="return isNumberKey(event)"   onclick="JsClearErrorInput();" >
+<input  class="input95 martop10" name="correo" id="correo" type="text" placeholder="Correo electrónico"  onclick="JsClearErrorInput();">
+<div id="err_correom" class="msg hide">El correo ya existe,favor de verificar</div>
+<input  class="input95 martop10" name="password" id="password" type="password" placeholder="Contraseña"  onclick="JsClearErrorInput();">
+<div class="questiondiv"  onmouseover="JsdivQuestion();" onmouseout="JsdivQuestion();" style="cursor:pointer"><img src="img/question.png" width="27" height="27" /></div>
+<input  class="input95 martop10" name="password_confirm" id="password_confirm" type="password" placeholder="Confirma tu Contraseña"  onclick="JsClearErrorInput();">
+<div id="err_passw" class="msg hide">Formato invalido</div>
+
+
+<div align="center"  class="txt_gris martop10 marbottom10">Fecha de nacimiento</div>
+<input type="text" name="dia" id="dia" class="input25" placeholder="Día" maxlength="2" onkeypress="return isNumberKey(event)"  onclick="JsClearErrorInput();">
+<input type="text" name="mes" id="mes" class="input25 marginleft14" placeholder="Mes" maxlength="2" onkeypress="return isNumberKey(event)"  onclick="JsClearErrorInput();">
+<input type="text" name="anio" id="anio" class="input25 marginleft14" placeholder="Año" maxlength="4" onkeypress="return isNumberKey(event)"  onclick="JsClearErrorInput();">
+<div align="left"  class="txt_gris martop20 marbottom10"> 
+	<span class="marginright20">Sexo:</span>
+  
+    <label>
+      <input type="radio" name="sexo" value="H" id="sexo_0" onclick="JsClearErrorInput();"/>
+      	Masculino
+   		</label>
+   
+    	<label>
+       <input type="radio" name="sexo" value="M" id="sexo_1" onclick="JsClearErrorInput();"/>
+      Femenino
+    </label>
+   <span id="err_sexo" class="msg"></span>
+
+	<div class="martop20">Estado (opcional):<select name="id_estado"  id="id_estado" class="input40 marginleft20">
+	  <option value="">--</option>
+      <?php for($i=0;$i<count($Estados);$i++){?>
+      <option value="<?php echo $Estados[$i]['id'] ?>"><?php echo utf8_encode($Estados[$i]['nombre'] )?></option>
+      <?php }?>
+      
+	</select>
+    </div>
+</div>
+<div align="center"  class="txt_gris martop10 marbottom10">Captcha</div>
+<div>
+<!---->
+<div class="float"><img src="index/captcha"/></div>
+<div class="float marginleft20"><input class="input" type="text" id="codigo" name="codigo" onclick="JsClearErrorInput();"></div>
+<div class="clear"></div>
+<div id="err_codigo" class="msg hide">Captcha invalido,favor de verificar</div>
+<!---->
+</div>
+
+<div class="txt_gris martop50 marbottom10">Al hacer clic en Regístrate, aceptas las <a href="#" class="link_gris">Condiciones</a> y que has leído la <a href="#" class="link_gris">Política de uso de datos</a></div>
+
+<div align="right"><input name="Submit" type="submit" class="btn_header" value="Regístrate"></div>
+</form>
