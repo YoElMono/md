@@ -70,8 +70,27 @@ function actionDelete(){
 
 
 
+function JscalcularAccion(){
+
+	var acciones=$("#acciones_socios").val();
+	var valor=$("#valor").val();
+	var suma=acciones*valor;
+	if(suma!=''){$("#suma").val(suma);}
+
+	 return false;
 
 
+
+
+}
+ function isNumberKey(evt)
+      {
+         var charCode = (evt.which) ? evt.which : event.keyCode
+         if (charCode > 31 && (charCode < 48 || charCode > 57))
+            return false;
+ 
+         return true;
+      }
 
 
 +function ($) { "use strict";

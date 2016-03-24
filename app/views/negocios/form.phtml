@@ -3,9 +3,10 @@
 		<section class="panel panel-default">
 			<header class="panel-heading bg-light">
 			  <ul class="nav nav-tabs nav-justified">
-			    <li class="active"><a href="#tab1" data-toggle="tab">Datos Generales</a></li>
-			    <li class=""><a href="#tab2" data-toggle="tab">Contacto</a></li>
-			    <li class=""><a href="#tab3" data-toggle="tab">Socios</a></li><!---->
+			    <li class="active"><a href="#tab1" data-toggle="tab">Datos Generales</a></li>			   
+			    <li class=""><a href="#tab2" data-toggle="tab">Socios</a></li>
+ 				<li class=""><a href="#tab3" data-toggle="tab">Documentos</a></li>
+			    <!---->
 			  
 
 			  </ul>
@@ -59,20 +60,16 @@
                                 <p></p>
 			                    <label>No. Registro (*)</label>
 			                    <input type="text" id="registro" name="registro" class="form-control" data-required="true"> 
+
+
+			                    <p></p>
+				                  <label>Teléfono (*)</label>
+				                  <input type="text" id="telefono" name="telefono" class="form-control" data-required="true" onkeypress="return isNumberKey(event)">
                               
                               
 			                </div>
 			                <div class="col-sm-6">                 	
 			                  
-			               
-			                 
-				                 
-				                  <p></p>
-				                  <label>Teléfono (*)</label>
-				                  <input type="text" id="telefono" name="telefono" class="form-control" data-required="true">
-			                  
-
-
 
 			                   <div class="col-sm-4">     
 				                  <p></p>
@@ -91,17 +88,55 @@
 				                  <label>Fecha Balance (*)</label>
 				                  <input type="text" id="fecha_balance" name="fecha_balance" class="form-control" data-required="true">
 			                  </div>
-			                  <div style=" margin-bottom:30px; clear:both; "></div>
+
+
+			                  <div class="col-sm-6">     
+				                  <p></p>
+				                  <label>Capital Total (*)</label>
+				                  <input type="text" id="capital" name="capital" class="form-control" data-required="true">
+			                  </div>
+
+			                   <div class="col-sm-6">     
+				                  <p></p>
+				                  <label>Acciones totales (*)</label>
+				                  <input type="text" id="acciones" name="acciones" class="form-control" data-required="true">
+			                  </div>
+  								<div style=" margin-bottom:30px; clear:both; "></div>
+			                   
+				              <p></p>
+			                  <label>Tipo de sociedad (*)</label>
+			                  <select class="form-control" id="status" name="status" data-required="true">			                    
+			                    <option value="">- - -</option>
+			                     <option value="S.A.">S.A.</option>
+			                    <option value="S.A. de C.V.">S.A. de C.V.</option>
+			                    <option value="S. en C. S.">S. en C. S.</option>
+			                    <option value="S. en C. por A.">S. en C. por A.</option>
+			                    <option value="S. DE R.L.">S. DE R.L.</option>
+			                    <option value="S.C.">S.C.</option>
+			                  </select>
+
+			                
 
 			                  <p></p>
-				              <label>FIEL (*)</label>
-				              <input type="text" id="fiel" name="fiel" class="form-control" data-required="true">
+				              <label>FIEL</label>
+				              <input type="text" id="fiel" name="fiel" class="form-control" >
 
 
 				              <p></p>
-				              <label>CIEC (*)</label>
-				              <input type="text" id="ciec" name="ciec" class="form-control" data-required="true">                 
+				              <label>CIEC</label>
+				              <input type="text" id="ciec" name="ciec" class="form-control" >     
+
+
 		                		
+
+			                  <p></p>
+			                  <label>Opinión (*)</label>
+			                  <select class="form-control" id="status" name="status" data-required="true">	
+			                   <option value="" selected="selected">-----</option>		                    
+			                    <option value="Positivo">Positivo</option>
+			                    <option value="Credito">Credito</option>
+			                     <option value="Declaraciones">Declaraciones</option>
+			                  </select>
 
 			                  <p></p>
 			                  <label>Estatus (*)</label>
@@ -115,47 +150,26 @@
 		                </div>
 		            </div>     	
                 </div>
+               
+
                 <div class="tab-pane" id="tab2">
-                	<div class="col-sm-6"> 
-						<p></p>
-						<label>Nombre de Contacto (*)</label>
-						<input type="text" id="nombre_contacto" name="nombre_contacto" class="form-control" data-required="true">
 
-
-						<p></p>
-						<label>Teléfono  (*)</label>
-						<input type="text" id="telefono_contacto" name="telefono_contacto" class="form-control" data-required="true">
-
-						<p></p>
-						<label>Correo  (*)</label>
-						<input type="text" id="correo_contacto" name="correo_contacto" class="form-control" data-required="true">
-
-
-
-						<!--<p></p>
-						<label>Password (*)</label>
-						<input type="password" id="password" name="password" class="form-control" data-required="true"> -->
-					</div>
-                    
-                    <div class="col-sm-6"> 
-                    <!--<p></p>-->
-                    
-                    </div>
-					 <div style=" margin-bottom:30px; clear:both; "></div>
-
-                </div>
-
-                <div class="tab-pane" id="tab3">
-
-                		<div class="col-sm-6"> 
+                		<div class="col-sm-4"> 
 	                		<p></p>
-			                 <label>Acciones Total (*)</label>
-			                 <input type="text" id="acciones" name="acciones" class="form-control" data-required="true"> 
+			                 <label>Acciones x socio (*)</label>
+			                 <input type="text" id="acciones_socios" name="acciones_socios" class="form-control" data-required="true" onkeypress="return isNumberKey(event)"> 
 		                 </div>
-		                 <div class="col-sm-6"> 	
+
+		                 <div class="col-sm-4"> 
+	                		<p></p>
+			                 <label>Valor de Acción (*)</label>
+			                 <input type="text" id="valor" name="valor" class="form-control" data-required="true"> 
+		                 </div>
+
+		                 <div class="col-sm-4"> 	
 		                		 <p></p>
 		                 		<label>Suma Capital total (*)</label>
-		                 		<input type="text" id="acciones" name="acciones" class="form-control" data-required="true">
+		                 		<input type="text" id="suma" name="suma" class="form-control" data-required="true" onclick="JscalcularAccion(); return false">
 		                  </div>
 		                 
 		                  <div style=" margin-bottom:30px; clear:both; "></div>
@@ -169,12 +183,61 @@
 			              	<p></p>
 			              <label>CURP (*)</label>
 			              <input type="text" id="curps_socio" name="curps_socio" class="form-control" data-required="true"> 
-			              <p></p>
-			              <label>Acciones (*)</label>
-			              <input type="text" id="curps_socio" name="curps_socio" class="form-control" data-required="true"> 
+			             
 
 
 
+
+                </div>
+
+                 <div class="tab-pane" id="tab3">
+                	
+							<label>Acta constituiva</label>  
+							<div style=" margin-bottom:10px; clear:both; "></div>                   
+								<input type="file" class="filestyle" data-icon="false" data-classbutton="btn btn-default" data-classinput="form-control inline v-middle input-s" id="filestyle-0" style="position: fixed; left: -500px;" name="img" accept="image/*">
+								<div class="bootstrap-filestyle" style="display: inline;">
+								  <input type="text" class="form-control inline v-middle input-s" disabled=""> 
+								  <label for="filestyle-0" class="btn btn-default"><span>Elige una imagen</span></label>
+								</div> 
+								<div style=" margin-bottom:30px; clear:both; "></div>
+
+
+								<label>FIEL</label> 
+								<div style=" margin-bottom:10px; clear:both; "></div>                        
+								<input type="file" class="filestyle" data-icon="false" data-classbutton="btn btn-default" data-classinput="form-control inline v-middle input-s" id="filestyle-0" style="position: fixed; left: -500px;" name="img" accept="image/*">
+								<div class="bootstrap-filestyle" style="display: inline;">
+								  <input type="text" class="form-control inline v-middle input-s" disabled=""> 
+								  <label for="filestyle-0" class="btn btn-default"><span>Elige una imagen</span></label>
+								</div> 
+								<div style=" margin-bottom:30px; clear:both; "></div>
+
+
+
+								<label>CIEC</label>  
+								<div style=" margin-bottom:10px; clear:both; "></div>                       
+								<input type="file" class="filestyle" data-icon="false" data-classbutton="btn btn-default" data-classinput="form-control inline v-middle input-s" id="filestyle-0" style="position: fixed; left: -500px;" name="img" accept="image/*">
+								<div class="bootstrap-filestyle" style="display: inline;">
+								  <input type="text" class="form-control inline v-middle input-s" disabled=""> 
+								  <label for="filestyle-0" class="btn btn-default"><span>Elige una imagen</span></label>
+								</div> 
+
+
+
+
+
+
+
+
+
+
+
+					</div>
+                    
+                    <div class="col-sm-6"> 
+                    <!--<p></p>-->
+                    
+                    </div>
+					 <div style=" margin-bottom:30px; clear:both; "></div>
 
                 </div>
 
