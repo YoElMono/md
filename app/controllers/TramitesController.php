@@ -9,21 +9,21 @@ use Phalcon\Mvc\Controller,
 
 
 
-class DocumentosController extends ControllerBase {
+class TramitesController extends ControllerBase {
 	
 	private $Security ;
 	var $Data = array();
 	var $MenuSlider = array();
 
 	public function initialize() {
-		$this->Title = "Documentos";
+		$this->Title = "Tramites";
 		Tag::setTitle($this->Title);
 		parent::initialize();
 
-		$this->setJS("documentos");
+		$this->setJS("tramites");
 		$this->Security = new Security();
-		$this->Modulo = "sub_documentos_documentos"; 
-		$this->Controller = "documentos";
+		$this->Modulo = "sub_tramites_tramites"; 
+		$this->Controller = "tramites";
 	}
 
 	public function dropAccents($incoming_string){        
@@ -97,8 +97,8 @@ class DocumentosController extends ControllerBase {
 	        return $response;
 		}
 		$Data = array("aaData" => array());
-		$Result = Documentos::find(array(
-			"columns" => "id ,nombre,date(fecha) as fecha,fecha_edit,status",
+		$Result = ViewTramites::find(array(
+			"columns" => "id ,empresa,liquidador,date(fecha_creacion) as fecha,status",
 		    "conditions" => "status!=2",
 		   //"limit" => 4
 		));	
@@ -109,20 +109,20 @@ class DocumentosController extends ControllerBase {
 			foreach($Result as $key => $value){
 				$Buttons = '';
 				if( (int) $_SESSION["PermisosUser"][$this->Modulo . "_edit"] == 1 ){
-					$Buttons .= '<a href="documentos/edit/'.trim($value->id).'/" class="btn btn-sm btn-icon btn-primary"><i class="fa fa-pencil"></i></a> ';
+					$Buttons .= '<a href="tramites/edit/'.trim($value->id).'/" class="btn btn-sm btn-icon btn-primary"><i class="fa fa-pencil"></i></a> ';
 				}
 
 				if( (int) $_SESSION["PermisosUser"][$this->Modulo . "_delete"] == 1 ){
 					$Buttons .= '<a href="del/'.(int) trim($value->id).'/" class="delete_usuarios btn btn-sm btn-icon btn-danger"><i class="fa fa-trash-o"></i></a>';
 				}
 
-				$img="<img src='../tmp/documentos/".$value->img."' width=50 height=50 >";
+				//$img="<img src='../tmp/tramites/".$value->img."' width=50 height=50 >";
 
 				$Data["aaData"][] = array(
 					"id" => trim($value->id),					
-					"nombre" => utf8_decode(trim($value->nombre)),
-					"fecha" => trim($value->fecha),
-					"fecha_edit" => trim($value->fecha_edit),
+					"empresa" => utf8_decode(trim($value->empresa)),
+					"liquidador" => utf8_decode(trim($value->liquidador)),
+					"fecha" => trim($value->fecha),					
 					"status" => trim($this->selectStatus($value->status)),
 					"buttons" => trim($Buttons),
 				);
@@ -149,7 +149,7 @@ class DocumentosController extends ControllerBase {
 		}
 
 		$this->ajaxBody($this->Title); 
-		$this->setHeaderMenu("Documentos Base" , "Listado de Documentos" , $this->Controller , "");		
+		$this->setHeaderMenu("Tramites" , "Listado de Tramites" , $this->Controller , "");		
 		$this->view->msjResponse = "";
 		if( $this->session->has("mensajeReturn") ){
 			$this->view->msjResponse = $this->session->get("mensajeReturn");

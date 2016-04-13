@@ -13,14 +13,14 @@ function Grid(){
       	setTimeout(actionDelete , 500);
       	console.log("Termino");
       },
-      "ajax" : "documentos/get/",
+      "ajax" : "tramites/get/",
       "sDom": "<'row'<'col-sm-6'l><'col-sm-6'f>r>t<'row'<'col-sm-6'i><'col-sm-6'p>>",
       "sPaginationType": "full_numbers",
       "aoColumns": [
         { "mData": "id" },       
-        { "mData": "nombre" },
-        { "mData": "fecha" },
-		{ "mData": "fecha_edit" },
+        { "mData": "empresa" },
+        { "mData": "liquidador" },
+        { "mData": "fecha" },		
         { "mData": "status" },
         { "mData": "buttons" }
       ]

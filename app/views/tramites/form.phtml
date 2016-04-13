@@ -14,9 +14,16 @@
               <div class="form-group pull-in clearfix">
               <div class="col-sm-8">
 
+                  <div class="col-sm-8" style=" margin-bottom: 30px;">
+                          <label>Documento Base (*)</label>
+                          <select class="form-control" id="id_documento" name="id_documento" data-required="true">
+                            <option value="">---</option>
+                          </select>      
+                    </div>
+
                    <div class="col-sm-8" style=" margin-bottom: 30px;">
-                      <label>Nombre</label>
-                      <input type="text" id="nombre" name="nombre" class="form-control" data-required="true"> 
+                      <label>Nombre (Liquidador)</label>
+                      <input type="text" id="liquidador" name="liquidador" class="form-control" data-required="true"> 
                    </div>
              
 
@@ -31,7 +38,7 @@
                     <div class="col-sm-8" style=" margin-bottom: 30px;">
                           <label>Estatus (*)</label>
                           <select class="form-control" id="status" name="status" data-required="true">
-                            
+                           <option value="" selected="">--</option>
                             <option value="1">Activo</option>
                             <option value="0">Inactivo</option>
                           </select>      
@@ -46,7 +53,7 @@
               </div>
               <div class="col-sm-4">
               <?php if(isset($img) and !empty($img)){?>
-                  <a href="tmp/documentos/<?php echo $img?>"><img src="images/paper.png"></a>
+                  <a href="tmp/tramites/<?php echo $img?>"><img src="images/paper.png"></a>
               <?php }?>
 
 
