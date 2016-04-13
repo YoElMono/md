@@ -17,10 +17,11 @@ function Grid(){
       "sDom": "<'row'<'col-sm-6'l><'col-sm-6'f>r>t<'row'<'col-sm-6'i><'col-sm-6'p>>",
       "sPaginationType": "full_numbers",
       "aoColumns": [
-        { "mData": "id" },      
+        { "mData": "id" },  
+         { "mData": "cliente" },    
         { "mData": "nombre" },
         { "mData": "telefono" },
-		{ "mData": "correo_contacto" },
+		{ "mData": "tipo_sociedad" },
         { "mData": "status" },
         { "mData": "buttons" }
       ]
@@ -28,6 +29,92 @@ function Grid(){
     return false;
    });
 	return false;
+}
+
+
+function JsNewSocio(documento) {
+	$('#pantalla_actividades').toggleClass('hidden');	
+	$('#documento').html(documento);
+}
+
+function hiddensocio () {
+	$('#pantalla_actividades').toggleClass('hidden');
+	return false;
+}
+
+function validar_socio(id) {
+	var form = $('#form_socios');
+
+	if($("#acciones_socios").val() == ""){
+		 $("#acciones_socios").attr("placeholder", "Necesario");
+		$("#acciones_socios").focus();
+		return false;
+	}
+
+
+	if($("#valor").val() == ""){
+		 $("#valor").attr("placeholder", "Necesario");
+		$("#valor").focus();
+		return false;
+	}
+
+
+	if($("#nombre_socio").val() == ""){
+		 $("#nombre_socio").attr("placeholder", "Necesario");
+		$("#nombre_socio").focus();
+		return false;
+	}
+
+
+	if($("#rfc_socio").val() == ""){
+		 $("#rfc_socio").attr("placeholder", "Necesario");
+		$("#rfc_socio").focus();
+		return false;
+	}
+
+	if($("#curps_socio").val() == ""){
+		 $("#curps_socio").attr("placeholder", "Necesario");
+		$("#curps_socio").focus();
+		return false;
+	}
+	$('#progress').removeClass('hidden');
+	$('#submit').prop('disabled',true);
+	$.ajax({
+			url: 'negocios/socionew/'+id,
+			type: 'POST',
+			dataType: 'json',
+			data: form.serialize(),
+			success:function (data) {
+				if(data.bien)
+					$('#progress').attr("src","images/ok.png").load(function() {
+						alert(data.msg)
+						//alertify.alert(data.msg);
+						//window.location = "mascotas/edit/"+id
+						jsCargarSocios(id);
+					});
+				else
+					$('#progress').attr("src","images/error.png").load(function() {
+						alert(data.msg)
+						//alertify.alert(data.msg);
+						//window.location = "mascotas/edit/"+id
+						jsCargarSocios(id);
+					});
+			},
+			error:function (error1,error2) {
+				console.log(error1,error2);
+			}
+		});
+		return false;
+
+
+
+
+}
+
+function jsCargarSocios(id){
+
+
+
 }
 
 

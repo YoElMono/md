@@ -1,11 +1,23 @@
-	 <?php //print_r($IdCliente); ?>
+<style type="text/css">
+  
+
+.clear{ clear:both; }
+.hidden{ display: none;}
+
+#pantalla_oscura{position: fixed;left: 0;top: 0;width: 100%;height: 100%;background-color: rgba(0, 0, 0, 0.5);z-index: 1000;overflow-y: auto;padding-top:150px;}
+
+#pantalla_actividades{position: fixed;left: 0;top: 0;width: 100%;height: 100%;background-color: rgba(0, 0, 0, 0.5);z-index: 1000;overflow-y: auto;padding-top:100px;}
+
+</style>	
 	<form class="form" id="formulario_registro" enctype="multipart/form-data" method="POST" data-validate="parsley" action="<?php echo $formAction ; ?>">
 		<section class="panel panel-default">
 			<header class="panel-heading bg-light">
 			  <ul class="nav nav-tabs nav-justified">
 			    <li class="active"><a href="#tab1" data-toggle="tab">Datos Generales</a></li>			   
-			    <li class=""><a href="#tab2" data-toggle="tab">Socios</a></li>
- 				<li class=""><a href="#tab3" data-toggle="tab">Documentos</a></li>
+			    <li class=""><a href="#tab2" data-toggle="tab">Documentos</a></li>
+			    <?php  if(isset($idregistro) and !empty($idregistro)){?>
+ 				<li class=""><a href="#tab3" data-toggle="tab" onclick="jsCargarSocios(<?php echo $idregistro; ?>);">Socios</a></li>
+ 				<?php }?>
 			    <!---->
 			  
 
@@ -19,7 +31,7 @@
 			                <div class="col-sm-6">
 			                	 <!----><p></p>
 
-			                	 <?php  if(empty($IdCliente)){?>
+			                	 <?php  if(!isset($IdCliente) and empty($IdCliente)){?>
 			                
 				                  <label>Cliente (*)</label>
 				                  <select class="form-control" id="id_cliente" name="id_cliente" data-required="true">
@@ -79,7 +91,7 @@
 			                  <div class="col-sm-4">     
 				                  <p></p>
 				                  <label>Fecha Liq. (*)</label>
-				                  <input type="text" id="fecha_liq" name="fecha_liq" class="form-control" data-required="true">
+				                  <input type="text" id="fecha_liquidacion" name="fecha_liquidacion" class="form-control" data-required="true">
 			                  </div>
 
 
@@ -93,26 +105,24 @@
 			                  <div class="col-sm-6">     
 				                  <p></p>
 				                  <label>Capital Total (*)</label>
-				                  <input type="text" id="capital" name="capital" class="form-control" data-required="true">
+				                  <input type="text" id="capital_total" name="capital_total" class="form-control" data-required="true">
 			                  </div>
 
 			                   <div class="col-sm-6">     
 				                  <p></p>
 				                  <label>Acciones totales (*)</label>
-				                  <input type="text" id="acciones" name="acciones" class="form-control" data-required="true">
+				                  <input type="text" id="acciones_totales" name="acciones_totales" class="form-control" data-required="true">
 			                  </div>
   								<div style=" margin-bottom:30px; clear:both; "></div>
 			                   
 				              <p></p>
 			                  <label>Tipo de sociedad (*)</label>
-			                  <select class="form-control" id="status" name="status" data-required="true">			                    
-			                    <option value="">- - -</option>
+			                  <select class="form-control" id="tipo_sociedad" name="tipo_sociedad" data-required="true">			                    
+			                     <option value="">- - -</option>
 			                     <option value="S.A.">S.A.</option>
-			                    <option value="S.A. de C.V.">S.A. de C.V.</option>
-			                    <option value="S. en C. S.">S. en C. S.</option>
-			                    <option value="S. en C. por A.">S. en C. por A.</option>
-			                    <option value="S. DE R.L.">S. DE R.L.</option>
-			                    <option value="S.C.">S.C.</option>
+			                     <option value="S.C.">S.C.</option>
+			                     <option value="S.R.L.">S.R.L</option>
+			                    
 			                  </select>
 
 			                
@@ -131,7 +141,7 @@
 
 			                  <p></p>
 			                  <label>Opinión (*)</label>
-			                  <select class="form-control" id="status" name="status" data-required="true">	
+			                  <select class="form-control" id="opinion" name="opinion" data-required="true">	
 			                   <option value="" selected="selected">-----</option>		                    
 			                    <option value="Positivo">Positivo</option>
 			                    <option value="Credito">Credito</option>
@@ -151,10 +161,98 @@
 		            </div>     	
                 </div>
                
+				<div class="tab-pane" id="tab2">
 
-                <div class="tab-pane" id="tab2">
+						<label>Acta constituiva</label>  
+						<div style=" margin-bottom:10px; clear:both; "></div>                   
+							<input type="file" class="filestyle" data-icon="false" data-classbutton="btn btn-default" data-classinput="form-control inline v-middle input-s" id="filestyle-0" style="position: fixed; left: -500px;" name="archivo_acta" accept="image/*">
+							<div class="bootstrap-filestyle" style="display: inline;">
+							  <input type="text" class="form-control inline v-middle input-s" disabled=""> 
+							  <label for="filestyle-0" class="btn btn-default"><span>Elige un archvio</span></label>
+							</div> 
+							<?php if(!empty($archivo_acta)) {?>
+								<a href="tmp/negocios/<?php echo $archivo_acta ?>" target="_blank"> Documento</a>
+							 <?php } ?>
+							<div style=" margin-bottom:30px; clear:both; "></div>
+							 
 
-                		<div class="col-sm-4"> 
+
+							<label>FIEL</label> 
+							<div style=" margin-bottom:10px; clear:both; "></div>                        
+							<input type="file" class="filestyle" data-icon="false" data-classbutton="btn btn-default" data-classinput="form-control inline v-middle input-s" id="filestyle-1" style="position: fixed; left: -500px;" name="archivo_fiel" accept="image/*">
+							<div class="bootstrap-filestyle" style="display: inline;">
+							  <input type="text" class="form-control inline v-middle input-s" disabled=""> 
+							  <label for="filestyle-1" class="btn btn-default"><span>Elige un archvio</span></label>
+							</div> 
+							<?php if(!empty($archivo_fiel)) {?>
+								<a href="tmp/negocios/<?php echo $archivo_fiel ?>" target="_blank"> Documento</a>
+							 <?php } ?>
+							<div style=" margin-bottom:30px; clear:both; "></div>
+
+
+
+							<label>CIEC</label>  
+							<div style=" margin-bottom:10px; clear:both; "></div>                       
+							<input type="file" class="filestyle" data-icon="false" data-classbutton="btn btn-default" data-classinput="form-control inline v-middle input-s" id="filestyle-2" style="position: fixed; left: -500px;" name="archivo_ciec" accept="image/*">
+							<div class="bootstrap-filestyle" style="display: inline;">
+							  <input type="text" class="form-control inline v-middle input-s" disabled=""> 
+							  <label for="filestyle-2" class="btn btn-default"><span>Elige un archvio</span></label>
+							</div>
+							<?php if(!empty($archivo_ciec)) {?>
+								<a href="tmp/negocios/<?php echo $archivo_ciec ?>" target="_blank"> Documento</a>
+							 <?php } ?>
+
+				</div>
+				<?php  if(isset($idregistro) and !empty($idregistro)){?>
+                <div class="tab-pane" id="tab3">
+
+                		<header class="panel-heading">
+							<div align="right">
+								<a href="#" class="btn btn-sm btn-icon btn-success" onclick="JsNewSocio('Nueva Socio'); return false;"><i class="fa fa-plus"></i></a>
+							</div><!---->
+						</header>
+
+
+                		 
+			             
+
+
+
+
+                </div>
+                <?php }?>
+
+                 
+                    
+                    <div class="col-sm-6"> 
+                    <!--<p></p>-->
+                    
+                    </div>
+					 <div style=" margin-bottom:30px; clear:both; "></div>
+
+                </div>
+
+            </div>
+
+            <footer class="panel-footer text-right bg-light lter">
+              <button type="submit" class="btn btn-success btn-s-xs">Guardar</button>
+            </footer>
+
+           
+		</section>
+	</form>
+	<div style="clear: both;">&nbsp;</div>
+	<div style="clear: both;">&nbsp;</div>
+	<div style="clear: both;">&nbsp;</div>
+
+
+
+	<div id="pantalla_actividades" class="hidden">
+            <div style="position: relative;overflow: auto;margin: auto;padding: 30px;max-width: 550px;background-color: #f5f5f5;transition: top 0.5s;">
+              <div id="documento" style="font-size: 15px;text-transform: uppercase;font-weight: bold;color: #000;"></div>
+              <form action="" method="post" enctype="multipart/form-data" id="form_socios">
+               
+                    <div class="col-sm-4"> 
 	                		<p></p>
 			                 <label>Acciones x socio (*)</label>
 			                 <input type="text" id="acciones_socios" name="acciones_socios" class="form-control" data-required="true" onkeypress="return isNumberKey(event)"> 
@@ -182,82 +280,26 @@
 			              <input type="text" id="rfc_socio" name="rfc_socio" class="form-control" data-required="true"> 
 			              	<p></p>
 			              <label>CURP (*)</label>
-			              <input type="text" id="curps_socio" name="curps_socio" class="form-control" data-required="true"> 
-			             
+			              <input type="text" id="curps_socio" name="curps_socio" class="form-control" data-required="true">
+			              <div style=" margin-bottom:30px; clear:both; "></div>
+                
 
 
-
-
+                <div class="martop10">
+                  <button class="btn" style="color: white;background-color: #1AAE88;border: 1px solid #ccc;" onclick="validar_socio(<?php echo $idregistro ?>);return false;">Guardar</button>
+                  <button class="btn" style="margin-left:10px;color: black;background-color: #f3f3f3;border: 1px solid #ccc;" onclick="hiddensocio();return false;">Cancelar</button>
                 </div>
-
-                 <div class="tab-pane" id="tab3">
-                	
-							<label>Acta constituiva</label>  
-							<div style=" margin-bottom:10px; clear:both; "></div>                   
-								<input type="file" class="filestyle" data-icon="false" data-classbutton="btn btn-default" data-classinput="form-control inline v-middle input-s" id="filestyle-0" style="position: fixed; left: -500px;" name="img" accept="image/*">
-								<div class="bootstrap-filestyle" style="display: inline;">
-								  <input type="text" class="form-control inline v-middle input-s" disabled=""> 
-								  <label for="filestyle-0" class="btn btn-default"><span>Elige una imagen</span></label>
-								</div> 
-								<div style=" margin-bottom:30px; clear:both; "></div>
-
-
-								<label>FIEL</label> 
-								<div style=" margin-bottom:10px; clear:both; "></div>                        
-								<input type="file" class="filestyle" data-icon="false" data-classbutton="btn btn-default" data-classinput="form-control inline v-middle input-s" id="filestyle-0" style="position: fixed; left: -500px;" name="img" accept="image/*">
-								<div class="bootstrap-filestyle" style="display: inline;">
-								  <input type="text" class="form-control inline v-middle input-s" disabled=""> 
-								  <label for="filestyle-0" class="btn btn-default"><span>Elige una imagen</span></label>
-								</div> 
-								<div style=" margin-bottom:30px; clear:both; "></div>
-
-
-
-								<label>CIEC</label>  
-								<div style=" margin-bottom:10px; clear:both; "></div>                       
-								<input type="file" class="filestyle" data-icon="false" data-classbutton="btn btn-default" data-classinput="form-control inline v-middle input-s" id="filestyle-0" style="position: fixed; left: -500px;" name="img" accept="image/*">
-								<div class="bootstrap-filestyle" style="display: inline;">
-								  <input type="text" class="form-control inline v-middle input-s" disabled=""> 
-								  <label for="filestyle-0" class="btn btn-default"><span>Elige una imagen</span></label>
-								</div> 
-
-
-
-
-
-
-
-
-
-
-
-					</div>
-                    
-                    <div class="col-sm-6"> 
-                    <!--<p></p>-->
-                    
-                    </div>
-					 <div style=" margin-bottom:30px; clear:both; "></div>
-
-                </div>
-
+              </form>
             </div>
+          </div>
 
-            <footer class="panel-footer text-right bg-light lter">
-              <button type="submit" class="btn btn-success btn-s-xs">Guardar</button>
-            </footer>
 
-           
-		</section>
-	</form>
-	<div style="clear: both;">&nbsp;</div>
-	<div style="clear: both;">&nbsp;</div>
-	<div style="clear: both;">&nbsp;</div>
+
 <script type="text/javascript">
 actionForm=1; 
-$("#fecha_disolucion").datepicker();
-$("#fecha_liq").datepicker();
-$("#fecha_balance").datepicker();
+$("#fecha_disolucion").datepicker({ format:"yyyy-mm-dd" });
+$("#fecha_liquidacion").datepicker({ format:"yyyy-mm-dd" });
+$("#fecha_balance").datepicker({ format:"yyyy-mm-dd" });
 
 </script>
 

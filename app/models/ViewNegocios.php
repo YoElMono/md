@@ -1,6 +1,8 @@
 <?php
 
-class Promociones extends \Phalcon\Mvc\Model
+
+
+class ViewNegocios extends \Phalcon\Mvc\Model
 {
 
 
@@ -26,6 +28,8 @@ class Promociones extends \Phalcon\Mvc\Model
     {
         return $this->$attr;
     }
+
+
 
 
 }

@@ -14,7 +14,7 @@ class NegociosController extends ControllerBase {
 	var $MenuSlider = array();
 
 	public function initialize() {
-		$this->Title = "Negocios";
+		$this->Title = "Empresas";
 		Tag::setTitle($this->Title);
 		parent::initialize();
 
@@ -95,8 +95,8 @@ class NegociosController extends ControllerBase {
 	        return $response;
 		}
 		$Data = array("aaData" => array());
-		$Result = Negocios::find(array(
-			"columns" => "id ,nombre ,telefono,correo_contacto, status",
+		$Result = ViewNegocios::find(array(
+			"columns" => "id ,cliente,nombre ,telefono,tipo_sociedad, status",
 		    "conditions" => "status!=2",
 		   //"limit" => 4
 		));	
@@ -123,7 +123,7 @@ class NegociosController extends ControllerBase {
 					"cliente" => utf8_decode(trim($value->cliente)),					
 					"nombre" => utf8_decode(trim($value->nombre)),
 					"telefono" => trim($value->telefono),
-					"correo_contacto" => utf8_decode(trim($value->correo_contacto)),
+					"tipo_sociedad" => utf8_decode(trim($value->tipo_sociedad)),
 					"status" => trim($this->selectStatus($value->status)),
 					"buttons" => trim($Buttons),
 				);
@@ -157,43 +157,30 @@ class NegociosController extends ControllerBase {
 			$this->session->remove("mensajeReturn");
 		}
 
-
-
-
-
-
-
-
-
-
-
-
-
 	}
-public function casoAction(){
-	
-	
-		$this->view->msjResponse = "";
-		$this->view->jsResponse = "";
-		$this->view->contenido = "";
+	public function casoAction(){
 		
 		
+			$this->view->msjResponse = "";
+			$this->view->jsResponse = "";
+			$this->view->contenido = "";
+			
+			
+			
+			$this->ajaxBody($this->Title);
+			$this->setHeaderMenu("Empresas" , "Nuevo Tramite" , $this->Controller , "Registro");		
+			$this->view->textarea = "";
+			$this->view->formAction = $this->Controller . "/caso/";
+			//$this->view->Departamentos = $this->getDepartamentos();
 		
-		$this->ajaxBody($this->Title);
-		$this->setHeaderMenu("Empresas" , "Nuevo Tramite" , $this->Controller , "Registro");		
-		$this->view->textarea = "";
-		$this->view->formAction = $this->Controller . "/caso/";
-		//$this->view->Departamentos = $this->getDepartamentos();
-	
-}
+	}
 
 
 	public function newAction($id_cliente){
 
 		 //$Folder =  __DIR__  . "tmp/negocios/";
-		// $Folder = "tmp/negocios/";
-		
-		//@mkdir($Folder , 777);
+		 $Folder = "tmp/negocios/";		
+		@mkdir($Folder , 777);
 
 		if( !$this->Security->securitySession() ){
 			return false;
@@ -241,26 +228,45 @@ public function casoAction(){
 
 		if($this->request->isPost()){
 			//$this->clearPost();
-			//$this->clearPostInt(array("status" , "id_departamento" , "id_puesto"));			
+				
 			$_POST["fecha_creacion"] = date("Y-m-d H:i:s");
 			$_POST["id_usuario"] = $_SESSION["id"];
 			$_POST["ip"] = $this->getRealIP();
 			
 			$_POST["nombre"] = utf8_encode($_POST["nombre"]);
 			$_POST["razon_social"] = utf8_encode($_POST["razon_social"]);
-			$_POST["direccion"] = utf8_encode($_POST["direccion"]);
-			$_POST["nombre_contacto"] = utf8_encode($_POST["nombre_contacto"]);
+			$_POST["rfc"] = utf8_encode($_POST["rfc"]);
+			$_POST["registro"] = utf8_encode($_POST["registro"]);
+			$_POST["fiel"] = utf8_encode($_POST["fiel"]);
+			$_POST["ciec"] = utf8_encode($_POST["ciec"]);
+			$_POST["fiel"] = utf8_encode($_POST["fiel"]);
 			//$usernew=$_POST["correo_contacto"];
 			//$passnew=$_POST["password"];
 			
 			
 			
 
-			if($_FILES['img']["name"] != ""){
-				$name = explode('.', $_FILES['img']['name']);
+			if($_FILES['archivo_acta']["name"] != ""){
+				$name = explode('.', $_FILES['archivo_acta']['name']);
 				$ext = $name[count($name)-1];
-				$name = 'img_'.uniqid().'.'.$ext;
-				$_POST['img'] = $name;
+				$name = 'acta_'.uniqid().'.'.$ext;
+				$_POST['archivo_acta'] = $name;
+			}	
+
+
+			if($_FILES['archivo_fiel']["name"] != ""){
+				$name1 = explode('.', $_FILES['archivo_fiel']['name']);
+				$ext1 = $name1[count($name1)-1];
+				$name1 = 'fiel_'.uniqid().'.'.$ext1;
+				$_POST['archivo_fiel'] = $name1;
+			}	
+
+
+			if($_FILES['archivo_ciec']["name"] != ""){
+				$name2 = explode('.', $_FILES['archivo_ciec']['name']);
+				$ext2 = $name2[count($name2)-1];
+				$name2 = 'ciec_'.uniqid().'.'.$ext2;
+				$_POST['archivo_ciec'] = $name2;
 			}	
 					
 			
@@ -294,11 +300,19 @@ public function casoAction(){
 
 
 
-					if($_FILES['img']["name"] != ""){
-						@copy($_FILES['img']['tmp_name'],$Folder.$name);
+
+					if($_FILES['archivo_acta']["name"] != ""){
+						@copy($_FILES['archivo_acta']['tmp_name'],$Folder.$name);
 						$ruta=$Folder.$name;
-						$directorio='negocios';
-						$this->Miniaturas($ruta,100,$name,$directorio);			
+					}
+					if($_FILES['archivo_ciec']["name"] != ""){
+						@copy($_FILES['archivo_ciec']['tmp_name'],$Folder.$name1);
+						$ruta1=$Folder.$name1;
+
+					}
+					if($_FILES['archivo_ciec']["name"] != ""){
+						@copy($_FILES['archivo_ciec']['tmp_name'],$Folder.$name2);
+						$ruta2=$Folder.$name2;								
 
 					}
 					///////////impórtante////////////					
@@ -535,17 +549,17 @@ public function editAction($id=""){
 		$this->view->contenido = "";
 
 
-		/*/clasificacion
-		$Tipos = array();
-		$Table = new Tipo();
-		$Result_tipos = $Table->find(array(
+		/**///cliente
+		$Cliente = array();
+		$Table = new Clientes();
+		$Result_clientes = $Table->find(array(
 				"columns" => "id,nombre",
 			    "conditions" => "status=1 order by nombre ASC",			    	    
 		));
-		foreach($Result_tipos as $value){
-			$Tipos[] = array("id" => $value->id ,"nombre" => $value->nombre);
+		foreach($Result_clientes as $value){
+			$Cliente[] = array("id" => $value->id ,"nombre" => $value->nombre);
 		}		
-		$this->view->Tipos = $Tipos;*/
+		$this->view->Cliente = $Cliente;
 
 
 		//Estados
@@ -579,30 +593,60 @@ public function editAction($id=""){
 			$_POST["ip"] = $this->getRealIP();			
 			$_POST["nombre"] = utf8_encode($_POST["nombre"]);
 			$_POST["razon_social"] = utf8_encode($_POST["razon_social"]);
-			$_POST["direccion"] = utf8_encode($_POST["direccion"]);
-			$_POST["nombre_contacto"] = utf8_encode($_POST["nombre_contacto"]);
+			$_POST["rfc"] = utf8_encode($_POST["rfc"]);
+			$_POST["registro"] = utf8_encode($_POST["registro"]);
+			$_POST["fiel"] = utf8_encode($_POST["fiel"]);
+			$_POST["ciec"] = utf8_encode($_POST["ciec"]);
+			$_POST["fiel"] = utf8_encode($_POST["fiel"]);
 
 
-			if($_FILES['img']["name"] != ""){
-				$name = explode('.', $_FILES['img']['name']);
+
+
+			if($_FILES['archivo_acta']["name"] != ""){
+				$name = explode('.', $_FILES['archivo_acta']['name']);
 				$ext = $name[count($name)-1];
-				$name = 'img_'.uniqid().'.'.$ext;
-				$_POST['img'] = $name;
+				$name = 'acta_'.uniqid().'.'.$ext;
+				$_POST['archivo_acta'] = $name;
+			}	
+
+
+			if($_FILES['archivo_fiel']["name"] != ""){
+				$name1 = explode('.', $_FILES['archivo_fiel']['name']);
+				$ext1 = $name1[count($name1)-1];
+				$name1 = 'fiel_'.uniqid().'.'.$ext1;
+				$_POST['archivo_fiel'] = $name1;
+			}	
+
+
+			if($_FILES['archivo_ciec']["name"] != ""){
+				$name2 = explode('.', $_FILES['archivo_ciec']['name']);
+				$ext2 = $name2[count($name2)-1];
+				$name2 = 'ciec_'.uniqid().'.'.$ext2;
+				$_POST['archivo_ciec'] = $name2;
 			}
 						
 			
-			//echo '<pre>';print_r($_POST);echo '</pre>';exit();
-			//echo '<pre>';print_r($_POST);echo '</pre>';exit();
+			
 			$Tabla->assign($this->request->getPost());
+
 			if($Tabla->update()){
-				if($_FILES['img']["name"] != ""){
-					@copy($_FILES['img']['tmp_name'],$Folder.$_POST['img']);
-					$ruta=$Folder.$name;
-					$directorio='negocios';
-					$this->Miniaturas($ruta,50,$name,$directorio);	
+
+					if($_FILES['archivo_acta']["name"] != ""){
+						@copy($_FILES['archivo_acta']['tmp_name'],$Folder.$name);
+						$ruta=$Folder.$name;
+					}
+					if($_FILES['archivo_ciec']["name"] != ""){
+						@copy($_FILES['archivo_ciec']['tmp_name'],$Folder.$name1);
+						$ruta1=$Folder.$name1;
+
+					}
+					if($_FILES['archivo_ciec']["name"] != ""){
+						@copy($_FILES['archivo_ciec']['tmp_name'],$Folder.$name2);
+						$ruta2=$Folder.$name2;								
+
+					}
 
 
-				}				
 				$this->session->set("mensajeReturn" , $this->msjReturn("&Eacute;xito" , "Se edito el registro correctamente." , "success"));
 				$this->response->redirect($this->Controller."/");
 				$this->view->disable();
@@ -614,7 +658,7 @@ public function editAction($id=""){
 		
 
 		$this->ajaxBody($this->Title);
-		$this->setHeaderMenu("Negocios" , "Editar Negocio" , $this->Controller , "Registro");		
+		$this->setHeaderMenu("Empresas" , "Editar Empresa" , $this->Controller , "Registro");		
 		$this->view->formAction = $this->Controller."/edit/" .$id;
 		//$this->view->Departamentos = $this->getDepartamentos();
 		$DataForm = array("data" => array());
@@ -639,18 +683,30 @@ public function editAction($id=""){
 				"id" => $value->id,
 				"status" => $value->status,
 				"id_estado" => utf8_decode($value->id_estado),
-				"id_tipo" => utf8_decode($value->id_tipo),
+				"id_cliente" => utf8_decode($value->id_cliente),
 				"nombre" => utf8_decode($value->nombre),
 				"razon_social" => utf8_decode($value->razon_social),
-				"direccion" => utf8_decode($value->direccion),
-				"cp" => utf8_decode($value->cp),
+				"rfc" => utf8_decode($value->rfc),
+				"registro" => utf8_decode($value->registro),
 				"telefono" => utf8_decode($value->telefono),
-				"img" => utf8_decode($value->img),
-				"nombre_contacto" => utf8_decode($value->nombre_contacto),
-				"telefono_contacto" => utf8_decode($value->telefono_contacto),
-				"correo_contacto" => utf8_decode($value->correo_contacto),				
+				"fecha_disolucion" => utf8_decode($value->fecha_disolucion),
+				"fecha_liquidacion" => utf8_decode($value->fecha_liquidacion),
+				"fecha_balance" => utf8_decode($value->fecha_balance),
+				"capital_total" => utf8_decode($value->capital_total),
+				"acciones_totales" => utf8_decode($value->acciones_totales),	
+				"tipo_sociedad" => utf8_decode($value->tipo_sociedad),	
+				"fiel" => utf8_decode($value->fiel),	
+				"ciec" => utf8_decode($value->ciec),	
+				"opinion" => utf8_decode($value->opinion),	
+				"archivo_acta" => utf8_decode($value->archivo_acta),
+				"archivo_fiel" => utf8_decode($value->archivo_fiel),	
+				"archivo_ciec" => utf8_decode($value->archivo_ciec),
+
 			);
-			//$this->view->nombre = utf8_decode($value->nombre);
+			$this->view->idregistro =$value->id;
+			$this->view->archivo_acta =$value->archivo_acta;
+			$this->view->archivo_fiel =$value->archivo_fiel;
+			$this->view->archivo_ciec =$value->archivo_ciec;
 			//$this->view->img = $value->img;		
 		//echo '<pre>';print_r($DataForm["data"]);echo '</pre>';exit();
 		}
@@ -701,6 +757,52 @@ public function editAction($id=""){
 	}
 
 
+	public function socionewAction($id=""){
 
+		if($this->request->isPost()){
+			//$this->clearPost();
+				
+			$_POST["fecha_creacion"] = date("Y-m-d H:i:s");
+			$_POST["id_usuario"] = $_SESSION["id"];
+			$_POST["ip"] = $this->getRealIP();
+			
+			$_POST["id_empresa"] = $id;
+			$_POST["nombre_socio"] = utf8_encode($_POST["nombre_socio"]);
+			$_POST["rfc_socio"] = utf8_encode($_POST["rfc_socio"]);
+			$_POST["curps_socio"] = utf8_encode($_POST["curps_socio"]);
+			$_POST["status"]=1;
+			
+			
+
+					
+			
+			$Table = new SociosEmpresa();
+			$Result = $Table->find(array(
+				"columns" => "id",
+			    "conditions" => "nombre_socio='".$_POST['nombre_socio']."'", 
+			    "limit" => 1
+			));
+			if( count($Result) <= 0 ){
+				$Table->assign($this->request->getPost());
+				if($Table->save()){
+					
+					
+					///////////////////////
+					$this->session->set("mensajeReturn" , $this->msjReturn("&Eacute;xito" , "Se guardo el registro correctamente." , "success"));					
+					$this->response->redirect($this->Controller."/");
+					$this->view->disable();
+					return false;
+				}
+				$this->view->msjResponse = $this->msjReturn("Error" , "Ocurrio un error , intente de nuevo." , "error");
+				$this->view->jsResponse = $this->setValueData("formulario_registro" , $_POST);
+			} else {
+				$this->view->msjResponse = $this->msjReturn("Error" , "Existe un registro con los mismos datos." , "error");
+				$this->view->jsResponse = $this->setValueData("formulario_registro" , $_POST);
+				//$this->view->jsResponse .= '<script type="text/javascript">Puestos('.$_POST["id_puesto"].');</script>';
+			}
+		}
+
+
+	}
 
 }
