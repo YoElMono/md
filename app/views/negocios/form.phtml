@@ -208,28 +208,15 @@
 
                 		<header class="panel-heading">
 							<div align="right">
-								<a href="#" class="btn btn-sm btn-icon btn-success" onclick="JsNewSocio('Nueva Socio'); return false;"><i class="fa fa-plus"></i></a>
+								<a href="#" class="btn btn-sm btn-icon btn-success" onclick="JsNewSocio('Nuevo Socio'); return false;"><i class="fa fa-plus"></i></a>
 							</div><!---->
 						</header>
 						<div style=" margin-bottom:30px; clear:both; "></div>
 
 						 <div class="col-sm-12">
                         <section class="panel panel-default">
-                            <ul class="list-group alt"> 
-                              <li class="list-group-item"> 
-                                <div class="media"> 
-                                  <span class="pull-left thumb-sm"><img src="images/profile.png" alt="" class="img-circle"></span> 
-                                  <div class="pull-right text-danger m-t-sm"> 
-                                    <b>$Total:</b> xxx 
-                                    <a href="#" class="btn btn-sm btn-icon btn-primary"><i class="fa fa-pencil"></i></a>
-                                    <a href="#" class="btn btn-sm btn-icon btn-danger" ><i class="fa fa-trash-o"></i></a>
-                                  </div> 
-                                  <div class="media-body"> 
-                                    <div><a href="#">Nombre</a></div>
-                                    <small class="text-muted"><b>RFC</b>: xxxx | <b>CURP</b>:  xxxxx | <b>No.Aciones</b>: xxx <b>Valor Accion:</b> xxx </small> 
-                                  </div> 
-                                </div> 
-                              </li> 
+                            <ul class="list-group alt" id="listado_socios"> 
+                              
 
                            
 
@@ -282,19 +269,19 @@
                     <div class="col-sm-4"> 
 	                		<p></p>
 			                 <label>Acciones x socio (*)</label>
-			                 <input type="text" id="acciones_socios" name="acciones_socios" class="form-control" data-required="true" onkeypress="return isNumberKey(event)"> 
+			                 <input type="text" id="acciones_socios" name="acciones_socios" class="form-control" data-required="true" onkeypress="return isNumberKey(event)" onkeyup="JscalcularAccion(); return false;"> 
 		                 </div>
 
 		                 <div class="col-sm-4"> 
 	                		<p></p>
 			                 <label>Valor de Acción (*)</label>
-			                 <input type="text" id="valor" name="valor" class="form-control" data-required="true"> 
+			                 <input type="text" id="valor" name="valor" class="form-control" data-required="true" onkeypress="return isNumberKey(event)" onkeyup="JscalcularAccion(); return false;"> 
 		                 </div>
 
 		                 <div class="col-sm-4"> 	
 		                		 <p></p>
 		                 		<label>Suma Capital total (*)</label>
-		                 		<input type="text" id="suma" name="suma" class="form-control" data-required="true" onclick="JscalcularAccion(); return false">
+		                 		<input readonly type="text" id="suma" name="suma" class="form-control" data-required="true" >
 		                  </div>
 		                 
 		                  <div style=" margin-bottom:30px; clear:both; "></div>

@@ -761,7 +761,7 @@ public function editAction($id=""){
 
 		if($this->request->isPost()){
 			//$this->clearPost();
-				
+		
 			$_POST["fecha_creacion"] = date("Y-m-d H:i:s");
 			$_POST["id_usuario"] = $_SESSION["id"];
 			$_POST["ip"] = $this->getRealIP();
@@ -782,27 +782,108 @@ public function editAction($id=""){
 			    "conditions" => "nombre_socio='".$_POST['nombre_socio']."'", 
 			    "limit" => 1
 			));
-			if( count($Result) <= 0 ){
+			if($_POST['id']) $socio = $Table->findFirst($_POST['id']);
+
+			if($socio){
+				$_POST['fecha_modificacion'] = date("Y-m-d H:i:s");
+				unset($_POST["fecha_creacion"]);
+				$socio->assign($_POST);
+				if($socio->update()){
+					$response['bien'] = true;
+					$response['msg'] = "Registro actualizado :)";
+				}else{
+					$response['bien'] = false;
+					$response['msg'] = "Error al guardar";
+				}
+			}elseif( count($Result) <= 0 ){
 				$Table->assign($this->request->getPost());
 				if($Table->save()){
-					
+					$response['bien'] = true;
+					$response['msg'] = "Registro guardado :)";
 					
 					///////////////////////
-					$this->session->set("mensajeReturn" , $this->msjReturn("&Eacute;xito" , "Se guardo el registro correctamente." , "success"));					
+					/*$this->session->set("mensajeReturn" , $this->msjReturn("&Eacute;xito" , "Se guardo el registro correctamente." , "success"));					
 					$this->response->redirect($this->Controller."/");
 					$this->view->disable();
-					return false;
+					return false;*/
+				}else{
+					$response['bien'] = false;
+					$response['msg'] = "Error al guardar";
 				}
-				$this->view->msjResponse = $this->msjReturn("Error" , "Ocurrio un error , intente de nuevo." , "error");
-				$this->view->jsResponse = $this->setValueData("formulario_registro" , $_POST);
+				/*$this->view->msjResponse = $this->msjReturn("Error" , "Ocurrio un error , intente de nuevo." , "error");
+				$this->view->jsResponse = $this->setValueData("formulario_registro" , $_POST);*/
 			} else {
-				$this->view->msjResponse = $this->msjReturn("Error" , "Existe un registro con los mismos datos." , "error");
-				$this->view->jsResponse = $this->setValueData("formulario_registro" , $_POST);
+				/*$this->view->msjResponse = $this->msjReturn("Error" , "Existe un registro con los mismos datos." , "error");
+				$this->view->jsResponse = $this->setValueData("formulario_registro" , $_POST);*/
 				//$this->view->jsResponse .= '<script type="text/javascript">Puestos('.$_POST["id_puesto"].');</script>';
+				$response['bien'] = false;
+				$response['msg'] = "Ya hay un registro igual";
 			}
+
+			echo json_encode($response);exit();
 		}
 
 
+	}
+
+	public function getsociosAction($id_negocio = "")	{
+		if($id_negocio != "" && is_numeric($id_negocio)){
+			$socios = SociosEmpresa::find("id_empresa = $id_negocio and status = 1");
+			if(count($socios)>0){
+				foreach ($socios as $key => $value) {
+					$Socios[] = array("id"=>$value->id,"id_negocio"=>$value->id_empresa, "nombre"=>utf8_decode($value->nombre_socio),"rfc"=>$value->rfc_socio,"curp"=>$value->curps_socio,"acciones"=>$value->acciones_socios,"valor"=>$value->valor,"total"=>$value->suma);
+				}
+				$response['bien'] = true;
+				$response['msg'] = "todo bien";
+				$response['socios'] = $Socios;
+
+			}else{
+				$response['bien'] = false;
+				$response['msg'] = "no hay socios";
+			}
+			echo json_encode($response);exit();
+		}else{
+			echo "ERROR";exit();
+		}
+	}
+
+	public function deletesocioAction($id=""){
+		if( !$this->Security->securitySession() ){
+			$this->view->disable();
+			$this->response->setContentType('application/json', 'UTF-8');
+	        $response = new \Phalcon\Http\Response();
+	        $response->setContent(json_encode(array()));
+	        return $response;
+		}
+		if( $_SESSION["PermisosUser"][$this->Modulo] == 0 ){
+			$this->view->disable();
+			$this->response->setContentType('application/json', 'UTF-8');
+	        $response = new \Phalcon\Http\Response();
+	        $response->setContent(json_encode(array()));
+	        return $response;
+		}
+		$_POST["status"] = 2;
+		$_POST["id"] = $id;
+		$_POST["fecha_modificacion"] = date("Y-m-d H:i:s");
+		$_POST["id_usuario"] = $_SESSION["id"];
+		$Tabla = SociosEmpresa::findFirst(array(
+			"columns" => "*",
+		    "conditions" => "id=:id:",
+		    "bind" => array("id" => $this->request->getPost("id" , "string")),
+		    "bindTypes" => array("id" => Column::BIND_PARAM_INT),
+		    "limit" => 1
+		));				
+		$Tabla->assign($this->request->getPost());
+		if($Tabla->update()){
+			$Msj = array("status" => 1 , "msj" => "Se elimino el registro correctamente.");
+		} else {
+			$Msj = array("status" => 0 , "msj" => "Ocurrio un error al eliminar el registro.");
+		}
+		$this->view->disable();
+		$this->response->setContentType('application/json', 'UTF-8');
+        $response = new \Phalcon\Http\Response();
+        $response->setContent(json_encode($Msj));
+        return $response;
 	}
 
 }
