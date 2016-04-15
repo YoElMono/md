@@ -80,5 +80,12 @@ function actionDelete(){
   	Grid();
   	//CKEDITOR.replace("contenido");	
 	
+  	$("#filestyle-0").change(function (argument) {
+		var inputFileImage = document.getElementById("filestyle-0");
+		var file = inputFileImage.files[0];
+  		var name = file.name;
+  		console.log(file);
+  		$("#img").val(name);
+  	})
   });
 }(window.jQuery);
