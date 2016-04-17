@@ -42,7 +42,7 @@ function actionDelete(){
 				async:true,
 				dataType: "json",
 				type: "GET",
-				url: "documentos/delete/"+id ,
+				url: "tramites/delete/"+id ,
 				global: true,
 				ifModified: false,
 				processData:true,
@@ -78,7 +78,13 @@ function actionDelete(){
 
   $(function(){
   	Grid();
-  	//CKEDITOR.replace("contenido");	
-	
+  	//CKEDITOR.replace("contenido");
+  	$("#filestyle-0").change(function (argument) {
+		var inputFileImage = document.getElementById("filestyle-0");
+		var file = inputFileImage.files[0];
+  		var name = file.name;
+  		console.log(file);
+  		$("#archivo").val(name);
+  	})
   });
 }(window.jQuery);

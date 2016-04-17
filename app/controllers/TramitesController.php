@@ -166,7 +166,7 @@ class TramitesController extends ControllerBase {
 		$Documento = Documentos::findFirst($id_documento);
 		$empresa = $this->GeneraRuta($empresa);
 		if($Documento){
-			$file = date("d_m_Y_H_i_s-").$empresa.".docx";
+			$file = date("d_m_Y-").$empresa.".docx";
 			if(file_exists($Folder.$file)) unlink($Folder.$file);
 			$word_path = dirname(__FILE__).'/../../vendor/phpoffice/phpword/src/PhpWord/Autoloader.php';
 			require_once $word_path;
@@ -210,9 +210,9 @@ class TramitesController extends ControllerBase {
 			$Tabla = new Tramites();
 			$Result = $Tabla->find(array(
 				"columns" => "id",
-			    "conditions" => "id_documento=:id_documento: and id_empresa=:id_empresa: and status=:status: and liquidador=:liquidador:",
-			    "bind" => array("id_documento" => $this->request->getPost("id_documento" , "int") , "id_empresa" => $this->request->getPost("id_empresa" , "int") , "status" => $this->request->getPost("status" , "string") , "liquidador" => $this->request->getPost("liquidador" , "string") ),
-			    "bindTypes" => array("id_documento" => Column::BIND_PARAM_INT , "id_empresa" => Column::BIND_PARAM_INT ,  "status" => Column::BIND_PARAM_STR,  "liquidador" => Column::BIND_PARAM_STR ),
+			    "conditions" => "id_empresa=:id_empresa: and status=:status: and liquidador=:liquidador: and date(fecha_creacion) = date('Y-m-d') ",
+			    "bind" => array( "id_empresa" => $this->request->getPost("id_empresa" , "int") , "status" => $this->request->getPost("status" , "string") , "liquidador" => $this->request->getPost("liquidador" , "string") ),
+			    "bindTypes" => array("id_empresa" => Column::BIND_PARAM_INT ,  "status" => Column::BIND_PARAM_STR,  "liquidador" => Column::BIND_PARAM_STR ),
 			    "limit" => 1
 			));
 			if( count($Result) <= 0 ){
@@ -309,7 +309,7 @@ class TramitesController extends ControllerBase {
 
 public function editAction($id=""){
 
-		$Folder =  __DIR__  . "/../../../tmp/tramites/";
+		$Folder =  __DIR__  . "/../../public/tmp/tramites/";
 		//$Folder ="tmp/documentos/";
 		@mkdir($Folder , 777);
 
@@ -328,7 +328,7 @@ public function editAction($id=""){
 		if($this->request->isPost()){
 
 			
-			$Tabla = Documentos::findFirst(array(
+			$Tabla = Tramites::findFirst(array(
 				"columns" => "*",
 			    "conditions" => "id=:id:",
 			    "bind" => array("id" => $this->request->getPost("id" , "int")),
@@ -337,15 +337,18 @@ public function editAction($id=""){
 			));
 			
 			$_POST["fecha_edit"] = date("Y-m-d H:i:s");
-			$_POST["nombre"] = utf8_encode($_POST["nombre"]);
+			$_POST["liquidador"] = utf8_encode($_POST["liquidador"]);
             //$_POST["contenido"] = utf8_encode($_POST["contenido"]);			
 			$_POST["ip"] = $this->getRealIP();
             
-			if($_FILES['img']["name"] != ""){
-				$name = explode('.', $_FILES['img']['name']);
+			if($_FILES['archivo']["name"] != ""){
+				$name = explode('.', $_FILES['archivo']['name']);
 				$ext = $name[count($name)-1];
-				$name = 'img_'.uniqid().'.'.$ext;
-				$_POST['img'] = $name;
+				$name = explode(".",$Tabla->archivo);
+				$name = str_replace($name[count($name)-1] ,"", $Tabla->archivo);
+				//$name = 'img_'.uniqid().'.'.$ext;
+				$name = $name.$ext;
+				$_POST['archivo'] = $name;
 			}/**/
 						
 			
@@ -354,12 +357,12 @@ public function editAction($id=""){
 			$Tabla->assign($this->request->getPost());
 			if($Tabla->update()){
 				
-                /**/if($_FILES['img']["name"] != ""){
-					@copy($_FILES['img']['tmp_name'],$Folder.$_POST['img']);
-					$ruta=$Folder.$name;
-					$directorio='tipos';
-					$this->Miniaturas($ruta,50,$name,$directorio);	
-				}				
+                if($_FILES['archivo']["name"] != ""){
+					@copy($_FILES['archivo']['tmp_name'],$Folder.$_POST['archivo']);
+					//$ruta=$Folder.$name;
+					//$directorio='tipos';
+					//$this->Miniaturas($ruta,50,$name,$directorio);	
+				}	/**/			
 				$this->session->set("mensajeReturn" , $this->msjReturn("&Eacute;xito" , "Se edito el registro correctamente." , "success"));
 				$this->response->redirect($this->Controller."/");
 				$this->view->disable();
@@ -448,7 +451,7 @@ public function editAction($id=""){
 		$_POST["id"] = $id;
 		$_POST["fecha_edit"] = date("Y-m-d H:i:s");
 		$_POST["id_usuario"] = $_SESSION["id"];
-		$Tabla = Documentos::findFirst(array(
+		$Tabla = Tramites::findFirst(array(
 			"columns" => "*",
 		    "conditions" => "id=:id:",
 		    "bind" => array("id" => $this->request->getPost("id" , "string")),
