@@ -30,6 +30,14 @@ $di->set('datosdb',function() use ($config) {
 },true
 );
 
+$di->set('config',function() use ($config) {
+    $DataSql = array(
+		'librerias' => $config->application->libraryDir
+    ); 
+    return $DataSql;
+},true
+);
+
 $di->set(
     'dispatcher',
     function() use ($di) {

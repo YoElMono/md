@@ -14,27 +14,48 @@
               <div class="form-group pull-in clearfix">
               <div class="col-sm-8">
 
+                <div class="col-sm-8" style=" margin-bottom: 30px;">
+                          <label>Empresa (*)</label>
+                          <select class="form-control" id="id_empresa" name="id_empresa" data-required="true">
+                            <option value="">---</option>
+                            <?php 
+                            if($Negocios != ""){
+                              foreach ($Negocios as $key => $value) { 
+                                echo "<option value='$value[id]' ".($id_negocio == $value["id"]?"selected":"").">$value[nombre]</option>";  
+                              }
+                            } ?>
+                          </select>      
+                    </div>
+                   <?php if(!isset($archivo) or empty($archivo)){?> 
                   <div class="col-sm-8" style=" margin-bottom: 30px;">
                           <label>Documento Base (*)</label>
                           <select class="form-control" id="id_documento" name="id_documento" data-required="true">
                             <option value="">---</option>
+                            <?php 
+                            if($Documentos != ""){
+                              foreach ($Documentos as $key => $value) { 
+                                echo "<option value='$value[id]'>$value[nombre]</option>";  
+                              }
+                            } ?>
                           </select>      
                     </div>
-
+                    <?php }?>
                    <div class="col-sm-8" style=" margin-bottom: 30px;">
                       <label>Nombre (Liquidador)</label>
                       <input type="text" id="liquidador" name="liquidador" class="form-control" data-required="true"> 
                    </div>
              
 
+              <?php if(isset($archivo) and !empty($archivo)){?>
                     <div class="col-sm-8"style=" margin-bottom: 30px;">
                           <label>Archivo</label>                     
-                            <input type="file" class="filestyle" data-icon="false" data-classbutton="btn btn-default" data-classinput="form-control inline v-middle input-s" id="filestyle-0" style="position: fixed; left: -500px;" name="img" accept="image/*">
+                            <input type="file" class="filestyle" data-icon="false" data-classbutton="btn btn-default" data-classinput="form-control inline v-middle input-s" id="filestyle-0" style="position: fixed; left: -500px;" name="archivo" accept="application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document">
                             <div class="bootstrap-filestyle" style="display: inline;">
-                              <input type="text" class="form-control inline v-middle input-s" disabled=""> 
+                              <input type="text" class="form-control inline v-middle input-s" disabled="" id="archivo"> 
                               <label for="filestyle-0" class="btn btn-default"><span>Elige el archivo</span></label>
                             </div>                    
-                    </div>                 
+                    </div>   
+              <?php }?>
                     <div class="col-sm-8" style=" margin-bottom: 30px;">
                           <label>Estatus (*)</label>
                           <select class="form-control" id="status" name="status" data-required="true">
@@ -52,8 +73,8 @@
 
               </div>
               <div class="col-sm-4">
-              <?php if(isset($img) and !empty($img)){?>
-                  <a href="tmp/tramites/<?php echo $img?>"><img src="images/paper.png"></a>
+              <?php if(isset($archivo) and !empty($archivo)){?>
+                  <a href="tmp/tramites/<?php echo $archivo?>"><img src="images/paper.png"></a>
               <?php }?>
 
 

@@ -192,7 +192,7 @@ class DocumentosController extends ControllerBase {
 			if($_FILES['img']["name"] != ""){
 				$name = explode('.', $_FILES['img']['name']);
 				$ext = $name[count($name)-1];
-				$name = 'img_'.uniqid().'.'.$ext;
+				$name = $this->GeneraRuta($_POST["nombre"]).".".$ext;//'img_'.uniqid().'.'.$ext;
 				$_POST['img'] = $name;
 			}	/**/			
 			
@@ -259,46 +259,64 @@ public function editAction($id=""){
 		$this->view->contenido = "";
 		if($this->request->isPost()){
 
-			
-			$Tabla = Documentos::findFirst(array(
-				"columns" => "*",
-			    "conditions" => "id=:id:",
-			    "bind" => array("id" => $this->request->getPost("id" , "int")),
-			    "bindTypes" => array("id" => Column::BIND_PARAM_INT),
+			$Tabla = new Documentos();
+			$Result = $Tabla->find(array(
+				"columns" => "id",
+			    "conditions" => "nombre=:nombre: and status=:status: and id != :id:",
+			    "bind" => array("nombre" => $this->request->getPost("nombre" , "string") , "status" => $this->request->getPost("status" , "string"), "id" => $this->request->getPost("id" , "string") ),
+			    "bindTypes" => array("nombre" => Column::BIND_PARAM_STR ,  "status" => Column::BIND_PARAM_STR,  "id" => Column::BIND_PARAM_STR ),
 			    "limit" => 1
 			));
+			if( count($Result) <= 0 ){
 			
-			$_POST["fecha_edit"] = date("Y-m-d H:i:s");
-			$_POST["nombre"] = utf8_encode($_POST["nombre"]);
-            //$_POST["contenido"] = utf8_encode($_POST["contenido"]);			
-			$_POST["ip"] = $this->getRealIP();
-            
-			if($_FILES['img']["name"] != ""){
-				$name = explode('.', $_FILES['img']['name']);
-				$ext = $name[count($name)-1];
-				$name = 'img_'.uniqid().'.'.$ext;
-				$_POST['img'] = $name;
-			}/**/
-						
-			
-			//echo '<pre>';print_r($_POST);echo '</pre>';exit();
-			//echo '<pre>';print_r($_POST);echo '</pre>';exit();
-			$Tabla->assign($this->request->getPost());
-			if($Tabla->update()){
+				$Tabla = Documentos::findFirst(array(
+					"columns" => "*",
+				    "conditions" => "id=:id:",
+				    "bind" => array("id" => $this->request->getPost("id" , "int")),
+				    "bindTypes" => array("id" => Column::BIND_PARAM_INT),
+				    "limit" => 1
+				));
 				
-                /**/if($_FILES['img']["name"] != ""){
-					@copy($_FILES['img']['tmp_name'],$Folder.$_POST['img']);
-					$ruta=$Folder.$name;
-					$directorio='tipos';
-					$this->Miniaturas($ruta,50,$name,$directorio);	
-				}				
-				$this->session->set("mensajeReturn" , $this->msjReturn("&Eacute;xito" , "Se edito el registro correctamente." , "success"));
-				$this->response->redirect($this->Controller."/");
-				$this->view->disable();
-				return false;
+				$_POST["fecha_edit"] = date("Y-m-d H:i:s");
+				$_POST["nombre"] = utf8_encode($_POST["nombre"]);
+	            //$_POST["contenido"] = utf8_encode($_POST["contenido"]);			
+				$_POST["ip"] = $this->getRealIP();
+	            
+				if($_FILES['img']["name"] != ""){
+					$name = explode('.', $_FILES['img']['name']);
+					$ext = $name[count($name)-1];
+					$name = $this->GeneraRuta($_POST["nombre"]).".".$ext;
+					//$name = 'img_'.uniqid().'.'.$ext;
+					$_POST['img'] = $name;
+				}/**/
+							
+				
+				//echo '<pre>';print_r($_POST);echo '</pre>';exit();
+				//echo '<pre>';print_r($_POST);echo '</pre>';exit();
+				$Tabla->assign($this->request->getPost());
+				if($Tabla->update()){
+					
+	                /**/if($_FILES['img']["name"] != ""){
+						@copy($_FILES['img']['tmp_name'],$Folder.$_POST['img']);
+						$ruta=$Folder.$name;
+						$directorio='tipos';
+						$this->Miniaturas($ruta,50,$name,$directorio);	
+					}				
+					$this->session->set("mensajeReturn" , $this->msjReturn("&Eacute;xito" , "Se edito el registro correctamente." , "success"));
+					$this->response->redirect($this->Controller."/");
+					$this->view->disable();
+					return false;
+				}
+				$this->view->msjResponse = $this->msjReturn("Error" , "Ocurrio un error , intente de nuevo." , "error");
+				$this->view->jsResponse = $this->setValueData("formulario_registro" , $_POST);
+
+
+			} else {
+				$this->view->msjResponse = $this->msjReturn("Error" , "Existe un registro con los mismos datos." , "error");
+				$this->view->jsResponse = $this->setValueData("formulario_registro" , $_POST);
+				//$this->view->jsResponse .= '<script type="text/javascript">Puestos('.$_POST["id_puesto"].');</script>';
 			}
-			$this->view->msjResponse = $this->msjReturn("Error" , "Ocurrio un error , intente de nuevo." , "error");
-			$this->view->jsResponse = $this->setValueData("formulario_registro" , $_POST);
+
 		}
 		$this->ajaxBody($this->Title);
 		$this->setHeaderMenu("Documentos" , "Listado de Documentos" , $this->Controller , "Editar");		

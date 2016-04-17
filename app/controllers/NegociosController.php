@@ -114,7 +114,7 @@ class NegociosController extends ControllerBase {
 					$Buttons .= '<a href="del/'.(int) trim($value->id).'/" class="delete_usuarios btn btn-sm btn-icon btn-danger"><i class="fa fa-trash-o"></i></a> ';
 				}
 				
-				$Buttons .= '<a href="negocios/tramites/'.(int) trim($value->id).'/" class="btn btn-sm btn-icon btn-success"><i class="fa fa-gavel"></i></a>';
+				$Buttons .= '<a href="tramites/new/'.(int) trim($value->id).'/" class="btn btn-sm btn-icon btn-success"><i class="fa fa-gavel"></i></a>';
 
 				//$img="<img src='tmp/negocios/".$value->img."' width=50 height=50 >";
 

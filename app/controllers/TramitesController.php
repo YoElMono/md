@@ -4,7 +4,8 @@
 use Phalcon\Mvc\Controller,
 	Phalcon\Db\Result\Pdo,
 	Phalcon\Tag as Tag,
-	Phalcon\Db\Column;
+	Phalcon\Db\Column,
+	PhpOffice\PhpWord\TemplateProcessor;
 
 
 
@@ -158,12 +159,34 @@ class TramitesController extends ControllerBase {
 	}
 
 
-
-	public function newAction(){
-
-		//$Folder =  __DIR__  . "/../../../tmp/documentos/";
-		$Folder ="tmp/documentos/";
+	public function crear_word($id_documento,$empresa,$vars = ""){
+		$Folder =  __DIR__  . "/../../public/tmp/tramites/";
+		//$Folder ="tmp/word/";
 		@mkdir($Folder , 777);
+		$Documento = Documentos::findFirst($id_documento);
+		$empresa = $this->GeneraRuta($empresa);
+		if($Documento){
+			$file = date("d_m_Y_H_i_s-").$empresa.".docx";
+			if(file_exists($Folder.$file)) unlink($Folder.$file);
+			$word_path = dirname(__FILE__).'/../../vendor/phpoffice/phpword/src/PhpWord/Autoloader.php';
+			require_once $word_path;
+			PhpOffice\PhpWord\Autoloader::register();
+
+			$templateWord = new TemplateProcessor(__DIR__.'/../../public/tmp/documentos/'.$Documento->img);
+			if($vars != "")
+				foreach ($vars as $key => $value)
+					$templateWord->setValue($key,$value);
+			$templateWord->saveAs($Folder.$file);
+			return file_exists($Folder.$file) ? $file:false ;
+		}else{
+			return false;
+		}
+	}
+
+
+
+	public function newAction($id_negocio = ""){
+
 
 		if( !$this->Security->securitySession() ){
 			return false;
@@ -179,48 +202,70 @@ class TramitesController extends ControllerBase {
 			//$this->clearPost();
 			//$this->clearPostInt(array("status" , "id_departamento" , "id_puesto"));
 			//$_POST["slug"] = uniqid();
-			$_POST["fecha"] = date("Y-m-d H:i:s");
+			$_POST["fecha_creacion"] = date("Y-m-d H:i:s");
 			$_POST["id_usuario"] = $_SESSION["id"];			
-			$_POST["nombre"] = utf8_encode($_POST["nombre"]);
+			$_POST["liquidador"] = utf8_encode($_POST["liquidador"]);
 			//$_POST["contenido"] = utf8_encode($_POST["contenido"]);			
 			$_POST["ip"] = $this->getRealIP();
-
-			
-			//print_r($_FILES);
-			
-
-			if($_FILES['img']["name"] != ""){
-				$name = explode('.', $_FILES['img']['name']);
-				$ext = $name[count($name)-1];
-				$name = 'img_'.uniqid().'.'.$ext;
-				$_POST['img'] = $name;
-			}	/**/			
-			
-			
-			$Tabla = new Documentos();
+			$Tabla = new Tramites();
 			$Result = $Tabla->find(array(
 				"columns" => "id",
-			    "conditions" => "nombre=:nombre: and status=:status:",
-			    "bind" => array("nombre" => $this->request->getPost("nombre" , "string") , "status" => $this->request->getPost("status" , "string") ),
-			    "bindTypes" => array("nombre" => Column::BIND_PARAM_STR ,  "status" => Column::BIND_PARAM_STR ),
+			    "conditions" => "id_documento=:id_documento: and id_empresa=:id_empresa: and status=:status: and liquidador=:liquidador:",
+			    "bind" => array("id_documento" => $this->request->getPost("id_documento" , "int") , "id_empresa" => $this->request->getPost("id_empresa" , "int") , "status" => $this->request->getPost("status" , "string") , "liquidador" => $this->request->getPost("liquidador" , "string") ),
+			    "bindTypes" => array("id_documento" => Column::BIND_PARAM_INT , "id_empresa" => Column::BIND_PARAM_INT ,  "status" => Column::BIND_PARAM_STR,  "liquidador" => Column::BIND_PARAM_STR ),
 			    "limit" => 1
 			));
 			if( count($Result) <= 0 ){
-				$Tabla->assign($this->request->getPost());
-				if($Tabla->save()){
-					if($_FILES['img']["name"] != ""){
-						@copy($_FILES['img']['tmp_name'],$Folder.$name);
-						$ruta=$Folder.$name;
-						$directorio='tipos';
-						$this->Miniaturas($ruta,50,$name,$directorio);		
-						
 
-					}/**/					
-					//$this->setSlug($Tabla->id , $_POST["slug"]);
-					$this->session->set("mensajeReturn" , $this->msjReturn("&Eacute;xito" , "Se guardo el registro correctamente." , "success"));					
-					$this->response->redirect($this->Controller."/");
-					$this->view->disable();
-					return false;
+				$datos = Negocios::findFirst($_POST["id_empresa"]);
+
+				if($datos){
+					$socios = SociosEmpresa::find("id_empresa = $datos->id and status = 1 ");
+					$array["NOMBRE_SOCIEDAD"] = utf8_decode($datos->nombre);
+					$array["REGISTRO"] = $datos->registro;
+					$array["FECHA_DISOLUCION"] = $datos->fecha_disolucion;
+					$array["ACCIONES_TOTAL"] = $datos->acciones_totales;
+					$array["SUMA_CAPITAL_TOT"] = $datos->capital_total;
+					$array["LIQUIDADOR"] = utf8_decode($_POST["liquidador"]);
+					$array["FECHA_LIQ"] = $datos->fecha_liquidacion;
+					$array["FECHA_BALANCE"] = $datos->fecha_balance;
+					
+					if(count($socios)>0){
+						$i = 1;
+						foreach ($socios as $key => $value) {
+							$array["SOCIO_".$i] = utf8_decode($value->nombre_socio);
+							$array["RFC".$i] = $value->rfc_socio;
+							$array["CURP".$i] = $value->curps_socio;
+							$array["ACCIONES".$i] = $value->acciones_socios;
+							$array["TOTAL".$i] = $value->suma;
+							$i++;
+						}
+					}
+
+					if($file = $this->crear_word($_POST["id_documento"],utf8_decode($datos->nombre),$array)){
+
+						$_POST["archivo"] = $file;
+						$Tabla->assign($this->request->getPost());
+
+						if($Tabla->save()){
+							/*if($_FILES['img']["name"] != ""){
+								@copy($_FILES['img']['tmp_name'],$Folder.$name);
+								$ruta=$Folder.$name;
+								$directorio='tipos';
+								$this->Miniaturas($ruta,50,$name,$directorio);		
+								
+
+							}*/					
+							//$this->setSlug($Tabla->id , $_POST["slug"]);
+							$this->session->set("mensajeReturn" , $this->msjReturn("&Eacute;xito" , "Se guardo el registro correctamente." , "success"));					
+							$this->response->redirect($this->Controller."/");
+							$this->view->disable();
+							return false;
+						}
+					}
+
+					$this->view->msjResponse = $this->msjReturn("Error" , "Ocurrio un error , intente de nuevo." , "error");
+					$this->view->jsResponse = $this->setValueData("formulario_registro" , $_POST);
 				}
 				$this->view->msjResponse = $this->msjReturn("Error" , "Ocurrio un error , intente de nuevo." , "error");
 				$this->view->jsResponse = $this->setValueData("formulario_registro" , $_POST);
@@ -230,19 +275,42 @@ class TramitesController extends ControllerBase {
 				//$this->view->jsResponse .= '<script type="text/javascript">Puestos('.$_POST["id_puesto"].');</script>';
 			}
 		}
-		$this->view->img = '';
+
+		$Negocios = Negocios::find("status = 1");
+		if(count($Negocios)>0){
+			foreach ($Negocios as $key => $value) {
+				$Negocio[] = array("id" => $value->id, "nombre" => utf8_decode($value->nombre)); 
+			}
+		}else{
+			$Negocio = "";
+		}
+
+		$Docs = Documentos::find("status = 1");
+		if(count($Docs)>0){
+			foreach ($Docs as $key => $value) {
+				$Documentos[] = array("id" => $value->id, "nombre" => utf8_decode($value->nombre));
+			}
+		}else{
+			$Documentos = "";
+		}
+
+		$this->view->Documentos = $Documentos;
+		$this->view->Negocios = $Negocio;
+		$this->view->archivo = '';
+		$this->view->id_negocio = $id_negocio;
 		$this->ajaxBody($this->Title);
-		$this->setHeaderMenu("Documentos" , "Nuevo Documento" , $this->Controller , "Nuevo");		
-		$this->view->textarea = "";
+		$this->setHeaderMenu("Trámites" , "Nuevo Trámite" , $this->Controller , "Nuevo");		
+		$this->view->id_archivo = "";
 		$this->view->formAction = $this->Controller . "/new/";
+
 		//$this->view->Departamentos = $this->getDepartamentos();
 	}
 
 
 public function editAction($id=""){
 
-		$Folder =  __DIR__  . "/../../../tmp/documentos/";
-		$Folder ="tmp/documentos/";
+		$Folder =  __DIR__  . "/../../../tmp/tramites/";
+		//$Folder ="tmp/documentos/";
 		@mkdir($Folder , 777);
 
 		if( !$this->Security->securitySession() ){
@@ -301,11 +369,11 @@ public function editAction($id=""){
 			$this->view->jsResponse = $this->setValueData("formulario_registro" , $_POST);
 		}
 		$this->ajaxBody($this->Title);
-		$this->setHeaderMenu("Documentos" , "Listado de Documentos" , $this->Controller , "Editar");		
+		$this->setHeaderMenu("Trámites" , "Listado de Trámites" , $this->Controller , "Editar");		
 		$this->view->formAction = $this->Controller."/edit/" .$id;
 		//$this->view->Departamentos = $this->getDepartamentos();
 		$DataForm = array("data" => array());
-		$Tabla = new Documentos();
+		$Tabla = new Tramites();
 		$Result = $Tabla->find(array(
 			"columns" => "*",
 		    "conditions" => "id=:id:",
@@ -322,15 +390,38 @@ public function editAction($id=""){
 			$DataForm["data"] = array(
 				"id" => $value->id,
 				"status" => $value->status,
-				"nombre" => utf8_decode($value->nombre), 
-				"img" => $value->img,               
-				
-			);
-			$this->view->nombre = utf8_decode($value->nombre);
-			$this->view->img = $value->img;	
-            $this->view->status = $value->status;		
+				"liquidador" => utf8_decode($value->liquidador), 
+				"archivo" => $value->archivo, 
+				"id_empresa" => $value->id_empresa, 
+				"id_documento" => $value->id_documento
+			);		
+			$this->view->archivo = $value->archivo;
 		//echo '<pre>';print_r($DataForm["data"]);echo '</pre>';exit();
 		}
+
+
+
+		$Negocios = Negocios::find("status = 1");
+		if(count($Negocios)>0){
+			foreach ($Negocios as $key => $value) {
+				$Negocio[] = array("id" => $value->id, "nombre" => utf8_decode($value->nombre)); 
+			}
+		}else{
+			$Negocio = "";
+		}
+
+		$Docs = Documentos::find("status = 1");
+		if(count($Docs)>0){
+			foreach ($Docs as $key => $value) {
+				$Documentos[] = array("id" => $value->id, "nombre" => utf8_decode($value->nombre));
+			}
+		}else{
+			$Documentos = "";
+		}
+
+		$this->view->Documentos = $Documentos;
+		$this->view->Negocios = $Negocio;
+
 		$this->view->jsResponse = $this->setValueData("formulario_registro" , $DataForm["data"]);
 		//$this->view->jsResponse .= '<script type="text/javascript">Puestos('.$DataForm["data"]["id_puesto"].');</script>';
 	}
