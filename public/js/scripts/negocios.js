@@ -37,20 +37,25 @@ function Grid(){
 function JsNewSocio(documento) {
 	$('#pantalla_actividades').toggleClass('hidden');	
 	$('#documento').html(documento);
+	$("#acciones_socios, #suma, #nombre_socio, #rfc_socio, #curps_socio").val("");
+	$("#form_socios [name='id']").remove();
+	$("#guardar").attr("onclick","validar_socio("+$("#id_registro").val()+",-1);return false;");
 }
 
 function JsEditarSocio (index) {
 	$('#pantalla_actividades').toggleClass('hidden');
 	var data = socios[index];
-	console.log(data);	
+	var id = $("#form_socios [name='id']");
+	console.log(id);	
 	$('#documento').html(data.nombre);
+	if(id != null) $("#form_socios [name='id']").remove();
 	$("#form_socios").append('<input type="hidden" name="id" value="'+data.id+'">');
 	$("#acciones_socios").val(data.acciones)
-	$("#valor").val(data.valor)
 	$("#suma").val(data.total)
 	$("#nombre_socio").val(data.nombre)
 	$("#rfc_socio").val(data.rfc)
 	$("#curps_socio").val(data.curp)
+	$("#guardar").attr("onclick","validar_socio("+$("#id_registro").val()+","+index+");return false;");
 }
 
 function hiddensocio () {
@@ -93,12 +98,34 @@ function JsEliminarSocio (index,id) {
 	return false;
 }
 
-function validar_socio(id) {
+function validar_socio(id,index) {
+	$("guardar").prop("disabled",true);
 	var form = $('#form_socios');
+	var acciones_totales = $("#acciones_totales2").val();
+	var socio = index == -1 ? "":socios[index];
+	var conteo = 0;
+
+	for (var i = 0; i < socios.length; i++) {
+		var aux = socios[i];
+		if(aux != socio)
+			conteo += parseInt(aux.acciones);
+	}
+
+	//if(socio != ""){
+		conteo += parseInt($("#acciones_socios").val());
+		console.log("conteo: "+conteo+" total: "+acciones_totales);
+		if(conteo > acciones_totales){
+			alert("Este socio ya no puede tener tantas acciones");
+	$("guardar").prop("disabled",false);
+			return false;
+		}
+	//}
+
 
 	if($("#acciones_socios").val() == ""){
 		 $("#acciones_socios").attr("placeholder", "Necesario");
 		$("#acciones_socios").focus();
+	$("guardar").prop("disabled",false);
 		return false;
 	}
 
@@ -106,6 +133,7 @@ function validar_socio(id) {
 	if($("#valor").val() == ""){
 		 $("#valor").attr("placeholder", "Necesario");
 		$("#valor").focus();
+	$("guardar").prop("disabled",false);
 		return false;
 	}
 
@@ -113,6 +141,7 @@ function validar_socio(id) {
 	if($("#nombre_socio").val() == ""){
 		 $("#nombre_socio").attr("placeholder", "Necesario");
 		$("#nombre_socio").focus();
+	$("guardar").prop("disabled",false);
 		return false;
 	}
 
@@ -120,12 +149,14 @@ function validar_socio(id) {
 	if($("#rfc_socio").val() == ""){
 		 $("#rfc_socio").attr("placeholder", "Necesario");
 		$("#rfc_socio").focus();
+	$("guardar").prop("disabled",false);
 		return false;
 	}
 
 	if($("#curps_socio").val() == ""){
 		 $("#curps_socio").attr("placeholder", "Necesario");
 		$("#curps_socio").focus();
+	$("guardar").prop("disabled",false);
 		return false;
 	}
 	$('#progress').removeClass('hidden');
@@ -145,16 +176,19 @@ function validar_socio(id) {
 						//window.location = "mascotas/edit/"+id
 						$("#pantalla_actividades").toggleClass('hidden');
 						jsCargarSocios(id);
-						alertify.alert(data.msg);
+						//alertify.
+						alert(data.msg);
 					//});
 				}
 				else{
 					//$('#progress').attr("src","images/error.png").load(function() {
 						//window.location = "mascotas/edit/"+id
 						jsCargarSocios(id);
-						alertify.alert(data.msg);
+						//alertify.
+						alert(data.msg);
 					//});
 				}
+				$("guardar").prop("disabled",false);
 			},
 			error:function (error1,error2) {
 				console.log(error1,error2);

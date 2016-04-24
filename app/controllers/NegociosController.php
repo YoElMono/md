@@ -240,6 +240,7 @@ class NegociosController extends ControllerBase {
 			$_POST["fiel"] = utf8_encode($_POST["fiel"]);
 			$_POST["ciec"] = utf8_encode($_POST["ciec"]);
 			$_POST["fiel"] = utf8_encode($_POST["fiel"]);
+			$_POST["valor_accion"] = round(($_POST["capital_total"]/$_POST["acciones_totales"]),2,PHP_ROUND_HALF_DOWN);
 			//$usernew=$_POST["correo_contacto"];
 			//$passnew=$_POST["password"];
 			
@@ -598,6 +599,7 @@ public function editAction($id=""){
 			$_POST["fiel"] = utf8_encode($_POST["fiel"]);
 			$_POST["ciec"] = utf8_encode($_POST["ciec"]);
 			$_POST["fiel"] = utf8_encode($_POST["fiel"]);
+			$_POST["valor_accion"] = round(($_POST["capital_total"]/$_POST["acciones_totales"]),2,PHP_ROUND_HALF_DOWN);
 
 
 
@@ -693,7 +695,8 @@ public function editAction($id=""){
 				"fecha_liquidacion" => utf8_decode($value->fecha_liquidacion),
 				"fecha_balance" => utf8_decode($value->fecha_balance),
 				"capital_total" => utf8_decode($value->capital_total),
-				"acciones_totales" => utf8_decode($value->acciones_totales),	
+				"acciones_totales" => utf8_decode($value->acciones_totales),
+				"acciones_totales2" => utf8_decode($value->acciones_totales),	
 				"tipo_sociedad" => utf8_decode($value->tipo_sociedad),	
 				"fiel" => utf8_decode($value->fiel),	
 				"ciec" => utf8_decode($value->ciec),	
@@ -707,6 +710,7 @@ public function editAction($id=""){
 			$this->view->archivo_acta =$value->archivo_acta;
 			$this->view->archivo_fiel =$value->archivo_fiel;
 			$this->view->archivo_ciec =$value->archivo_ciec;
+			$this->view->valor_accion = $value->valor_accion;
 			//$this->view->img = $value->img;		
 		//echo '<pre>';print_r($DataForm["data"]);echo '</pre>';exit();
 		}
@@ -771,6 +775,7 @@ public function editAction($id=""){
 			$_POST["rfc_socio"] = utf8_encode($_POST["rfc_socio"]);
 			$_POST["curps_socio"] = utf8_encode($_POST["curps_socio"]);
 			$_POST["status"]=1;
+			$_POST["suma"] = round($_POST["suma"],2,PHP_ROUND_HALF_DOWN);
 			
 			
 
@@ -782,7 +787,8 @@ public function editAction($id=""){
 			    "conditions" => "nombre_socio='".$_POST['nombre_socio']."'", 
 			    "limit" => 1
 			));
-			if($_POST['id']) $socio = $Table->findFirst($_POST['id']);
+			if(isset($_POST['id'])) $socio = $Table->findFirst($_POST['id']);
+			else $socio = false;
 
 			if($socio){
 				$_POST['fecha_modificacion'] = date("Y-m-d H:i:s");
