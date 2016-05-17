@@ -69,6 +69,15 @@ function actionDelete(){
 
 
 
+ function isNumberKey(evt)
+      {
+         var charCode = (evt.which) ? evt.which : event.keyCode
+         if (charCode > 31 && (charCode < 48 || charCode > 57))
+            return false;
+ 
+         return true;
+      }
+
 
 
 
@@ -86,5 +95,8 @@ function actionDelete(){
   		console.log(file);
   		$("#archivo").val(name);
   	})
+
+  	$("#fecha_entrega,#fecha1,#fecha2,#fecha3,#fecha4").datepicker({"format":"yyyy-mm-dd"});
+
   });
 }(window.jQuery);

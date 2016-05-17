@@ -100,7 +100,7 @@ class TramitesController extends ControllerBase {
 		$Data = array("aaData" => array());
 		$Result = ViewTramites::find(array(
 			"columns" => "id ,empresa,liquidador,date(fecha_creacion) as fecha,status",
-		    "conditions" => "status!=2",
+		    "conditions" => "status!=0",
 		   //"limit" => 4
 		));	
 		//1 activo
@@ -159,14 +159,14 @@ class TramitesController extends ControllerBase {
 	}
 
 
-	public function crear_word($id_documento,$empresa,$vars = ""){
+	public function crear_word($id_documento,$empresa,$tipo,$vars = ""){
 		$Folder =  __DIR__  . "/../../public/tmp/tramites/";
 		//$Folder ="tmp/word/";
 		@mkdir($Folder , 777);
 		$Documento = Documentos::findFirst($id_documento);
 		$empresa = $this->GeneraRuta($empresa);
 		if($Documento){
-			$file = date("d_m_Y-").$empresa.".docx";
+			$file = date("d_m_Y-").$tipo."-".$empresa.".docx";
 			if(file_exists($Folder.$file)) unlink($Folder.$file);
 			$word_path = dirname(__FILE__).'/../../vendor/phpoffice/phpword/src/PhpWord/Autoloader.php';
 			require_once $word_path;
@@ -203,9 +203,11 @@ class TramitesController extends ControllerBase {
 			//$this->clearPostInt(array("status" , "id_departamento" , "id_puesto"));
 			//$_POST["slug"] = uniqid();
 			$_POST["fecha_creacion"] = date("Y-m-d H:i:s");
+			$_POST["inicio_proceso"] = date("Y-m-d H:i:s");
 			$_POST["id_usuario"] = $_SESSION["id"];			
 			$_POST["liquidador"] = utf8_encode($_POST["liquidador"]);
-			//$_POST["contenido"] = utf8_encode($_POST["contenido"]);			
+			//$_POST["contenido"] = utf8_encode($_POST["contenido"]);	
+			$_POST["status"] = 1;		
 			$_POST["ip"] = $this->getRealIP();
 			$Tabla = new Tramites();
 			$Result = $Tabla->find(array(
@@ -223,11 +225,11 @@ class TramitesController extends ControllerBase {
 					$socios = SociosEmpresa::find("id_empresa = $datos->id and status = 1 ");
 					$array["NOMBRE_SOCIEDAD"] = utf8_decode($datos->nombre);
 					$array["REGISTRO"] = $datos->registro;
-					$array["FECHA_DISOLUCION"] = $datos->fecha_disolucion;
+					$array["FECHA"] = $datos->fecha_disolucion;
 					$array["ACCIONES_TOTAL"] = $datos->acciones_totales;
 					$array["SUMA_CAPITAL_TOT"] = $datos->capital_total;
 					$array["LIQUIDADOR"] = utf8_decode($_POST["liquidador"]);
-					$array["FECHA_LIQ"] = $datos->fecha_liquidacion;
+					//$array["FECHA_LIQ"] = $datos->fecha_liquidacion;
 					$array["FECHA_BALANCE"] = $datos->fecha_balance;
 					
 					if(count($socios)>0){
@@ -242,26 +244,32 @@ class TramitesController extends ControllerBase {
 						}
 					}
 
-					if($file = $this->crear_word($_POST["id_documento"],utf8_decode($datos->nombre),$array)){
+					if($file = $this->crear_word($_POST["id_documento"],utf8_decode($datos->nombre),"disolucion",$array)){
 
-						$_POST["archivo"] = $file;
-						$Tabla->assign($this->request->getPost());
+						$_POST["archivo_disolucion"] = $file;
+						//$array["FECHA"] = $datos->fecha_liquidacion;
 
-						if($Tabla->save()){
-							/*if($_FILES['img']["name"] != ""){
-								@copy($_FILES['img']['tmp_name'],$Folder.$name);
-								$ruta=$Folder.$name;
-								$directorio='tipos';
-								$this->Miniaturas($ruta,50,$name,$directorio);		
-								
+						//if($file = $this->crear_word($_POST["id_documento"],utf8_decode($datos->nombre),"liquidacion",$array)){
 
-							}*/					
-							//$this->setSlug($Tabla->id , $_POST["slug"]);
-							$this->session->set("mensajeReturn" , $this->msjReturn("&Eacute;xito" , "Se guardo el registro correctamente." , "success"));					
-							$this->response->redirect($this->Controller."/");
-							$this->view->disable();
-							return false;
-						}
+							//$_POST["archivo_liquidacion"] = $file;
+							$Tabla->assign($this->request->getPost());
+
+							if($Tabla->save()){
+								/*if($_FILES['img']["name"] != ""){
+									@copy($_FILES['img']['tmp_name'],$Folder.$name);
+									$ruta=$Folder.$name;
+									$directorio='tipos';
+									$this->Miniaturas($ruta,50,$name,$directorio);		
+									
+
+								}*/					
+								//$this->setSlug($Tabla->id , $_POST["slug"]);
+								$this->session->set("mensajeReturn" , $this->msjReturn("&Eacute;xito" , "Se guardo el registro correctamente." , "success"));					
+								$this->response->redirect($this->Controller."/");
+								$this->view->disable();
+								return false;
+							}
+						//}
 					}
 
 					$this->view->msjResponse = $this->msjReturn("Error" , "Ocurrio un error , intente de nuevo." , "error");
@@ -296,7 +304,9 @@ class TramitesController extends ControllerBase {
 
 		$this->view->Documentos = $Documentos;
 		$this->view->Negocios = $Negocio;
-		$this->view->archivo = '';
+		$this->view->archivo_disolucion = '';
+		$this->view->archivo_liquidacion = '';
+		$this->view->status = "";
 		$this->view->id_negocio = $id_negocio;
 		$this->ajaxBody($this->Title);
 		$this->setHeaderMenu("Trámites" , "Nuevo Trámite" , $this->Controller , "Nuevo");		
@@ -312,6 +322,10 @@ public function editAction($id=""){
 		$Folder =  __DIR__  . "/../../public/tmp/tramites/";
 		//$Folder ="tmp/documentos/";
 		@mkdir($Folder , 777);
+		$this->view->Status = ["", "En Proceso", "Actas Formalizadas", "SAT", "Registro"];
+		$this->view->Status_Fechas = ["", "proceso", "actas", "sat", "registro"];
+
+		$Status_Fechas = ["", "proceso", "actas", "sat", "registro"];
 
 		if( !$this->Security->securitySession() ){
 			return false;
@@ -336,7 +350,7 @@ public function editAction($id=""){
 			    "limit" => 1
 			));
 			
-			$_POST["fecha_edit"] = date("Y-m-d H:i:s");
+			$_POST["fecha_edicion"] = date("Y-m-d H:i:s");
 			$_POST["liquidador"] = utf8_encode($_POST["liquidador"]);
             //$_POST["contenido"] = utf8_encode($_POST["contenido"]);			
 			$_POST["ip"] = $this->getRealIP();
@@ -354,21 +368,26 @@ public function editAction($id=""){
 			
 			//echo '<pre>';print_r($_POST);echo '</pre>';exit();
 			//echo '<pre>';print_r($_POST);echo '</pre>';exit();
-			$Tabla->assign($this->request->getPost());
-			if($Tabla->update()){
-				
-                if($_FILES['archivo']["name"] != ""){
-					@copy($_FILES['archivo']['tmp_name'],$Folder.$_POST['archivo']);
-					//$ruta=$Folder.$name;
-					//$directorio='tipos';
-					//$this->Miniaturas($ruta,50,$name,$directorio);	
-				}	/**/			
-				$this->session->set("mensajeReturn" , $this->msjReturn("&Eacute;xito" , "Se edito el registro correctamente." , "success"));
-				$this->response->redirect($this->Controller."/");
-				$this->view->disable();
-				return false;
+			$pos_fecha_fin = "fin_".$Status_Fechas[$Tabla->status];
+			$pos_fecha_inicio = "inicio_".$Status_Fechas[$Tabla->status+1];
+			//exit();
+			if(($_POST["status"] != $Tabla->status and ($_POST[$pos_fecha_fin] != "" and $_POST[$pos_fecha_inicio] != "")) OR ($_POST["status"] == $Tabla->status and ($_POST[$pos_fecha_fin] == "" and $_POST[$pos_fecha_inicio] == ""))){
+				$Tabla->assign($this->request->getPost());
+				if($Tabla->update()){
+					
+	                if($_FILES['archivo']["name"] != ""){
+						@copy($_FILES['archivo']['tmp_name'],$Folder.$_POST['archivo']);
+						//$ruta=$Folder.$name;
+						//$directorio='tipos';
+						//$this->Miniaturas($ruta,50,$name,$directorio);	
+					}	/**/			
+					$this->session->set("mensajeReturn" , $this->msjReturn("&Eacute;xito" , "Se edito el registro correctamente." , "success"));
+					$this->response->redirect($this->Controller."/");
+					$this->view->disable();
+					return false;
+				}
 			}
-			$this->view->msjResponse = $this->msjReturn("Error" , "Ocurrio un error , intente de nuevo." , "error");
+			$this->view->msjResponse = $this->msjReturn("Error" , "Se tiene que cambiar el status y establecer las fechas" , "error");
 			$this->view->jsResponse = $this->setValueData("formulario_registro" , $_POST);
 		}
 		$this->ajaxBody($this->Title);
@@ -392,13 +411,16 @@ public function editAction($id=""){
 		foreach($Result as $value){
 			$DataForm["data"] = array(
 				"id" => $value->id,
-				"status" => $value->status,
 				"liquidador" => utf8_decode($value->liquidador), 
 				"archivo" => $value->archivo, 
 				"id_empresa" => $value->id_empresa, 
-				"id_documento" => $value->id_documento
+				"id_documento" => $value->id_documento,
+				"fecha_entrega" => $value->fecha_entrega,
+				"costo_tramite" => $value->costo_tramite
 			);		
-			$this->view->archivo = $value->archivo;
+			$this->view->archivo_disolucion = $value->archivo_disolucion;
+			$this->view->archivo_liquidacion = $value->archivo_liquidacion;
+			$this->view->status = $value->status;
 		//echo '<pre>';print_r($DataForm["data"]);echo '</pre>';exit();
 		}
 
@@ -424,7 +446,6 @@ public function editAction($id=""){
 
 		$this->view->Documentos = $Documentos;
 		$this->view->Negocios = $Negocio;
-
 		$this->view->jsResponse = $this->setValueData("formulario_registro" , $DataForm["data"]);
 		//$this->view->jsResponse .= '<script type="text/javascript">Puestos('.$DataForm["data"]["id_puesto"].');</script>';
 	}
@@ -447,9 +468,9 @@ public function editAction($id=""){
 	        $response->setContent(json_encode(array()));
 	        return $response;
 		}
-		$_POST["status"] = 2;
+		$_POST["status"] = 0;
 		$_POST["id"] = $id;
-		$_POST["fecha_edit"] = date("Y-m-d H:i:s");
+		$_POST["fecha_edicion"] = date("Y-m-d H:i:s");
 		$_POST["id_usuario"] = $_SESSION["id"];
 		$Tabla = Tramites::findFirst(array(
 			"columns" => "*",
