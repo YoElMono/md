@@ -219,7 +219,7 @@ class TramitesController extends ControllerBase {
 			));
 			if( count($Result) <= 0 ){
 
-				$datos = Negocios::findFirst($_POST["id_empresa"]);
+				/*$datos = Negocios::findFirst($_POST["id_empresa"]);
 
 				if($datos){
 					$socios = SociosEmpresa::find("id_empresa = $datos->id and status = 1 ");
@@ -246,7 +246,7 @@ class TramitesController extends ControllerBase {
 
 					if($file = $this->crear_word($_POST["id_documento"],utf8_decode($datos->nombre),"disolucion",$array)){
 
-						$_POST["archivo_disolucion"] = $file;
+						$_POST["archivo_disolucion"] = $file;*/
 						//$array["FECHA"] = $datos->fecha_liquidacion;
 
 						//if($file = $this->crear_word($_POST["id_documento"],utf8_decode($datos->nombre),"liquidacion",$array)){
@@ -270,11 +270,11 @@ class TramitesController extends ControllerBase {
 								return false;
 							}
 						//}
-					}
+					/*}
 
 					$this->view->msjResponse = $this->msjReturn("Error" , "Ocurrio un error , intente de nuevo." , "error");
 					$this->view->jsResponse = $this->setValueData("formulario_registro" , $_POST);
-				}
+				}*/
 				$this->view->msjResponse = $this->msjReturn("Error" , "Ocurrio un error , intente de nuevo." , "error");
 				$this->view->jsResponse = $this->setValueData("formulario_registro" , $_POST);
 			} else {
@@ -311,6 +311,9 @@ class TramitesController extends ControllerBase {
 		$this->ajaxBody($this->Title);
 		$this->setHeaderMenu("Trámites" , "Nuevo Trámite" , $this->Controller , "Nuevo");		
 		$this->view->id_archivo = "";
+		$this->view->edit = false;
+		$this->view->fecha_disolucion = false;
+		$this->view->fecha_liquidacion = false;
 		$this->view->formAction = $this->Controller . "/new/";
 
 		//$this->view->Departamentos = $this->getDepartamentos();
@@ -372,6 +375,75 @@ public function editAction($id=""){
 			$pos_fecha_inicio = "inicio_".$Status_Fechas[$Tabla->status+1];
 			//exit();
 			if(($_POST["status"] != $Tabla->status and ($_POST[$pos_fecha_fin] != "" and $_POST[$pos_fecha_inicio] != "")) OR ($_POST["status"] == $Tabla->status and ($_POST[$pos_fecha_fin] == "" and $_POST[$pos_fecha_inicio] == ""))){
+				
+
+				if($_POST['id_archivo_disolucion']){
+
+					$datos = Negocios::findFirst($Tabla->id_empresa);
+
+					//if($datos){
+					$socios = SociosEmpresa::find("id_empresa = $datos->id and status = 1 ");
+					$array["NOMBRE_SOCIEDAD"] = utf8_decode($datos->nombre);
+					$array["REGISTRO"] = $datos->registro;
+					$array["FECHA_DISOLICION"] = $datos->fecha_disolucion;
+					$array["ACCIONES_TOTAL"] = $datos->acciones_totales;
+					$array["SUMA_CAPITAL_TOT"] = $datos->capital_total;
+					$array["LIQUIDADOR"] = utf8_decode($_POST["liquidador"]);
+					$array["FECHA_LIQ"] = $datos->fecha_disolucion;
+					$array["FECHA_BALANCE"] = $datos->fecha_balance;
+					
+					if(count($socios)>0){
+						$i = 1;
+						foreach ($socios as $key => $value) {
+							$array["SOCIO_".$i] = utf8_decode($value->nombre_socio);
+							$array["RFC".$i] = $value->rfc_socio;
+							$array["CURP".$i] = $value->curps_socio;
+							$array["ACCIONES".$i] = $value->acciones_socios;
+							$array["TOTAL".$i] = $value->suma;
+							$i++;
+						}
+					}
+
+					if($file = $this->crear_word($_POST["id_documento"],utf8_decode($datos->nombre),"disolucion",$array)){
+
+						$_POST["archivo_disolucion"] = $file;
+					}
+				}
+
+				if($_POST['id_documento_liquidacion']){
+
+					$datos = Negocios::findFirst($Tabla->id_empresa);
+
+					//if($datos){
+					$socios = SociosEmpresa::find("id_empresa = $datos->id and status = 1 ");
+					$array["NOMBRE_SOCIEDAD"] = utf8_decode($datos->nombre);
+					$array["REGISTRO"] = $datos->registro;
+					$array["FECHA_DISOLICION"] = $datos->fecha_disolucion;
+					$array["ACCIONES_TOTAL"] = $datos->acciones_totales;
+					$array["SUMA_CAPITAL_TOT"] = $datos->capital_total;
+					$array["LIQUIDADOR"] = utf8_decode($_POST["liquidador"]);
+					$array["FECHA_LIQ"] = $datos->fecha_liquidacion;
+					$array["FECHA_BALANCE"] = $datos->fecha_balance;
+					
+					if(count($socios)>0){
+						$i = 1;
+						foreach ($socios as $key => $value) {
+							$array["SOCIO_".$i] = utf8_decode($value->nombre_socio);
+							$array["RFC".$i] = $value->rfc_socio;
+							$array["CURP".$i] = $value->curps_socio;
+							$array["ACCIONES".$i] = $value->acciones_socios;
+							$array["TOTAL".$i] = $value->suma;
+							$i++;
+						}
+					}
+
+					if($file = $this->crear_word($_POST["id_documento_liquidacion"],utf8_decode($datos->nombre),"liquidacion",$array)){
+
+						$_POST["archivo_liquidacion"] = $file;
+					}
+				}
+
+
 				$Tabla->assign($this->request->getPost());
 				if($Tabla->update()){
 					
@@ -380,7 +452,9 @@ public function editAction($id=""){
 						//$ruta=$Folder.$name;
 						//$directorio='tipos';
 						//$this->Miniaturas($ruta,50,$name,$directorio);	
-					}	/**/			
+					}	/**/
+
+					}			
 					$this->session->set("mensajeReturn" , $this->msjReturn("&Eacute;xito" , "Se edito el registro correctamente." , "success"));
 					$this->response->redirect($this->Controller."/");
 					$this->view->disable();
@@ -444,8 +518,17 @@ public function editAction($id=""){
 			$Documentos = "";
 		}
 
+		$Empresa = Negocios::findFirst($Result[0]->id_empresa);
+		if($Empresa){
+			$this->view->fecha_disolucion = $Empresa->fecha_disolucion != null and $Empresa->fecha_disolucion != "";
+			$this->view->fecha_liquidacion = $Empresa->fecha_liquidacion != null and $Empresa->fecha_liquidacion != "";
+		}else{
+			$this->view->fecha_disolucion = $this->fecha_liquidacion = false;
+		}
+
 		$this->view->Documentos = $Documentos;
 		$this->view->Negocios = $Negocio;
+		$this->view->edit = true;
 		$this->view->jsResponse = $this->setValueData("formulario_registro" , $DataForm["data"]);
 		//$this->view->jsResponse .= '<script type="text/javascript">Puestos('.$DataForm["data"]["id_puesto"].');</script>';
 	}

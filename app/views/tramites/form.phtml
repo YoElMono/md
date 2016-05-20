@@ -24,10 +24,24 @@
                   } ?>
                 </select>      
               </div>
-                   <?php if(empty($archivo_disolucion) and empty($archivo_disolucion)){?> 
+                   <?php if(empty($archivo_disolucion) and $edit and $fecha_disolucion){?> 
                   <div class="col-sm-4">
-                          <label>Documento Base (*)</label>
-                          <select class="form-control" id="id_documento" name="id_documento" data-required="true">
+                          <label>Documento Base Acta disolucion </label>
+                          <select class="form-control" id="id_documento_disolucion" name="id_documento_disolucion" data-required="true">
+                            <option value="">---</option>
+                            <?php 
+                            if($Documentos != ""){
+                              foreach ($Documentos as $key => $value) { 
+                                echo "<option value='$value[id]'>$value[nombre]</option>";  
+                              }
+                            } ?>
+                          </select>      
+                    </div>
+                    <?php }?>
+                   <?php if($edit and empty($archivo_disolucion) and $fecha_liquidacion){?> 
+                  <div class="col-sm-4">
+                          <label>Documento Base Acta liquidacion</label>
+                          <select class="form-control" id="id_documento_liquidacion" name="id_documento_liquidacion" data-required="true">
                             <option value="">---</option>
                             <?php 
                             if($Documentos != ""){
