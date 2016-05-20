@@ -444,7 +444,17 @@ public function editAction($id=""){
 				}
 
 
+                /*if($_POST['status'] == 2){
+                	if($_POST['status'] != $Tabla->status){
+                		if(!(($Tabla->archivo_disolucion != "" and $Tabla->archivo_liquidacion != "") or 
+                			($Tabla->archivo_disolucion != "" and $_POST['archivo_liquidacion'] != "") or
+                			($_POST['archivo_disolucion'] != "" and $Tabla->archivo_liquidacion != "") or
+                			($_POST['archivo_disolucion'] != "" and $_POST['archivo_liquidacion'] != "")))
+                	}
+                }*/
+
 				$Tabla->assign($this->request->getPost());
+
 				if($Tabla->update()){
 					
 	                if($_FILES['archivo']["name"] != ""){
