@@ -342,9 +342,8 @@ public function editAction($id=""){
 		$this->view->msjResponse = "";
 		$this->view->jsResponse = "";
 		$this->view->contenido = "";
-		if($this->request->isPost()){
+		if($this->request->isPost()) {
 
-			
 			$Tabla = Tramites::findFirst(array(
 				"columns" => "*",
 			    "conditions" => "id=:id:",
@@ -366,7 +365,7 @@ public function editAction($id=""){
 				//$name = 'img_'.uniqid().'.'.$ext;
 				$name = $name.$ext;
 				$_POST['archivo'] = $name;
-			}/**/
+			}
 						
 			
 			//echo '<pre>';print_r($_POST);echo '</pre>';exit();
@@ -374,7 +373,10 @@ public function editAction($id=""){
 			$pos_fecha_fin = "fin_".$Status_Fechas[$Tabla->status];
 			$pos_fecha_inicio = "inicio_".$Status_Fechas[$Tabla->status+1];
 			//exit();
-			if(($_POST["status"] != $Tabla->status and ($_POST[$pos_fecha_fin] != "" and $_POST[$pos_fecha_inicio] != "")) OR ($_POST["status"] == $Tabla->status and ($_POST[$pos_fecha_fin] == "" and $_POST[$pos_fecha_inicio] == ""))){
+			if(
+				($_POST["status"] != $Tabla->status and ($_POST[$pos_fecha_fin] != "" and $_POST[$pos_fecha_inicio] != "")) OR 
+				($_POST["status"] == $Tabla->status and ($_POST[$pos_fecha_fin] == "" and $_POST[$pos_fecha_inicio] == ""))
+				){
 				
 
 				if($_POST['id_archivo_disolucion']){
@@ -464,15 +466,16 @@ public function editAction($id=""){
 						//$this->Miniaturas($ruta,50,$name,$directorio);	
 					}	/**/
 
-					}			
+					//}			
 					$this->session->set("mensajeReturn" , $this->msjReturn("&Eacute;xito" , "Se edito el registro correctamente." , "success"));
 					$this->response->redirect($this->Controller."/");
 					$this->view->disable();
 					return false;
 				}
 			}
-			$this->view->msjResponse = $this->msjReturn("Error" , "Se tiene que cambiar el status y establecer las fechas" , "error");
-			$this->view->jsResponse = $this->setValueData("formulario_registro" , $_POST);
+
+			//$this->view->msjResponse = $this->msjReturn("Error" , "Se tiene que cambiar el status y establecer las fechas" , "error");
+			//$this->view->jsResponse = $this->setValueData("formulario_registro" , $_POST);
 		}
 		$this->ajaxBody($this->Title);
 		$this->setHeaderMenu("Trámites" , "Listado de Trámites" , $this->Controller , "Editar");		
