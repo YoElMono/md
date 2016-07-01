@@ -357,7 +357,7 @@ public function editAction($id=""){
             //$_POST["contenido"] = utf8_encode($_POST["contenido"]);			
 			$_POST["ip"] = $this->getRealIP();
             
-			if($_FILES['archivo']["name"] != ""){
+			/*if($_FILES['archivo']["name"] != ""){
 				$name = explode('.', $_FILES['archivo']['name']);
 				$ext = $name[count($name)-1];
 				$name = explode(".",$Tabla->archivo);
@@ -365,7 +365,7 @@ public function editAction($id=""){
 				//$name = 'img_'.uniqid().'.'.$ext;
 				$name = $name.$ext;
 				$_POST['archivo'] = $name;
-			}
+			}*/
 						
 			
 			//echo '<pre>';print_r($_POST);echo '</pre>';exit();
@@ -379,14 +379,14 @@ public function editAction($id=""){
 				){
 				
 
-				if($_POST['id_archivo_disolucion']){
+				if($_POST['id_documento_disolucion']){
 
 					$datos = Negocios::findFirst($Tabla->id_empresa);
 
 					//if($datos){
 					$socios = SociosEmpresa::find("id_empresa = $datos->id and status = 1 ");
-					$array["NOMBRE_SOCIEDAD"] = utf8_decode($datos->nombre);
-					$array["REGISTRO"] = $datos->registro;
+					$array["NOMBRE_SOCIEDAD"] = utf8_decode($datos->razon_social);
+					$array["REGISTRO"] = "REGISTRO"; //$datos->registro;
 					$array["FECHA_DISOLICION"] = $datos->fecha_disolucion;
 					$array["ACCIONES_TOTAL"] = $datos->acciones_totales;
 					$array["SUMA_CAPITAL_TOT"] = $datos->capital_total;
@@ -406,7 +406,7 @@ public function editAction($id=""){
 						}
 					}
 
-					if($file = $this->crear_word($_POST["id_documento"],utf8_decode($datos->nombre),"disolucion",$array)){
+					if($file = $this->crear_word($_POST["id_documento_disolucion"],utf8_decode($datos->razon_social),"disolucion",$array)){
 
 						$_POST["archivo_disolucion"] = $file;
 					}
