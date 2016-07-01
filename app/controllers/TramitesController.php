@@ -287,7 +287,7 @@ class TramitesController extends ControllerBase {
 		$Negocios = Negocios::find("status = 1");
 		if(count($Negocios)>0){
 			foreach ($Negocios as $key => $value) {
-				$Negocio[] = array("id" => $value->id, "nombre" => utf8_decode($value->nombre)); 
+				$Negocio[] = array("id" => $value->id, "nombre" => utf8_decode($value->razon_social)); 
 			}
 		}else{
 			$Negocio = "";

@@ -27,7 +27,7 @@
                    <?php if(empty($archivo_disolucion) and $edit and $fecha_disolucion){?> 
                   <div class="col-sm-4">
                           <label>Documento Base Acta disolucion </label>
-                          <select class="form-control" id="id_documento_disolucion" name="id_documento_disolucion" data-required="true">
+                          <select class="form-control" id="id_documento_disolucion" name="id_documento_disolucion">
                             <option value="">---</option>
                             <?php 
                             if($Documentos != ""){
@@ -41,7 +41,7 @@
                    <?php if($edit and empty($archivo_disolucion) and $fecha_liquidacion){?> 
                   <div class="col-sm-4">
                           <label>Documento Base Acta liquidacion</label>
-                          <select class="form-control" id="id_documento_liquidacion" name="id_documento_liquidacion" data-required="true">
+                          <select class="form-control" id="id_documento_liquidacion" name="id_documento_liquidacion">
                             <option value="">---</option>
                             <?php 
                             if($Documentos != ""){
