@@ -406,10 +406,10 @@ public function editAction($id=""){
 						}
 					}
 
-					if($file = $this->crear_word($_POST["id_documento_disolucion"],utf8_decode($datos->razon_social),"disolucion",$array)){
+					/*if($file = $this->crear_word($_POST["id_documento_disolucion"],utf8_decode($datos->razon_social),"disolucion",$array)){
 
 						$_POST["archivo_disolucion"] = $file;
-					}
+					}*/
 				}
 
 				if($_POST['id_documento_liquidacion']){
@@ -439,10 +439,10 @@ public function editAction($id=""){
 						}
 					}
 
-					if($file = $this->crear_word($_POST["id_documento_liquidacion"],utf8_decode($datos->nombre),"liquidacion",$array)){
+					/*if($file = $this->crear_word($_POST["id_documento_liquidacion"],utf8_decode($datos->nombre),"liquidacion",$array)){
 
 						$_POST["archivo_liquidacion"] = $file;
-					}
+					}*/
 				}
 
 
