@@ -96,7 +96,7 @@ class NegociosController extends ControllerBase {
 		}
 		$Data = array("aaData" => array());
 		$Result = ViewNegocios::find(array(
-			"columns" => "id ,cliente,nombre ,telefono,tipo_sociedad, status",
+			"columns" => "id ,cliente,razon_social ,telefono,tipo_sociedad, status",
 		    "conditions" => "status!=2",
 		   //"limit" => 4
 		));	
@@ -121,7 +121,7 @@ class NegociosController extends ControllerBase {
 				$Data["aaData"][] = array(
 					"id" => trim($value->id),
 					"cliente" => utf8_decode(trim($value->cliente)),					
-					"nombre" => utf8_decode(trim($value->nombre)),
+					"razon_social" => utf8_decode(trim($value->razon_social)),
 					"telefono" => trim($value->telefono),
 					"tipo_sociedad" => utf8_decode(trim($value->tipo_sociedad)),
 					"status" => trim($this->selectStatus($value->status)),
@@ -212,20 +212,6 @@ class NegociosController extends ControllerBase {
 		
 
 
-		//Estados
-		$Estados = array();
-		$Table = new Estados();
-		$Result_estados = $Table->find(array(
-				"columns" => "id,nombre",
-			    "conditions" => "status=1 order by nombre ASC",			    	    
-		));
-		foreach($Result_estados as $value){
-			$Estados[] = array("id" => $value->id ,"nombre" => $value->nombre);
-		}		
-		$this->view->Estados = $Estados;
-
-
-
 		if($this->request->isPost()){
 			//$this->clearPost();
 				
@@ -233,10 +219,10 @@ class NegociosController extends ControllerBase {
 			$_POST["id_usuario"] = $_SESSION["id"];
 			$_POST["ip"] = $this->getRealIP();
 			
-			$_POST["nombre"] = utf8_encode($_POST["nombre"]);
+			$_POST["ciudad"] = utf8_encode($_POST["ciudad"]);
 			$_POST["razon_social"] = utf8_encode($_POST["razon_social"]);
 			$_POST["rfc"] = utf8_encode($_POST["rfc"]);
-			$_POST["registro"] = utf8_encode($_POST["registro"]);
+			$_POST["fme"] = utf8_encode($_POST["fme"]);
 			$_POST["fiel"] = utf8_encode($_POST["fiel"]);
 			$_POST["ciec"] = utf8_encode($_POST["ciec"]);
 			$_POST["fiel"] = utf8_encode($_POST["fiel"]);
@@ -531,7 +517,7 @@ class NegociosController extends ControllerBase {
 	}
 
 
-public function editAction($id=""){
+	public function editAction($id=""){
 
 		$Folder = "tmp/negocios/";
 		@mkdir($Folder , 777);
@@ -592,10 +578,10 @@ public function editAction($id=""){
 			$_POST["fecha_modificacion"] = date("Y-m-d H:i:s");			
 			$_POST["id_usuario"] = $_SESSION["id"];
 			$_POST["ip"] = $this->getRealIP();			
-			$_POST["nombre"] = utf8_encode($_POST["nombre"]);
+			$_POST["ciudad"] = utf8_encode($_POST["ciudad"]);
 			$_POST["razon_social"] = utf8_encode($_POST["razon_social"]);
 			$_POST["rfc"] = utf8_encode($_POST["rfc"]);
-			$_POST["registro"] = utf8_encode($_POST["registro"]);
+			$_POST["fme"] = utf8_encode($_POST["fme"]);
 			$_POST["fiel"] = utf8_encode($_POST["fiel"]);
 			$_POST["ciec"] = utf8_encode($_POST["ciec"]);
 			$_POST["fiel"] = utf8_encode($_POST["fiel"]);
@@ -684,12 +670,11 @@ public function editAction($id=""){
 			$DataForm["data"] = array(
 				"id" => $value->id,
 				"status" => $value->status,
-				"id_estado" => utf8_decode($value->id_estado),
-				"id_cliente" => utf8_decode($value->id_cliente),
-				"nombre" => utf8_decode($value->nombre),
+				"ciudad" => utf8_decode($value->ciudad),
+				"id_cliente" => utf8_decode($value->id_cliente),				
 				"razon_social" => utf8_decode($value->razon_social),
 				"rfc" => utf8_decode($value->rfc),
-				"registro" => utf8_decode($value->registro),
+				"fme" => utf8_decode($value->fme),
 				"telefono" => utf8_decode($value->telefono),
 				"fecha_disolucion" => utf8_decode($value->fecha_disolucion),
 				"fecha_liquidacion" => utf8_decode($value->fecha_liquidacion),
@@ -891,5 +876,58 @@ public function editAction($id=""){
         $response->setContent(json_encode($Msj));
         return $response;
 	}
+
+
+	public function documetosAction(){
+
+		$Folder =  __DIR__  . "/../../public/doc_empresas/";
+		@mkdir($Folder , 777);
+		//echo json_encode($_FILES);exit();
+		printf($_FILES);
+		exit();
+		if($_FILES['documento_file'][''] != ""){
+				$name = explode('.', $_FILES['documento_file']['name']);
+				$ext = $name[count($name)-1];
+				$name = 'archivo_'.uniqid().'.'.$ext;
+				//$_POST['img'] = $name;
+				
+				$_POST['documento_file'] = $name;
+				$_POST['fecha_edit'] = date('Y-m-d H:i:s');
+				//$_POST['ip'] = $this->getRealIP();
+				
+				//echo json_encode($usuario);
+				//exit();
+				$usuario->assign($this->request->getPost());
+
+
+
+
+				if($usuario->update()){
+					if($_FILES[$tipo]['name'] != '') @copy($_FILES[$tipo]['tmp_name'],$Folder.$name);
+					echo json_encode(array("bien"=>true,"msg"=>"Actualización Completada"));
+				}else{
+					echo json_encode(array("bien"=>false,"msg"=>"Error Al actualizar"));
+				}
+			}
+			
+		else{
+			echo json_encode(array("bien"=>false,"msg"=>"Error Al actualizar"));
+		}
+
+	}
+
+
+
+
+
+			
+			
+			
+
+
+
+
+
+
 
 }

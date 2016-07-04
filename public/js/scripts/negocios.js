@@ -21,7 +21,7 @@ function Grid(){
       "aoColumns": [
         { "mData": "id" },  
          { "mData": "cliente" },    
-        { "mData": "nombre" },
+        { "mData": "razon_social" },
         { "mData": "telefono" },
 		{ "mData": "tipo_sociedad" },
         { "mData": "status" },
@@ -318,6 +318,87 @@ function JscalcularAccion(){
  
          return true;
       }
+
+
+
+
+
+
+
+function JsNewDocumento(documento) {
+	$('#pantalla_documentos').toggleClass('hidden');	
+	$('#pantalla_documentos #documento').html(documento);	
+	$("#guardar").attr("onclick","validar_socio("+$("#id_registro").val()+",-1);return false;");
+}
+function hiddendocumento() {
+	$('#pantalla_documentos').toggleClass('hidden');
+	return false;
+}
+
+
+function validar_cargar_documento (id) {
+	
+	var destino = "documentos";	
+	var form = $("#form_documentos");
+
+
+	if($("#nombre_documento").val() == ""){
+		 $("#nombre_documento").attr("placeholder", "Necesario");
+		$("#nombre_documento").focus();
+	$("guardar").prop("disabled",false);
+		return false;
+	}
+
+
+	var formData = new FormData();
+	var inputFileImage = document.getElementById("documento_file");
+	var file = inputFileImage.files[0];
+	var name = $('#documento_file')[0].name;
+	if(typeof(file) == "undefined"){
+		alert("Archivo no seleccionado nada :( ");
+		return false;
+	}
+
+
+	formData.append(name,file);
+	$.ajax({
+		url: 'negocios/'+destino+'/'+id,
+		type: 'POST',
+		dataType: 'json',
+		data: formData,
+		contentType:false,
+		processData:false,
+		cache:false,
+		success:function (data) {
+			console.log(data);
+			$('#pantalla_documentos').toggleClass('hidden');
+			if(data.bien)
+				$('#progress3').attr("src","images/bien.png").load(function() {
+					alert(data.msg)
+					window.location = "negocios/edit/"+id
+				});
+			else
+				$('#progress3').attr("src","images/mal.png").load(function() {
+					alert(data.msg)
+					window.location = 'negocios/edit/'+id
+				});
+		},
+		error:function (error1,error2) {
+			console.log(error1,error2);
+		}
+	});
+	return false;
+}
+
+
+
+
+
+
+
+
+
+
 
 
 +function ($) { "use strict";
