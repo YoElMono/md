@@ -838,6 +838,27 @@ class NegociosController extends ControllerBase {
 		}
 	}
 
+	public function getdocumentosAction($id_negocio = "")	{
+		if($id_negocio != "" && is_numeric($id_negocio)){
+			$documentos = Documentos::find("id_negocio = $id_negocio and status = 1");
+			if(count($documentos)>0){
+				foreach ($documentos as $key => $value) {
+					$Documentos[] = array("id"=>$value->id, "nombre"=>utf8_decode($value->nombre),"link"=>'<a href="doc_empresas/'.$value->archivo.'" class="btn btn-warning btn-icon"><i class="fa fa-folder-open"></i></a>');
+				}
+				$response['bien'] = true;
+				$response['msg'] = "todo bien";
+				$response['documentos'] = $Documentos;
+
+			}else{
+				$response['bien'] = false;
+				$response['msg'] = "no hay socios";
+			}
+			echo json_encode($response);exit();
+		}else{
+			echo "ERROR";exit();
+		}
+	}
+
 	public function deletesocioAction($id=""){
 		if( !$this->Security->securitySession() ){
 			$this->view->disable();
@@ -878,33 +899,37 @@ class NegociosController extends ControllerBase {
 	}
 
 
-	public function documetosAction(){
+	public function documentosAction($id){
 
 		$Folder =  __DIR__  . "/../../public/doc_empresas/";
 		@mkdir($Folder , 777);
 		//echo json_encode($_FILES);exit();
-		printf($_FILES);
-		exit();
-		if($_FILES['documento_file'][''] != ""){
-				$name = explode('.', $_FILES['documento_file']['name']);
+		//echo '<pre>';print_r($_FILES);print_r($_POST);
+		//exit();
+		if($_FILES['img']['name'] != "" and $_FILES['img']['error'] == 0){
+				$name = explode('.', $_FILES['img']['name']);
 				$ext = $name[count($name)-1];
 				$name = 'archivo_'.uniqid().'.'.$ext;
 				//$_POST['img'] = $name;
 				
-				$_POST['documento_file'] = $name;
-				$_POST['fecha_edit'] = date('Y-m-d H:i:s');
-				//$_POST['ip'] = $this->getRealIP();
-				
+				$_POST['archivo'] = $name;
+				$_POST['fecha'] = date('Y-m-d H:i:s');
+				$_POST['ip'] = $this->getRealIP();
+				$_POST['id_negocio'] = $id;
+				$_POST['id_usuario'] = $_SESSION['id'];
+				$_POST['status'] = 1;
+				$_POST['nombre'] = utf8_decode($_POST['nombre_documento']);
 				//echo json_encode($usuario);
 				//exit();
-				$usuario->assign($this->request->getPost());
+				$Documentos = new Documentos();
+				$Documentos->assign($this->request->getPost());
 
 
 
 
-				if($usuario->update()){
-					if($_FILES[$tipo]['name'] != '') @copy($_FILES[$tipo]['tmp_name'],$Folder.$name);
-					echo json_encode(array("bien"=>true,"msg"=>"Actualización Completada"));
+				if($Documentos->save()){
+					if($_FILES['img']['name'] != '') @copy($_FILES['img']['tmp_name'],$Folder.$name);
+					echo json_encode(array("bien"=>true,"msg"=>"Actualización Completada","doc"=>["nombre"=>utf8_decode($Documentos->nombre),"link"=>'<a href="doc_empresas/'.$name.'" class="btn btn-warning btn-icon"><i class="fa fa-folder-open"></i></a>']));
 				}else{
 					echo json_encode(array("bien"=>false,"msg"=>"Error Al actualizar"));
 				}

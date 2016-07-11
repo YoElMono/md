@@ -256,6 +256,48 @@ function jsCargarSocios(id){
 
 }
 
+function jsCargarDocumentos(id){
+
+	$.ajax({
+			url: 'negocios/getdocumentos/'+id,
+			type: 'POST',
+			dataType: 'json',
+			success:function (data) {
+				console.log(data);
+				if(data.bien){
+					//$('#progress').attr("src","images/ok.png").load(function() {
+						//alert(data.msg);
+						documentos = data.documentos;
+                        $("#listado_documentos").html("")
+						for(var i = 0; i < documentos.length; i++){
+							var documento = documentos[i];
+							console.log(documento);
+							var html = '<li class="list-group-item"><div class="media"><div class="pull-right text-danger m-t-sm">'+documento.link+'</div><div class="media-body"><div><a href="#" onclick="return false;">'+documento.nombre+'</a></div></div></li>';
+							$("#listado_documentos").append(html);
+						}
+
+						//alertify.alert(data.msg);
+						//window.location = "mascotas/edit/"+id
+						//jsCargarSocios(id);
+					//});
+				}
+				else{
+					//$('#progress').attr("src","images/error.png").load(function() {
+						alert(data.msg)
+						//alertify.alert(data.msg);
+						//window.location = "mascotas/edit/"+id
+						//jsCargarSocios(id);
+					//});
+				}
+			},
+			error:function (error1,error2) {
+				console.log(error1,error2);
+			}
+		});
+		return false;
+
+}
+
 
 
 function actionDelete(){
@@ -336,7 +378,7 @@ function hiddendocumento() {
 }
 
 
-function validar_cargar_documento (id) {
+function validar_documento (id) {
 	
 	var destino = "documentos";	
 	var form = $("#form_documentos");
@@ -350,10 +392,10 @@ function validar_cargar_documento (id) {
 	}
 
 
-	var formData = new FormData();
-	var inputFileImage = document.getElementById("documento_file");
+	var formData = new FormData(document.getElementById("form_documentos"));
+	var inputFileImage = document.getElementById("filestyle-0");
 	var file = inputFileImage.files[0];
-	var name = $('#documento_file')[0].name;
+	var name = $('#filestyle-0')[0].name;
 	if(typeof(file) == "undefined"){
 		alert("Archivo no seleccionado nada :( ");
 		return false;
@@ -372,16 +414,20 @@ function validar_cargar_documento (id) {
 		success:function (data) {
 			console.log(data);
 			$('#pantalla_documentos').toggleClass('hidden');
-			if(data.bien)
-				$('#progress3').attr("src","images/bien.png").load(function() {
+			if(data.bien){
+				/*$('#progress3').attr("src","images/bien.png").load(function() {
 					alert(data.msg)
 					window.location = "negocios/edit/"+id
-				});
-			else
-				$('#progress3').attr("src","images/mal.png").load(function() {
+				});*/
+				var html = '<li class="list-group-item"><div class="media"><div class="pull-right text-danger m-t-sm">'+data.doc.link+'</div><div class="media-body"><div><a href="#" onclick="return false;">'+data.doc.nombre+'</a></div></div></li>';
+				$("#listado_documentos").append(html);
+			}else{
+				alert(data.msj);
+			}
+				/*$('#progress3').attr("src","images/mal.png").load(function() {
 					alert(data.msg)
 					window.location = 'negocios/edit/'+id
-				});
+				});*/
 		},
 		error:function (error1,error2) {
 			console.log(error1,error2);

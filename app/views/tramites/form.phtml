@@ -19,7 +19,7 @@
                   <?php 
                   if($Negocios != ""){
                     foreach ($Negocios as $key => $value) { 
-                      echo "<option value='$value[id]' ".($id_negocio == $value["id"]?"selected":"").">$value[nombre]</option>";
+                      echo "<option value='$value[id]'>$value[nombre]</option>";
                     }
                   } ?>
                 </select>      
@@ -71,10 +71,6 @@
                     <div class="col-sm-4">
                           <label>Costo de trámite (*)</label>
                           <input onkeypress="return isNumberKey(event);" class="form-control" id="costo_tramite" name="costo_tramite" data-required="true">
-                    </div>
-                    <div class="col-sm-4">
-                          <label>Fecha de entrega (*)</label>
-                          <input readonly class="form-control" id="fecha_entrega" name="fecha_entrega" data-required="true">
                     </div>
                     <?php if($status != "") {?>
                       <?php for ($i = $status; $i <= ($status+1); $i++) { ?>

@@ -199,25 +199,25 @@ class TramitesController extends ControllerBase {
 		$this->view->jsResponse = "";
 		$this->view->contenido = "";
 		if($this->request->isPost()){
-			//$this->clearPost();
-			//$this->clearPostInt(array("status" , "id_departamento" , "id_puesto"));
-			//$_POST["slug"] = uniqid();
 			$_POST["fecha_creacion"] = date("Y-m-d H:i:s");
-			$_POST["inicio_proceso"] = date("Y-m-d H:i:s");
+			$_POST["inicio_envio_notaria"] = date("Y-m-d H:i:s");
 			$_POST["id_usuario"] = $_SESSION["id"];			
 			$_POST["liquidador"] = utf8_encode($_POST["liquidador"]);
-			//$_POST["contenido"] = utf8_encode($_POST["contenido"]);	
 			$_POST["status"] = 1;		
 			$_POST["ip"] = $this->getRealIP();
 			$Tabla = new Tramites();
 			$Result = $Tabla->find(array(
 				"columns" => "id",
-			    "conditions" => "id_empresa=:id_empresa: and status=:status: and liquidador=:liquidador: and date(fecha_creacion) = date('Y-m-d') ",
-			    "bind" => array( "id_empresa" => $this->request->getPost("id_empresa" , "int") , "status" => $this->request->getPost("status" , "string") , "liquidador" => $this->request->getPost("liquidador" , "string") ),
-			    "bindTypes" => array("id_empresa" => Column::BIND_PARAM_INT ,  "status" => Column::BIND_PARAM_STR,  "liquidador" => Column::BIND_PARAM_STR ),
+			    "conditions" => "id_empresa=:id_empresa: and status=:status: ",
+			    "bind" => array( "id_empresa" => $this->request->getPost("id_empresa" , "int") , "status" => $this->request->getPost("status" , "string")),
+			    "bindTypes" => array("id_empresa" => Column::BIND_PARAM_INT ,  "status" => Column::BIND_PARAM_STR),
 			    "limit" => 1
 			));
 			if( count($Result) <= 0 ){
+
+				$Empresa = Negocios::findFirst($_POST['id_empresa']);
+
+				if($Empresa->fecha_disolucion != null and $Empresa->fecha_disolucion != "0000-00-00"){
 
 				/*$datos = Negocios::findFirst($_POST["id_empresa"]);
 
@@ -275,7 +275,8 @@ class TramitesController extends ControllerBase {
 					$this->view->msjResponse = $this->msjReturn("Error" , "Ocurrio un error , intente de nuevo." , "error");
 					$this->view->jsResponse = $this->setValueData("formulario_registro" , $_POST);
 				}*/
-				$this->view->msjResponse = $this->msjReturn("Error" , "Ocurrio un error , intente de nuevo." , "error");
+				}
+				$this->view->msjResponse = $this->msjReturn("Error" , "falta la fecha de disolucion" , "error");
 				$this->view->jsResponse = $this->setValueData("formulario_registro" , $_POST);
 			} else {
 				$this->view->msjResponse = $this->msjReturn("Error" , "Existe un registro con los mismos datos." , "error");
@@ -325,10 +326,10 @@ public function editAction($id=""){
 		$Folder =  __DIR__  . "/../../public/tmp/tramites/";
 		//$Folder ="tmp/documentos/";
 		@mkdir($Folder , 777);
-		$this->view->Status = ["", "En Proceso", "Actas Formalizadas", "SAT", "Registro"];
-		$this->view->Status_Fechas = ["", "proceso", "actas", "sat", "registro"];
+		$this->view->Status = ["", "Envío a Notaria", "RPC", "SAT", "Concuído"];
+		$this->view->Status_Fechas = ["", "envio_notaria", "rpc", "sat", "concluido"];
 
-		$Status_Fechas = ["", "proceso", "actas", "sat", "registro"];
+		$Status_Fechas = ["", "envio_notaria", "rpc", "sat", "concluido"];
 
 		if( !$this->Security->securitySession() ){
 			return false;
@@ -406,10 +407,10 @@ public function editAction($id=""){
 						}
 					}
 
-					/*if($file = $this->crear_word($_POST["id_documento_disolucion"],utf8_decode($datos->razon_social),"disolucion",$array)){
+					if($file = $this->crear_word($_POST["id_documento_disolucion"],utf8_decode($datos->razon_social),"disolucion",$array)){
 
 						$_POST["archivo_disolucion"] = $file;
-					}*/
+					}
 				}
 
 				if($_POST['id_documento_liquidacion']){
@@ -439,10 +440,10 @@ public function editAction($id=""){
 						}
 					}
 
-					/*if($file = $this->crear_word($_POST["id_documento_liquidacion"],utf8_decode($datos->nombre),"liquidacion",$array)){
+					if($file = $this->crear_word($_POST["id_documento_liquidacion"],utf8_decode($datos->nombre),"liquidacion",$array)){
 
 						$_POST["archivo_liquidacion"] = $file;
-					}*/
+					}
 				}
 
 
@@ -516,7 +517,7 @@ public function editAction($id=""){
 		$Negocios = Negocios::find("status = 1");
 		if(count($Negocios)>0){
 			foreach ($Negocios as $key => $value) {
-				$Negocio[] = array("id" => $value->id, "nombre" => utf8_decode($value->nombre)); 
+				$Negocio[] = array("id" => $value->id, "nombre" => utf8_decode($value->razon_social)); 
 			}
 		}else{
 			$Negocio = "";
