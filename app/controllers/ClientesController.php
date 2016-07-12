@@ -209,7 +209,7 @@ class ClientesController extends ControllerBase {
 		*/
 
 
-		//Estados
+		/*//Estados
 		$Estados = array();
 		$Table = new Estados();
 		$Result_estados = $Table->find(array(
@@ -219,7 +219,7 @@ class ClientesController extends ControllerBase {
 		foreach($Result_estados as $value){
 			$Estados[] = array("id" => $value->id ,"nombre" => $value->nombre);
 		}		
-		$this->view->Estados = $Estados;
+		$this->view->Estados = $Estados;*/
 
 
 
@@ -231,8 +231,8 @@ class ClientesController extends ControllerBase {
 			$_POST["ip"] = $this->getRealIP();
 			
 			$_POST["nombre"] = utf8_encode($_POST["nombre"]);
-			$_POST["rfc"] = utf8_encode($_POST["rfc"]);
-			$_POST["direccion"] = utf8_encode($_POST["direccion"]);
+			//$_POST["rfc"] = utf8_encode($_POST["rfc"]);
+			//$_POST["direccion"] = utf8_encode($_POST["direccion"]);
 			
 			//$usernew=$_POST["correo_contacto"];
 			//$passnew=$_POST["password"];
@@ -240,193 +240,180 @@ class ClientesController extends ControllerBase {
 			
 			
 
-			if($_FILES['img']["name"] != ""){
+			/*if($_FILES['img']["name"] != ""){
 				$name = explode('.', $_FILES['img']['name']);
 				$ext = $name[count($name)-1];
 				$name = 'img_'.uniqid().'.'.$ext;
 				$_POST['img'] = $name;
-			}	
+			}	*/
 					
 			
 			$Table = new Clientes();
 			$Result = $Table->find(array(
 				"columns" => "id",
-			    "conditions" => "nombre='".$_POST['nombre']."'", 
+			    "conditions" => "correo='".$_POST['correo']."'", 
 			    "limit" => 1
 			));
 			if( count($Result) <= 0 ){
 				$Table->assign($this->request->getPost());
 				if($Table->save()){
 
-					/*obtenemos id de negocio para crear usuario
+					/*obtenemos id de cliente para crear usuario*/
+					$Table = new Clientes();
+					$Result = $Table->find(array(
+						"columns" => "id",
+					    "conditions" => "correo='".$_POST['correo']."'", 
+					    "limit" => 1
+					));
+					$id_cliente=$Result[0]['id'];
+					
+					//echo "<pre>";print_r($Result);exit();
 
-					$hostname_externa = $this->datosdb['host'];
-					$database_externa = $this->datosdb['dbname'];
-					$username_externa = $this->datosdb['username'];
-					$password_externa = $this->datosdb['password'];
-
-					$mysqli = @mysql_connect($hostname_externa, $username_externa, $password_externa) or trigger_error(mysql_error(),E_USER_ERROR);
-					mysql_select_db($database_externa, $mysqli);
-
-					$query= "SELECT MAX(id) as last_insert from negocios";
-					$Recordset1 = mysql_query($query, $mysqli) or die(mysql_error());
-					$Resultid = mysql_fetch_assoc($Recordset1);*/
 
 					/*termina obtenemos id de negocio para crear usuario*/
 
 
 
-
-
-					if($_FILES['img']["name"] != ""){
-						@copy($_FILES['img']['tmp_name'],$Folder.$name);
-						$ruta=$Folder.$name;
-						$directorio='clientes';
-						$this->Miniaturas($ruta,100,$name,$directorio);			
-
-					}
 					///////////impórtante////////////					
 					//creamos un usuario tipo Negocio,enviamos correo y damos permisos
-					/*
+					$_POST["pass"]="FiscalistasMD0".$id_cliente;
 						$Guardaren = new Usuarios();						
 						$Guardaren->assign(array(
-							"id_usuario" =>$_SESSION['id_web'],
-							"id_negocio" =>$Resultid['last_insert'],
-							"email" =>$_POST["correo_contacto"],
-							"user" =>$_POST["correo_contacto"],
-							"password" =>sha1($_POST["password"]),
+							"id_user" =>$_SESSION['id'],
+							"id_cliente" =>$id_cliente,
+							"email" =>$_POST["correo"],
+							"user" =>$_POST["correo"],
+							"password" =>sha1($_POST["pass"]),
 							"nombre" =>$_POST["nombre"],
 							"telefono" =>$_POST["telefono"],
-							"tipo" =>'Negocio',
-							"fecha" =>date("Y-m-d H:i:s"),	
-							"ip" =>$this->getRealIP(),
-							"foto" =>$name,
-							"status" =>'1',	
+							"tipo" =>'Cliente',
+							"fecha" =>date("Y-m-d H:i:s"),														
+							"status" =>'0',	
 						));
 						
 						if($Guardaren->save()){	
 						///mandamos correo
-						$titulo = 'Bienvenido  a PingShop';
-
+						$titulo = 'Bienvenido a Fiscalistas MD';
 						$mensaje = '<div>
-						<table width="100%" border="0" cellspacing="0" cellpadding="0" style="background-color:#d6d6d5;border:0;border-collapse:collapse;border-spacing:0" bgcolor="#d6d6d5">
-						<tr>
-						<td align="center">
-						<!---->
-						<table width="100%" border="0" align="center" cellpadding="0" cellspacing="0" style="border:0;border-collapse:collapse;border-spacing:0;max-width:700px">
-						<tr>
-						<td bgcolor="#38B6B4">&nbsp;</td>
-						<td bgcolor="#38B6B4">&nbsp;</td>
-						<td bgcolor="#38B6B4">&nbsp;</td>
-						<td bgcolor="#38B6B4">&nbsp;</td>
-						</tr>
-						<tr>
-						<td width="3%" bgcolor="#FFFFFF">&nbsp;</td>
-						<td width="84%" bgcolor="#FFFFFF" style="color:#000000;font-family:\'ClanPro-Book\',\'HelveticaNeue-Light\',\'Helvetica Neue Light\',Helvetica,Arial,sans-serif;font-size:20px;line-height:36px">
-						<b>Bienvenido(a) </b>&nbsp;'.$_POST['nombre'].'
-						</td>
-						<td width="10%" bgcolor="#FFFFFF"><img src="http://pingshop.testingview.com/images/logo_correo.png" /></td>
-						<td width="3%" bgcolor="#FFFFFF">&nbsp;</td>
-						</tr>
-						<tr>
-						<td bgcolor="#FFFFFF">&nbsp;</td>
-						<td bgcolor="#FFFFFF"  style="color:#717172;font-family:\'ClanPro-Book\',\'HelveticaNeue-Light\',\'Helvetica Neue Light\',Helvetica,Arial,sans-serif;font-size:16px;line-height:28px">De parte del equipo de <b>PingShop</b> recibe una cordial bienvenida.</br> ya eres parte de esta comunidad.</td>
-						<td bgcolor="#FFFFFF">&nbsp;</td>
-						<td bgcolor="#FFFFFF">&nbsp;</td>
-						</tr>
-						<tr>
-						<td bgcolor="#FFFFFF">&nbsp;</td>
-						<td bgcolor="#FFFFFF">&nbsp;</td>
-						<td bgcolor="#FFFFFF">&nbsp;</td>
-						<td bgcolor="#FFFFFF">&nbsp;</td>
-						</tr>
-						<tr>
-						<td bgcolor="#FFFFFF">&nbsp;</td>
-						<td bgcolor="#FFFFFF"><hr></hr></td>
-						<td bgcolor="#FFFFFF">&nbsp;</td>
-						<td bgcolor="#FFFFFF">&nbsp;</td>
-						</tr>
-						<tr>
-						<td bgcolor="#FFFFFF">&nbsp;</td>
-						<td bgcolor="#FFFFFF" align="left" style="color:#000000;font-family:\'ClanPro-Book\',\'HelveticaNeue-Light\',\'Helvetica Neue Light\',Helvetica,Arial,sans-serif;font-size:20px;line-height:20px"><b>Datos de acceso</b></td>
-						<td bgcolor="#FFFFFF">&nbsp;</td>
-						<td bgcolor="#FFFFFF">&nbsp;</td>
-						</tr>
-						<tr>
-						<td bgcolor="#FFFFFF">&nbsp;</td>
-						<td bgcolor="#FFFFFF" align="left">
-                        <b>Usuario:</b>	'.$_POST["email"].'					
-						</td>
-						<td bgcolor="#FFFFFF">&nbsp;</td>
-						<td bgcolor="#FFFFFF">&nbsp;</td>
-						</tr>
-						<tr>
-						  <td bgcolor="#FFFFFF">&nbsp;</td>
-						  <td bgcolor="#FFFFFF" align="left"><b>Password:</b> '.$_POST["password"].'</td>
-						  <td bgcolor="#FFFFFF">&nbsp;</td>
-						  <td bgcolor="#FFFFFF">&nbsp;</td>
-						  </tr>
-						<tr>
-						<td bgcolor="#FFFFFF">&nbsp;</td>
-						<td bgcolor="#FFFFFF"><hr></hr></td>
-						<td bgcolor="#FFFFFF">&nbsp;</td>
-						<td bgcolor="#FFFFFF">&nbsp;</td>
-						</tr>
-						<tr>
-						<td bgcolor="#FFFFFF">&nbsp;</td>
-						<td bgcolor="#FFFFFF" style="color:#717172;font-family:\'ClanPro-Book\',\'HelveticaNeue-Light\',\'Helvetica Neue Light\',Helvetica,Arial,sans-serif;font-size:14px;line-height:28px">Si tienes alguna pregunta, responde a este correo o escríbenos a soporte@pingshop.com</td>
-						<td bgcolor="#FFFFFF">&nbsp;</td>
-						<td bgcolor="#FFFFFF">&nbsp;</td>
-						</tr>
-						<tr>
-						<td bgcolor="#FFFFFF">&nbsp;</td>
-						<td bgcolor="#FFFFFF">&nbsp;</td>
-						<td bgcolor="#FFFFFF">&nbsp;</td>
-						<td bgcolor="#FFFFFF">&nbsp;</td>
-						</tr>
-						<tr>
-						<td bgcolor="#000000">&nbsp;</td>
-						<td colspan="2" bgcolor="#000000">
-						<table width="100%" border="0" cellspacing="0" cellpadding="0">
-						<tr>
-						<td width="80%">dd</td>
-						<td width="5%">&nbsp;</td>
-						<td width="4%">&nbsp;</td>
-						<td width="5%">&nbsp;</td>
-						<td width="6%">&nbsp;</td>
-						</tr>
-						<tr>
-						<td><img src="http://pingshop.testingview.com/images/logo_correo_blanco.png" /></td>
-						<td align="center"><a href="#" target="_blank"><img src="http://pingshop.testingview.com/images/footer_social_facebook.png" border="0" width="10"></a></td>
-						<td align="center"><a href="#" target="_blank"><img src="http://pingshop.testingview.com/images/footer_social_twitter.png" border="0" width="20"></a></td>
-						<td align="center"><a href="#" target="_blank"><img src="http://pingshop.testingview.com/images/footer_social_instagram.png" border="0" width="20"></a></td>
-						<td align="center"><a href="#" target="_blank"><img src="http://pingshop.testingview.com/images/footer_social_linkedin.png" border="0" width="20"></a></td>
-						</tr>
-						<tr>
-						<td>&nbsp;</td>
-						<td>&nbsp;</td>
-						<td>&nbsp;</td>
-						<td>&nbsp;</td>
-						<td>&nbsp;</td>
-						</tr>
-						</table>
-						</td>
-						<td bgcolor="#000000">&nbsp;</td>
-						</tr>
-						</table>
-						<!---->    
-						</td>
-						</tr>
-						</table>
-						</div>';
+									<table width="100%" border="0" cellspacing="0" cellpadding="0" style="background-color:#d6d6d5;border:0;border-collapse:collapse;border-spacing:0" bgcolor="#d6d6d5">
+									<tr>
+									<td align="center">
+									<!---->
+									<table width="100%" border="0" align="center" cellpadding="0" cellspacing="0" style="border:0;border-collapse:collapse;border-spacing:0;max-width:700px">
+									<tr>
+									<td bgcolor="#990000">&nbsp;</td>
+									<td bgcolor="#990000">&nbsp;</td>
+									<td bgcolor="#990000">&nbsp;</td>
+									<td bgcolor="#990000">&nbsp;</td>
+									</tr>
+									<tr>
+									<td width="3%" bgcolor="#FFFFFF">&nbsp;</td>
+									<td width="84%" bgcolor="#FFFFFF" style="color:#000000;font-family:\'ClanPro-Book\',\'HelveticaNeue-Light\',\'Helvetica Neue Light\',Helvetica,Arial,sans-serif;font-size:20px;line-height:36px">
+									<b>Bienvenido(a) </b>&nbsp;'.$_POST['nombre'].'
+									</td>
+									<td width="10%" bgcolor="#FFFFFF"><img src="http://md.testingview.com/images/logoprincipal.png" width="150" /></td>
+									<td width="3%" bgcolor="#FFFFFF">&nbsp;</td>
+									</tr>
+									<tr>
+									<td bgcolor="#FFFFFF">&nbsp;</td>
+									<td bgcolor="#FFFFFF"  style="color:#717172;font-family:\'ClanPro-Book\',\'HelveticaNeue-Light\',\'Helvetica Neue Light\',Helvetica,Arial,sans-serif;font-size:16px;line-height:28px">De parte del equipo de <b>MD</b> recibe una cordial bienvenida.</br> ya eres parte de esta comunidad.</td>
+									<td bgcolor="#FFFFFF">&nbsp;</td>
+									<td bgcolor="#FFFFFF">&nbsp;</td>
+									</tr>
+									<tr>
+									<td bgcolor="#FFFFFF">&nbsp;</td>
+									<td bgcolor="#FFFFFF">&nbsp;</td>
+									<td bgcolor="#FFFFFF">&nbsp;</td>
+									<td bgcolor="#FFFFFF">&nbsp;</td>
+									</tr>
+									<tr>
+									<td bgcolor="#FFFFFF">&nbsp;</td>
+									<td bgcolor="#FFFFFF"><hr></hr></td>
+									<td bgcolor="#FFFFFF">&nbsp;</td>
+									<td bgcolor="#FFFFFF">&nbsp;</td>
+									</tr>
+									<tr>
+									<td bgcolor="#FFFFFF">&nbsp;</td>
+									<td bgcolor="#FFFFFF" align="left" style="color:#000000;font-family:\'ClanPro-Book\',\'HelveticaNeue-Light\',\'Helvetica Neue Light\',Helvetica,Arial,sans-serif;font-size:20px;line-height:20px"><b>Datos de acceso</b></td>
+									<td bgcolor="#FFFFFF">&nbsp;</td>
+									<td bgcolor="#FFFFFF">&nbsp;</td>
+									</tr>
+									<tr>
+									<td bgcolor="#FFFFFF">&nbsp;</td>
+									<td bgcolor="#FFFFFF" align="left">
+			                        <b>Usuario:</b>	'.$_POST["correo"].'					
+									</td>
+									<td bgcolor="#FFFFFF">&nbsp;</td>
+									<td bgcolor="#FFFFFF">&nbsp;</td>
+									</tr>
+									<tr>
+									  <td bgcolor="#FFFFFF">&nbsp;</td>
+									  <td bgcolor="#FFFFFF" align="left"><b>Password:</b> '.$_POST["pass"].'</td>
+									  <td bgcolor="#FFFFFF">&nbsp;</td>
+									  <td bgcolor="#FFFFFF">&nbsp;</td>
+									  </tr>
+									<tr>
+									<td bgcolor="#FFFFFF">&nbsp;</td>
+									<td bgcolor="#FFFFFF"><hr></hr></td>
+									<td bgcolor="#FFFFFF">&nbsp;</td>
+									<td bgcolor="#FFFFFF">&nbsp;</td>
+									</tr>
+									<tr>
+									<td bgcolor="#FFFFFF">&nbsp;</td>
+									<td bgcolor="#FFFFFF" style="color:#717172;font-family:\'ClanPro-Book\',\'HelveticaNeue-Light\',\'Helvetica Neue Light\',Helvetica,Arial,sans-serif;font-size:14px;line-height:28px">Si tienes alguna pregunta, responde a este correo o escríbenos a contacto@fiscalistas-md.com.mx</td>
+									<td bgcolor="#FFFFFF">&nbsp;</td>
+									<td bgcolor="#FFFFFF">&nbsp;</td>
+									</tr>
+									<tr>
+									<td bgcolor="#FFFFFF">&nbsp;</td>
+									<td bgcolor="#FFFFFF">&nbsp;</td>
+									<td bgcolor="#FFFFFF">&nbsp;</td>
+									<td bgcolor="#FFFFFF">&nbsp;</td>
+									</tr>
+									<tr>
+									<td bgcolor="#000000">&nbsp;</td>
+									<td colspan="2" bgcolor="#000000">
+									<table width="100%" border="0" cellspacing="0" cellpadding="0">
+									<tr>
+									<td width="80%">dd</td>
+									<td width="5%">&nbsp;</td>
+									<td width="4%">&nbsp;</td>
+									<td width="5%">&nbsp;</td>
+									<td width="6%">&nbsp;</td>
+									</tr>
+									<tr>
+									<td><img src="http://md.testingview.com/images/logoprincipal_blanco.png" width="150" /></td>
+									<td align="center">&nbsp;</td>
+									<td align="center">&nbsp;</td>
+									<td align="center">&nbsp;</td>
+									<td align="center">&nbsp;</td>
+									</tr>
+									<tr>
+									<td>&nbsp;</td>
+									<td>&nbsp;</td>
+									<td>&nbsp;</td>
+									<td>&nbsp;</td>
+									<td>&nbsp;</td>
+									</tr>
+									</table>
+									</td>
+									<td bgcolor="#000000">&nbsp;</td>
+									</tr>
+									</table>
+									<!---->    
+									</td>
+									</tr>
+									</table>
+									</div>
+									';
 
 						  
 						$cabeceras  = 'MIME-Version: 1.0' . "\r\n";
 						$cabeceras .= 'Content-type: text/html; charset=UTF-8; format=flowed\n' . "\r\n";   
-						$cabeceras .= 'From:PingShop contacto@pingshop.com' . "\r\n";
+						$cabeceras .= 'From:MD Consultoría contacto@fiscalistas-md.com.mx' . "\r\n";
 
 
-						@mail($datos['email'], $titulo, $mensaje, $cabeceras ); 
+						@mail($datos['correo'], $titulo, $mensaje, $cabeceras ); 
 						@mail('luisglezv3@gmail.com', $titulo, $mensaje, $cabeceras ); 
 
 						///termina correo
@@ -434,47 +421,34 @@ class ClientesController extends ControllerBase {
 						//damos permisos//////
 						//////////////////////
 
-						 	$hostname_externa = $this->datosdb['host'];
-							$database_externa = $this->datosdb['dbname'];
-							$username_externa = $this->datosdb['username'];
-							$password_externa = $this->datosdb['password'];
-
-							$mysqli = @mysql_connect($hostname_externa, $username_externa, $password_externa) or trigger_error(mysql_error(),E_USER_ERROR);
-							mysql_select_db($database_externa, $mysqli);
-
-							$query_Recordset1 = "SELECT MAX(id) as last_insert from usuarios";
-							$Recordset1 = mysql_query($query_Recordset1, $mysqli) or die(mysql_error());
-							$Resultado = mysql_fetch_assoc($Recordset1);
-							
+						 $Usuarios = new Usuarios();
+						$Resultuser = $Usuarios->find(array(
+							"columns" => "id",
+						    "conditions" => "id_cliente='".$id_cliente."'", 
+						    "limit" => 1
+						));
+						$id_usuario=$Resultuser[0]['id'];
 							
 						
 							$Saveas = new Permisos();						
 							$Saveas->assign(array(
-								"id_usuario" =>$Resultado['last_insert'],
+								"id_usuario" =>$id_usuario,
 								"mod_home" =>1,
 								"sub_home_home" =>1,
-								"mod_configuraciones" =>1,
-								"sub_configuraciones_usuarios" =>1,
-								"sub_configuraciones_usuarios_new" =>1,
-								"sub_configuraciones_usuarios_edit" =>1,
-								"sub_configuraciones_usuarios_delete" =>1,
-								"mod_sucursales" =>1,						
-								"sub_sucursales_sucursales" =>1,
-								"sub_sucursales_sucursales_new" =>1,
-								"sub_sucursales_sucursales_edit" =>1,
-								"sub_sucursales_sucursales_delete" =>1,	
-								"mod_promociones" =>1,
-								"sub_promociones_promociones" =>1,
-								"sub_promociones_promociones_new" =>1,
-								"sub_promociones_promociones_edit" =>1,
-								"sub_promociones_promociones_delete" =>1,
+								"mod_areaclientes" =>1,
+								"sub_areaclientes_areaclientes" =>1,
+								"sub_areaclientes_areaclientes_new" =>1,
+								"mod_perfil" =>1,
+								"sub_perfil_perfil" =>1,
+								"sub_perfil_perfil_edit" =>1,					
+								
 							));
 							
 							$Saveas->save();
 						
 
 
-					}*/
+					}
 					
 					
 					///////////////////////

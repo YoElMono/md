@@ -63,7 +63,7 @@ class LoginController extends ControllerBase {
 
 	public function logoutAction(){
 		$this->session->remove("id");
-		$this->session->remove("id_fb");
+		$this->session->remove("id_cliente");
 		$this->session->remove("nombre");
 		$this->session->remove("apellido");
 		$this->session->remove("email");
@@ -114,13 +114,13 @@ class LoginController extends ControllerBase {
 				} else {							
 
 					$this->session->set("id",$user->__get('id'));
-					$this->session->set("id_fb",$user->__get('id_fb'));
+					$this->session->set("id_cliente",$user->__get('id_cliente'));
 					$this->session->set("nombre",$user->__get('nombre'));
 					$this->session->set("apellido",$user->__get('apellido'));
 					$this->session->set("email",$user->__get('email'));
 					$this->session->set("user",$user->__get('user'));
 					$this->session->set("tipo",$user->__get('tipo'));
-					$this->session->set("id_negocio",$user->__get('id_negocio'));
+				
 					$this->setIP();
 					$this->setMenu();
 					$this->response->redirect($this->view->PrimerMenu);

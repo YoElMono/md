@@ -1,0 +1,94 @@
+<section class="hbox stretch">
+            <section>
+              <section class="vbox">
+                <section class="scrollable padder">              
+                 
+
+
+
+                  <section class="row m-b-md">
+                    <div class="col-sm-6">
+                      <h3 class="m-b-xs text-black">Area Clientes</h3>
+                      <small>Bienvenido  <?php echo $_SESSION['nombre']; ?></small>
+                    </div>
+                   
+                  </section>
+                  <div class="row">
+                    <div class="col-sm-12">
+                      <div class="panel b-a">
+                        <div class="row m-n">
+                          <div class="col-md-6 b-b b-r">
+                            <a href="#" class="block padder-v hover">
+                              <span class="i-s i-s-2x pull-left m-r-sm">
+                                <i class="i i-hexagon2 i-s-base text-danger hover-rotate"></i>
+                                <i class="i i-plus2 i-1x text-white"></i>
+                              </span>
+                              <span class="clear">
+                                <span class="h3 block m-t-xs text-danger"><?php echo $NumEmpresas ?></span>
+                                <small class="text-muted text-u-c">Empresas</small>
+                              </span>
+                            </a>
+                          </div>
+                          <div class="col-md-6 b-b">
+                            <a href="#" class="block padder-v hover">
+                              <span class="i-s i-s-2x pull-left m-r-sm">
+                                <i class="i i-hexagon2 i-s-base text-success-lt hover-rotate"></i>
+                                <i class="i  i-copy3 i-sm text-white"></i>
+                              </span>
+                              <span class="clear">
+                                <span class="h3 block m-t-xs text-success"><?php echo $NumTramites ?></span>
+                                <small class="text-muted text-u-c">Tramites</small>
+                              </span>
+                            </a>
+                          </div>
+                         
+                          
+                        </div>
+                      </div>
+                    </div>
+                   
+                   
+                    
+                  </div>           
+                  <div class="row bg-light dk m-b">
+                    <?php for($i=0;$i<count($Tramites);$i++){?>
+                    <div class="col-md-6 ">
+                      <p></p>
+                       <section class="panel panel-default"> 
+                          <header class="panel-heading bg-light no-border"> 
+                            <div class="clearfix">
+                              <a href="#" class="pull-left thumb-md avatar b-3x m-r"> <img src="images/processing-file.png"> </a> 
+                              <div class="clear"> 
+                                <div class="h3 m-t-xs m-b-xs">Tramite No.  <?php echo $Tramites[$i]['id']; ?>  </div> 
+                                <small class="text-muted"><b>Empresa:</b> <?php echo $Tramites[$i]['empresa']; ?></small> 
+                              </div> 
+                            </div> 
+                          </header> 
+                          <div class="list-group no-radius alt"> 
+                            <a class="list-group-item" href="#"> <i class="fa fa-circle text-success pull-right text-xs m-t-sm"></i><i class="fa  fa-check-square"></i><b> Estatus:</b>  <?php echo $Tramites[$i]['status']; ?></a> 
+                            <a class="accordion-toggle list-group-item" data-toggle="collapse" data-parent="#accordion2" href="#tab_<?php echo $Tramites[$i]['id']; ?>"> <span class="badge bg-info">16</span> <i class="fa  fa-file-text-o"></i> Documentos Asociados </a> 
+                              <div id="tab_<?php echo $Tramites[$i]['id']; ?>" class="panel-collapse collapse "> 
+                                <div class="panel-body text-sm">contenido</div> 
+                              </div>  
+                            <a class="accordion-toggle list-group-item" data-toggle="collapse" data-parent="#accordion2" href="#tab2_<?php echo $Tramites[$i]['id']; ?>"> <span class="badge bg-light">5</span> <i class="fa fa-dollar "></i> Historial de Pagos </a>
+                            <div id="tab2_<?php echo $Tramites[$i]['id']; ?>" class="panel-collapse collapse "> 
+                                <div class="panel-body text-sm">contenido</div> 
+                            </div>  
+                          </div>
+                          
+
+                       </section>
+
+                       
+                    </div>
+                    <?php }?>
+                  
+
+
+
+                  </div>
+                  
+                </section>
+              </section>
+            </section>
+          </section>

@@ -25,61 +25,69 @@ class HomeController extends ControllerBase {
 			return false;
 		}
 		
+		//Empresas
+		$Empresas = array();
+		$Table = new Negocios();
+		$Result = $Table->find(array(
+				"columns" => "id,razon_social",
+			    "conditions" => "status=1 and id_cliente=".(int) $_SESSION['id_cliente'],			    	    
+		));
+		$NumEmpresas=count($Result);
+		$this->view->NumEmpresas = $NumEmpresas;
+
+		//Tramites
+		$Tramites = array();
+		$Archivos = array();
+		$Table = new ViewTramites();
+		$Tabla = new Documentos();
+		$ResultTramites = $Table->find(array(
+				"columns" => "*",
+			    "conditions" => "id_cliente=".(int) $_SESSION['id_cliente'],			    	    
+		));
+		$NumTramites=count($ResultTramites);
+		$this->view->NumTramites = $NumTramites;
+
+		foreach($ResultTramites as $value){
+			$Tramites[] = array("id" => $value->id ,
+				"id_empresa" => $value->id_empresa,
+				"empresa" => $value->empresa,
+				"status" => $value->status,
+				
+				
+				);
+			
+
+		}
+		$this->view->Tramites = $Tramites;
+
+		//echo "<pre>";print_r($Tramites);exit();
+
+
+
+
+
+
 		$this->ajaxBody("Inicio");
 		$this->setHeaderMenu("Inicio" , "Inicio" , "home" , "");
 		$this->setActionSubMenu(0, "home/slider.phtml");
 		$this->view->session = $_SESSION['PermisosUser']['sub_home_home'];
 		return true;
-	}
-
-
-	public function qrAction($trama){
-		//print_r($trama);
-		//exit();
-		$this->view->disable();
-
-		$Result = array();
-		if( isset($trama) && !empty($trama) ){
-			$Explode = explode("," , $trama);
-			//print_r($Explode);
-			//exit();
-			$email = trim($Explode[2]);
-			$cadena=trim($Explode[1]);
-
-			$Usuarios = Usuarios::findFirst("sha1(email)='".$email."'");
-			if(!$Usuarios){
-				$Data="error";	
-			}else{
-				//echo "<pre>";
-				//print_r($Usuarios);
-				//exit();
-
-				$Data="<div><h2>Bienvenido</h2> </div><div style='marging-top:20px'><h3>".$Usuarios->nombre." ".$Usuarios->apellido."</h3></div><div style='color:#900; marging-top:50px'><h2>Checking Exitoso !!</h2> </div>";	
-
-			}
-
-		}else{
-
-			$Data="error";	
-
-
-		}
-		echo   $Data;
-
-
-			
 
 
 		
-		//$this->response->setContentType('application/json', 'UTF-8');
-       // $response = new \Phalcon\Http\Response();
-        //$response->setContent(json_encode($Data));
-        //return $response;
+		
 
 
 
 
-	}	
+
+
+
+
+	}
+
+
+	
 
 
 
