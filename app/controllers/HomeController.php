@@ -25,42 +25,79 @@ class HomeController extends ControllerBase {
 			return false;
 		}
 		
-		//Empresas
-		$Empresas = array();
-		$Table = new Negocios();
-		$Result = $Table->find(array(
-				"columns" => "id,razon_social",
-			    "conditions" => "status=1 and id_cliente=".(int) $_SESSION['id_cliente'],			    	    
-		));
-		$NumEmpresas=count($Result);
-		$this->view->NumEmpresas = $NumEmpresas;
+		
+		if ($_SESSION['tipo']=='Cliente') {	
+				//Empresas
+				$Empresas = array();
+				$Table = new Negocios();
+				$Result = $Table->find(array(
+						"columns" => "id,razon_social",
+					    "conditions" => "status=1 and id_cliente=".(int) $_SESSION['id_cliente'],			    	    
+				));
+				$NumEmpresas=count($Result);
+				$this->view->NumEmpresas = $NumEmpresas;
 
-		//Tramites
-		$Tramites = array();
-		$Archivos = array();
-		$Table = new ViewTramites();
-		$Tabla = new Documentos();
-		$ResultTramites = $Table->find(array(
-				"columns" => "*",
-			    "conditions" => "id_cliente=".(int) $_SESSION['id_cliente'],			    	    
-		));
-		$NumTramites=count($ResultTramites);
-		$this->view->NumTramites = $NumTramites;
+				//Tramites
+				$Tramites = array();
+				$Archivos = array();
+				$Table = new ViewTramites();
+				$Tabla = new Documentos();
+				$ResultTramites = $Table->find(array(
+						"columns" => "*",
+					    "conditions" => "id_cliente=".(int) $_SESSION['id_cliente'],			    	    
+				));
+				$NumTramites=count($ResultTramites);
+				$this->view->NumTramites = $NumTramites;
 
-		foreach($ResultTramites as $value){
-			$Tramites[] = array("id" => $value->id ,
-				"id_empresa" => $value->id_empresa,
-				"empresa" => $value->empresa,
-				"status" => $value->status,
-				
-				
-				);
-			
-
+				foreach($ResultTramites as $value){
+					$Tramites[] = array("id" => $value->id ,
+						"id_empresa" => $value->id_empresa,
+						"empresa" => $value->empresa,
+						"status" => $value->status,	
+						);			
+				}
+				$this->view->Tramites = $Tramites;
+				//echo "<pre>";print_r($Tramites);exit();
 		}
-		$this->view->Tramites = $Tramites;
 
-		//echo "<pre>";print_r($Tramites);exit();
+
+		if ($_SESSION['tipo']=='Administrador') {	
+				//Empresas
+				$Empresas = array();
+				$Table = new Negocios();
+				$Result = $Table->find(array(
+						"columns" => "id,razon_social",
+					    "conditions" => "status=1",			    	    
+				));
+				$NumEmpresas=count($Result);
+				$this->view->NumEmpresas = $NumEmpresas;
+				//clientes
+				$Clientes = array();
+				$Table = new Clientes();
+				$Result = $Table->find(array(
+						"columns" => "id",
+					    "conditions" => "status=1",			    	    
+				));
+				$NumClientes=count($Result);
+				$this->view->NumClientes = $NumClientes;
+
+				
+
+				//Tramites
+				$Tramites = array();
+				$Table = new Tramites();
+				$ResultTramites = $Table->find(array(
+						"columns" => "id",
+					    "conditions" => "",			    	    
+				));
+				$NumTramites=count($ResultTramites);
+				$this->view->NumTramites = $NumTramites;
+				
+				//echo "<pre>";print_r($Tramites);exit();
+		}
+
+
+		
 
 
 
