@@ -38,10 +38,8 @@ class HomeController extends ControllerBase {
 				$this->view->NumEmpresas = $NumEmpresas;
 
 				//Tramites
-				$Tramites = array();
-				$Archivos = array();
-				$Table = new ViewTramites();
-				$Tabla = new Documentos();
+				$Tramites = array();				
+				$Table = new ViewTramites();				
 				$ResultTramites = $Table->find(array(
 						"columns" => "*",
 					    "conditions" => "id_cliente=".(int) $_SESSION['id_cliente'],			    	    
@@ -50,10 +48,46 @@ class HomeController extends ControllerBase {
 				$this->view->NumTramites = $NumTramites;
 
 				foreach($ResultTramites as $value){
+
+
+					//Archivos
+					$Archivos = array();				
+					$Tabla = new Documentos();			
+					$Resultarchivo = $Tabla->find(array(
+							"columns" => "nombre,archivo",
+						    "conditions" => "status=1 and id_negocio=".(int) $value->id_empresa ,			    	    
+					));
+					foreach($Resultarchivo as $valor){					
+						 $Archivos[] = array(
+										"nombre" => $valor->nombre,
+										"archivo" => $valor->archivo,										
+										);	
+					}	
+
+
+					//Pagos
+					$Pagos = array();				
+					$Tablapagos = new Movimientos();			
+					$ResultPagos = $Tablapagos->find(array(
+							"columns" => "id,fecha,monto",
+						    "conditions" => "status=1 and tipo='Pago' and id_tramite=".(int) $value->id,			    	    
+					));
+					foreach($ResultPagos as $valorpago){					
+						 $Pagos[] = array(
+										"fecha" => $valorpago->fecha,
+										"monto" => $valorpago->monto,										
+										);	
+					}
+
+
+
 					$Tramites[] = array("id" => $value->id ,
 						"id_empresa" => $value->id_empresa,
 						"empresa" => $value->empresa,
+						"costo" => $value->costo,
 						"status" => $value->status,	
+						"archivos"=>$Archivos,
+						"pagos"=>$Pagos,
 						);			
 				}
 				$this->view->Tramites = $Tramites;

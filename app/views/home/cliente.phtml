@@ -60,19 +60,40 @@
                               <a href="#" class="pull-left thumb-md avatar b-3x m-r"> <img src="images/processing-file.png"> </a> 
                               <div class="clear"> 
                                 <div class="h3 m-t-xs m-b-xs">Tramite No.  <?php echo $Tramites[$i]['id']; ?>  </div> 
-                                <small class="text-muted"><b>Empresa:</b> <?php echo $Tramites[$i]['empresa']; ?></small> 
+                                <div> <small class="text-muted"><b>Empresa:</b> <?php echo $Tramites[$i]['empresa']; ?></small> </div>
+                                <div> <small class="text-muted"><b>Costo:</b> <?php echo $Tramites[$i]['costo']; ?></small> </div>  
                               </div> 
                             </div> 
                           </header> 
                           <div class="list-group no-radius alt"> 
                             <a class="list-group-item" href="#"> <i class="fa fa-circle text-success pull-right text-xs m-t-sm"></i><i class="fa  fa-check-square"></i><b> Estatus:</b>  <?php echo $Tramites[$i]['status']; ?></a> 
-                            <a class="accordion-toggle list-group-item" data-toggle="collapse" data-parent="#accordion2" href="#tab_<?php echo $Tramites[$i]['id']; ?>"> <span class="badge bg-info">16</span> <i class="fa  fa-file-text-o"></i> Documentos Asociados </a> 
+                            <a class="accordion-toggle list-group-item" data-toggle="collapse" data-parent="#accordion2" href="#tab_<?php echo $Tramites[$i]['id']; ?>"> <span class="badge bg-info"><?php echo count($Tramites[$i]['archivos']); ?> </span> <i class="fa  fa-file-text-o"></i> Documentos Asociados </a> 
                               <div id="tab_<?php echo $Tramites[$i]['id']; ?>" class="panel-collapse collapse "> 
-                                <div class="panel-body text-sm">contenido</div> 
+                                <div class="panel-body text-sm">
+                                  <?php //echo "<pre>"; print_r($Tramites[$i]['archivos']) 
+
+                                  for($x=0;$x<count($Tramites[$i]['archivos']);$x++){?>                                    
+                                     <a href="tmp/doc_empresas/<?php  echo $Tramites[$i]['archivos'][$x]['archivo'];?>"  target="_blank"><i class="fa fa-file-text-o"></i> <?php  echo $Tramites[$i]['archivos'][$x]['nombre'];?></a> 
+                                  <?php } ?>  
+                                  
+
+
+                                   
+
+                                </div> 
                               </div>  
-                            <a class="accordion-toggle list-group-item" data-toggle="collapse" data-parent="#accordion2" href="#tab2_<?php echo $Tramites[$i]['id']; ?>"> <span class="badge bg-light">5</span> <i class="fa fa-dollar "></i> Historial de Pagos </a>
+                            <a class="accordion-toggle list-group-item" data-toggle="collapse" data-parent="#accordion2" href="#tab2_<?php echo $Tramites[$i]['id']; ?>"> <span class="badge bg-light"><?php  echo count($Tramites[$i]['pagos']); ?> </span> <i class="fa fa-dollar "></i> Historial de Pagos </a>
                             <div id="tab2_<?php echo $Tramites[$i]['id']; ?>" class="panel-collapse collapse "> 
-                                <div class="panel-body text-sm">contenido</div> 
+                                <div class="panel-body text-sm">
+                                  <?php $suma=0; for($x=0;$x<count($Tramites[$i]['pagos']);$x++){ $suma+=$Tramites[$i]['pagos'][$x]['monto'];?>                                                                      
+                                     <div><i class="fa fa-calendar"></i> <?php  echo $Tramites[$i]['pagos'][$x]['fecha'];?> | $<?php  echo $Tramites[$i]['pagos'][$x]['monto'];?> </div> 
+                                  <?php } ?>
+                                  <p></p>
+                                  <hr></hr>
+                                  <div><i class="fa fa-dollar"></i> Total Acumulado: <?php  echo  $suma; ?> </div>   
+
+
+                                </div> 
                             </div>  
                           </div>
                           
