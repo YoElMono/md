@@ -176,12 +176,9 @@ class NegociosController extends ControllerBase {
 	}
 
 
-	public function newAction($id_cliente){
+	public function newAction($id_cliente=0){
 
-		 //$Folder =  __DIR__  . "tmp/negocios/";
-		 $Folder = "tmp/negocios/";		
-		@mkdir($Folder , 777);
-
+			 
 		if( !$this->Security->securitySession() ){
 			return false;
 		}
@@ -227,272 +224,20 @@ class NegociosController extends ControllerBase {
 			$_POST["ciec"] = utf8_encode($_POST["ciec"]);
 			$_POST["fiel"] = utf8_encode($_POST["fiel"]);
 			$_POST["valor_accion"] = round(($_POST["capital_total"]/$_POST["acciones_totales"]),2,PHP_ROUND_HALF_DOWN);
-			//$usernew=$_POST["correo_contacto"];
-			//$passnew=$_POST["password"];
 			
+			//echo "<pre>";print_r($_POST);exit();			
 			
-			
-
-			if($_FILES['archivo_acta']["name"] != ""){
-				$name = explode('.', $_FILES['archivo_acta']['name']);
-				$ext = $name[count($name)-1];
-				$name = 'acta_'.uniqid().'.'.$ext;
-				$_POST['archivo_acta'] = $name;
-			}	
-
-
-			if($_FILES['archivo_fiel']["name"] != ""){
-				$name1 = explode('.', $_FILES['archivo_fiel']['name']);
-				$ext1 = $name1[count($name1)-1];
-				$name1 = 'fiel_'.uniqid().'.'.$ext1;
-				$_POST['archivo_fiel'] = $name1;
-			}	
-
-
-			if($_FILES['archivo_ciec']["name"] != ""){
-				$name2 = explode('.', $_FILES['archivo_ciec']['name']);
-				$ext2 = $name2[count($name2)-1];
-				$name2 = 'ciec_'.uniqid().'.'.$ext2;
-				$_POST['archivo_ciec'] = $name2;
-			}	
-					
 			
 			$Table = new Negocios();
 			$Result = $Table->find(array(
 				"columns" => "id",
-			    "conditions" => "nombre='".$_POST['nombre']."'", 
+			    "conditions" => "razon_social='".$_POST['razon_social']."'", 
 			    "limit" => 1
 			));
 			if( count($Result) <= 0 ){
 				$Table->assign($this->request->getPost());
 				if($Table->save()){
 
-					/*obtenemos id de negocio para crear usuario
-
-					$hostname_externa = $this->datosdb['host'];
-					$database_externa = $this->datosdb['dbname'];
-					$username_externa = $this->datosdb['username'];
-					$password_externa = $this->datosdb['password'];
-
-					$mysqli = @mysql_connect($hostname_externa, $username_externa, $password_externa) or trigger_error(mysql_error(),E_USER_ERROR);
-					mysql_select_db($database_externa, $mysqli);
-
-					$query= "SELECT MAX(id) as last_insert from negocios";
-					$Recordset1 = mysql_query($query, $mysqli) or die(mysql_error());
-					$Resultid = mysql_fetch_assoc($Recordset1);*/
-
-					/*termina obtenemos id de negocio para crear usuario*/
-
-
-
-
-
-
-					if($_FILES['archivo_acta']["name"] != ""){
-						@copy($_FILES['archivo_acta']['tmp_name'],$Folder.$name);
-						$ruta=$Folder.$name;
-					}
-					if($_FILES['archivo_ciec']["name"] != ""){
-						@copy($_FILES['archivo_ciec']['tmp_name'],$Folder.$name1);
-						$ruta1=$Folder.$name1;
-
-					}
-					if($_FILES['archivo_ciec']["name"] != ""){
-						@copy($_FILES['archivo_ciec']['tmp_name'],$Folder.$name2);
-						$ruta2=$Folder.$name2;								
-
-					}
-					///////////impórtante////////////					
-					//creamos un usuario tipo Negocio,enviamos correo y damos permisos
-					/*
-						$Guardaren = new Usuarios();						
-						$Guardaren->assign(array(
-							"id_usuario" =>$_SESSION['id_web'],
-							"id_negocio" =>$Resultid['last_insert'],
-							"email" =>$_POST["correo_contacto"],
-							"user" =>$_POST["correo_contacto"],
-							"password" =>sha1($_POST["password"]),
-							"nombre" =>$_POST["nombre"],
-							"telefono" =>$_POST["telefono"],
-							"tipo" =>'Negocio',
-							"fecha" =>date("Y-m-d H:i:s"),	
-							"ip" =>$this->getRealIP(),
-							"foto" =>$name,
-							"status" =>'1',	
-						));
-						
-						if($Guardaren->save()){	
-						///mandamos correo
-						$titulo = 'Bienvenido  a PingShop';
-
-						$mensaje = '<div>
-						<table width="100%" border="0" cellspacing="0" cellpadding="0" style="background-color:#d6d6d5;border:0;border-collapse:collapse;border-spacing:0" bgcolor="#d6d6d5">
-						<tr>
-						<td align="center">
-						<!---->
-						<table width="100%" border="0" align="center" cellpadding="0" cellspacing="0" style="border:0;border-collapse:collapse;border-spacing:0;max-width:700px">
-						<tr>
-						<td bgcolor="#38B6B4">&nbsp;</td>
-						<td bgcolor="#38B6B4">&nbsp;</td>
-						<td bgcolor="#38B6B4">&nbsp;</td>
-						<td bgcolor="#38B6B4">&nbsp;</td>
-						</tr>
-						<tr>
-						<td width="3%" bgcolor="#FFFFFF">&nbsp;</td>
-						<td width="84%" bgcolor="#FFFFFF" style="color:#000000;font-family:\'ClanPro-Book\',\'HelveticaNeue-Light\',\'Helvetica Neue Light\',Helvetica,Arial,sans-serif;font-size:20px;line-height:36px">
-						<b>Bienvenido(a) </b>&nbsp;'.$_POST['nombre'].'
-						</td>
-						<td width="10%" bgcolor="#FFFFFF"><img src="http://pingshop.testingview.com/images/logo_correo.png" /></td>
-						<td width="3%" bgcolor="#FFFFFF">&nbsp;</td>
-						</tr>
-						<tr>
-						<td bgcolor="#FFFFFF">&nbsp;</td>
-						<td bgcolor="#FFFFFF"  style="color:#717172;font-family:\'ClanPro-Book\',\'HelveticaNeue-Light\',\'Helvetica Neue Light\',Helvetica,Arial,sans-serif;font-size:16px;line-height:28px">De parte del equipo de <b>PingShop</b> recibe una cordial bienvenida.</br> ya eres parte de esta comunidad.</td>
-						<td bgcolor="#FFFFFF">&nbsp;</td>
-						<td bgcolor="#FFFFFF">&nbsp;</td>
-						</tr>
-						<tr>
-						<td bgcolor="#FFFFFF">&nbsp;</td>
-						<td bgcolor="#FFFFFF">&nbsp;</td>
-						<td bgcolor="#FFFFFF">&nbsp;</td>
-						<td bgcolor="#FFFFFF">&nbsp;</td>
-						</tr>
-						<tr>
-						<td bgcolor="#FFFFFF">&nbsp;</td>
-						<td bgcolor="#FFFFFF"><hr></hr></td>
-						<td bgcolor="#FFFFFF">&nbsp;</td>
-						<td bgcolor="#FFFFFF">&nbsp;</td>
-						</tr>
-						<tr>
-						<td bgcolor="#FFFFFF">&nbsp;</td>
-						<td bgcolor="#FFFFFF" align="left" style="color:#000000;font-family:\'ClanPro-Book\',\'HelveticaNeue-Light\',\'Helvetica Neue Light\',Helvetica,Arial,sans-serif;font-size:20px;line-height:20px"><b>Datos de acceso</b></td>
-						<td bgcolor="#FFFFFF">&nbsp;</td>
-						<td bgcolor="#FFFFFF">&nbsp;</td>
-						</tr>
-						<tr>
-						<td bgcolor="#FFFFFF">&nbsp;</td>
-						<td bgcolor="#FFFFFF" align="left">
-                        <b>Usuario:</b>	'.$_POST["email"].'					
-						</td>
-						<td bgcolor="#FFFFFF">&nbsp;</td>
-						<td bgcolor="#FFFFFF">&nbsp;</td>
-						</tr>
-						<tr>
-						  <td bgcolor="#FFFFFF">&nbsp;</td>
-						  <td bgcolor="#FFFFFF" align="left"><b>Password:</b> '.$_POST["password"].'</td>
-						  <td bgcolor="#FFFFFF">&nbsp;</td>
-						  <td bgcolor="#FFFFFF">&nbsp;</td>
-						  </tr>
-						<tr>
-						<td bgcolor="#FFFFFF">&nbsp;</td>
-						<td bgcolor="#FFFFFF"><hr></hr></td>
-						<td bgcolor="#FFFFFF">&nbsp;</td>
-						<td bgcolor="#FFFFFF">&nbsp;</td>
-						</tr>
-						<tr>
-						<td bgcolor="#FFFFFF">&nbsp;</td>
-						<td bgcolor="#FFFFFF" style="color:#717172;font-family:\'ClanPro-Book\',\'HelveticaNeue-Light\',\'Helvetica Neue Light\',Helvetica,Arial,sans-serif;font-size:14px;line-height:28px">Si tienes alguna pregunta, responde a este correo o escríbenos a soporte@pingshop.com</td>
-						<td bgcolor="#FFFFFF">&nbsp;</td>
-						<td bgcolor="#FFFFFF">&nbsp;</td>
-						</tr>
-						<tr>
-						<td bgcolor="#FFFFFF">&nbsp;</td>
-						<td bgcolor="#FFFFFF">&nbsp;</td>
-						<td bgcolor="#FFFFFF">&nbsp;</td>
-						<td bgcolor="#FFFFFF">&nbsp;</td>
-						</tr>
-						<tr>
-						<td bgcolor="#000000">&nbsp;</td>
-						<td colspan="2" bgcolor="#000000">
-						<table width="100%" border="0" cellspacing="0" cellpadding="0">
-						<tr>
-						<td width="80%">dd</td>
-						<td width="5%">&nbsp;</td>
-						<td width="4%">&nbsp;</td>
-						<td width="5%">&nbsp;</td>
-						<td width="6%">&nbsp;</td>
-						</tr>
-						<tr>
-						<td><img src="http://pingshop.testingview.com/images/logo_correo_blanco.png" /></td>
-						<td align="center"><a href="#" target="_blank"><img src="http://pingshop.testingview.com/images/footer_social_facebook.png" border="0" width="10"></a></td>
-						<td align="center"><a href="#" target="_blank"><img src="http://pingshop.testingview.com/images/footer_social_twitter.png" border="0" width="20"></a></td>
-						<td align="center"><a href="#" target="_blank"><img src="http://pingshop.testingview.com/images/footer_social_instagram.png" border="0" width="20"></a></td>
-						<td align="center"><a href="#" target="_blank"><img src="http://pingshop.testingview.com/images/footer_social_linkedin.png" border="0" width="20"></a></td>
-						</tr>
-						<tr>
-						<td>&nbsp;</td>
-						<td>&nbsp;</td>
-						<td>&nbsp;</td>
-						<td>&nbsp;</td>
-						<td>&nbsp;</td>
-						</tr>
-						</table>
-						</td>
-						<td bgcolor="#000000">&nbsp;</td>
-						</tr>
-						</table>
-						<!---->    
-						</td>
-						</tr>
-						</table>
-						</div>';
-
-						  
-						$cabeceras  = 'MIME-Version: 1.0' . "\r\n";
-						$cabeceras .= 'Content-type: text/html; charset=UTF-8; format=flowed\n' . "\r\n";   
-						$cabeceras .= 'From:PingShop contacto@pingshop.com' . "\r\n";
-
-
-						@mail($datos['email'], $titulo, $mensaje, $cabeceras ); 
-						@mail('luisglezv3@gmail.com', $titulo, $mensaje, $cabeceras ); 
-
-						///termina correo
-						///////////////////////
-						//damos permisos//////
-						//////////////////////
-
-						 	$hostname_externa = $this->datosdb['host'];
-							$database_externa = $this->datosdb['dbname'];
-							$username_externa = $this->datosdb['username'];
-							$password_externa = $this->datosdb['password'];
-
-							$mysqli = @mysql_connect($hostname_externa, $username_externa, $password_externa) or trigger_error(mysql_error(),E_USER_ERROR);
-							mysql_select_db($database_externa, $mysqli);
-
-							$query_Recordset1 = "SELECT MAX(id) as last_insert from usuarios";
-							$Recordset1 = mysql_query($query_Recordset1, $mysqli) or die(mysql_error());
-							$Resultado = mysql_fetch_assoc($Recordset1);
-							
-							
-						
-							$Saveas = new Permisos();						
-							$Saveas->assign(array(
-								"id_usuario" =>$Resultado['last_insert'],
-								"mod_home" =>1,
-								"sub_home_home" =>1,
-								"mod_configuraciones" =>1,
-								"sub_configuraciones_usuarios" =>1,
-								"sub_configuraciones_usuarios_new" =>1,
-								"sub_configuraciones_usuarios_edit" =>1,
-								"sub_configuraciones_usuarios_delete" =>1,
-								"mod_sucursales" =>1,						
-								"sub_sucursales_sucursales" =>1,
-								"sub_sucursales_sucursales_new" =>1,
-								"sub_sucursales_sucursales_edit" =>1,
-								"sub_sucursales_sucursales_delete" =>1,	
-								"mod_promociones" =>1,
-								"sub_promociones_promociones" =>1,
-								"sub_promociones_promociones_new" =>1,
-								"sub_promociones_promociones_edit" =>1,
-								"sub_promociones_promociones_delete" =>1,
-							));
-							
-							$Saveas->save();
-						
-
-
-					}*/
-					
 					
 					///////////////////////
 					$this->session->set("mensajeReturn" , $this->msjReturn("&Eacute;xito" , "Se guardo el registro correctamente." , "success"));					
@@ -519,9 +264,7 @@ class NegociosController extends ControllerBase {
 
 	public function editAction($id=""){
 
-		$Folder = "tmp/negocios/";
-		@mkdir($Folder , 777);
-
+		
 		if( !$this->Security->securitySession() ){
 			return false;
 		}
@@ -588,52 +331,9 @@ class NegociosController extends ControllerBase {
 			$_POST["valor_accion"] = round(($_POST["capital_total"]/$_POST["acciones_totales"]),2,PHP_ROUND_HALF_DOWN);
 
 
-
-
-			if($_FILES['archivo_acta']["name"] != ""){
-				$name = explode('.', $_FILES['archivo_acta']['name']);
-				$ext = $name[count($name)-1];
-				$name = 'acta_'.uniqid().'.'.$ext;
-				$_POST['archivo_acta'] = $name;
-			}	
-
-
-			if($_FILES['archivo_fiel']["name"] != ""){
-				$name1 = explode('.', $_FILES['archivo_fiel']['name']);
-				$ext1 = $name1[count($name1)-1];
-				$name1 = 'fiel_'.uniqid().'.'.$ext1;
-				$_POST['archivo_fiel'] = $name1;
-			}	
-
-
-			if($_FILES['archivo_ciec']["name"] != ""){
-				$name2 = explode('.', $_FILES['archivo_ciec']['name']);
-				$ext2 = $name2[count($name2)-1];
-				$name2 = 'ciec_'.uniqid().'.'.$ext2;
-				$_POST['archivo_ciec'] = $name2;
-			}
-						
-			
-			
 			$Tabla->assign($this->request->getPost());
 
-			if($Tabla->update()){
-
-					if($_FILES['archivo_acta']["name"] != ""){
-						@copy($_FILES['archivo_acta']['tmp_name'],$Folder.$name);
-						$ruta=$Folder.$name;
-					}
-					if($_FILES['archivo_ciec']["name"] != ""){
-						@copy($_FILES['archivo_ciec']['tmp_name'],$Folder.$name1);
-						$ruta1=$Folder.$name1;
-
-					}
-					if($_FILES['archivo_ciec']["name"] != ""){
-						@copy($_FILES['archivo_ciec']['tmp_name'],$Folder.$name2);
-						$ruta2=$Folder.$name2;								
-
-					}
-
+			if($Tabla->update()){	
 
 				$this->session->set("mensajeReturn" , $this->msjReturn("&Eacute;xito" , "Se edito el registro correctamente." , "success"));
 				$this->response->redirect($this->Controller."/");
@@ -702,6 +402,7 @@ class NegociosController extends ControllerBase {
 		$this->view->jsResponse = $this->setValueData("formulario_registro" , $DataForm["data"]);
 		//$this->view->jsResponse .= '<script type="text/javascript">Puestos('.$DataForm["data"]["id_puesto"].');</script>';
 	}
+
 
 
 

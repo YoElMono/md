@@ -21,7 +21,7 @@
  				<li class=""><a href="#tab3" data-toggle="tab" onclick="jsCargarSocios(<?php echo $idregistro; ?>);">Socios</a></li>
  				<?php }?>
  				<?php  if(isset($idregistro) and !empty($idregistro)){?>
-			    <li class=""><a href="#tab2" data-toggle="tab" onclick="jsCargarDocumentos(<?php echo $idregistro; ?>);">Documentos</a></li>
+			    <li class=""><a href="#tab2" data-toggle="tab">Documentos</a></li>
 			    <?php }?>
 			    <!---->
 			  
@@ -36,9 +36,9 @@
 			                <div class="col-sm-6">
 			                	 <!----><p></p>
 
-			                	 <?php  if(!isset($IdCliente) and empty($IdCliente)){?>
+			                	 <?php  if(!isset($IdCliente) and empty($IdCliente) or  $IdCliente==0 ){?>
 			                
-				                  <label>Cliente (*)</label>
+				                  <label>Cliente (*)</label> 
 				                  <select class="form-control" id="id_cliente" name="id_cliente" data-required="true">
 				                    <option value="" selected="selected"> --- </option>
 				                    <?php if(!empty($Cliente)){ for($i=0;$i<count($Cliente);$i++){?>
@@ -288,7 +288,7 @@
     <div id="pantalla_documentos" class="hidden">
             <div style="position: relative;overflow: auto;margin: auto;padding: 30px;max-width: 550px;background-color: #f5f5f5;transition: top 0.5s;">
               <div id="documento" style="font-size: 15px;text-transform: uppercase;font-weight: bold;color: #000;">sfsf</div>
-              <form action="negocios/docuemntos/" method="post" enctype="multipart/form-data" id="form_documentos"   onsubmit="return false">
+              <form  method="post" enctype="multipart/form-data" id="form_documentos"   onsubmit="validar_cargar_documento(<?php echo $idregistro ?>); return false">
                
                    
 		                  <hr></hr> 
@@ -305,7 +305,7 @@
 			              <input type="hidden" id="id_registro" value="<?php echo $idregistro ?>">
 			              <p></p>	
                 <div class="martop10">
-                  <button id="guardar" class="btn" style="color: white;background-color: #1AAE88;border: 1px solid #ccc;" onclick="validar_documento(<?php echo $idregistro ?>);return false;">Guardar</button>
+                  <button id="guardar" class="btn" style="color: white;background-color: #1AAE88;border: 1px solid #ccc;" >Guardar</button>
                   <button class="btn" style="margin-left:10px;color: black;background-color: #f3f3f3;border: 1px solid #ccc;" onclick="hiddendocumento();return false;">Cancelar</button>
                 </div>
               </form>

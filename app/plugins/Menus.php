@@ -73,15 +73,15 @@ class Menus extends Plugin
 		),
 
 		array(
-			"name" => "Promociones",
-			"module" => "promociones",
-			"controller" => "promociones",
+			"name" => "Pagos | Gastos",
+			"module" => "pagos",
+			"controller" => "pagos",
 			"action" => "index",
 			"show" => 1,
 			"slider" => 0,
 			"slider_name" => "",
 			"sub_menu" => 0,
-			"icon" => "i-star2",
+			"icon" => "i-chart",
 			"data" => array()
 		),
 

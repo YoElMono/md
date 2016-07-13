@@ -1,0 +1,152 @@
+<style type="text/css">
+ #pantalla_pagos{position: fixed;left: 0;top: 0;width: 100%;height: 100%;background-color: rgba(0, 0, 0, 0.5);z-index: 1000;overflow-y: auto;padding-top:100px;}
+ #pantalla_gasto{position: fixed;left: 0;top: 0;width: 100%;height: 100%;background-color: rgba(0, 0, 0, 0.5);z-index: 1000;overflow-y: auto;padding-top:100px;}
+
+</style>	
+	 <div>
+		 <div class="font-bold">Tramite No. xxx</div>
+		 <div><small class="text-muted"> Cliente: xxxx | Empresa: xxx | Costo: $000 </small></div>
+	 <div>
+	 <div class="col-md-6 ">
+	      <p></p>
+	      <section class="panel panel-default">
+	        <div class="panel-heading font-bold">
+	        	<div align="left" style="float:left">Pagos</div>
+		        <div align="right"  style="float:right">
+					<a href="#" class="btn btn-sm btn-icon btn-success" onclick="JsNewPago();return false;"><i class="fa fa-plus"></i></a>
+				</div>
+				<div style="clear:both"></div>
+			</div> 
+	        <div class="panel-body">
+	          <div id="Pagos" style="height: 240px; padding: 0px; position: relative;">
+	           <!-- -->
+	           <ul class="list-group alt"> 
+                      <li class="list-group-item"> 
+                        <div class="media"> 
+                          <span class="pull-left thumb-sm"><img src="images/processing-file.png" class="img-circle"></span>                     
+                          <div class="media-body"> 
+                            <div><small class="text-muted"> <b>Fecha:</b> 23/07/2016</small> | <small class="text-muted">Pago 01 $1800</small> </div>
+                          </div> 
+                        </div> 
+                      </li> 
+
+                      <li class="list-group-item"> 
+                        <div class="media"> 
+                          <span class="pull-left thumb-sm"><img src="images/processing-file.png" class="img-circle"></span>                     
+                          <div class="media-body"> 
+                            <div><small class="text-muted"> <b>Fecha:</b> 23/07/2016</small> | <small class="text-muted">Pago 01 $1800</small> </div>
+                          </div> 
+                        </div> 
+                      </li> 
+                
+                  </ul>
+                 <div>  <b>Pagos a la fecha</b> $000</div> 
+                 <div>  <b>Restante</b> $00000000</div> 
+                <!-- -->      
+
+	          </div>
+	        </div> 
+	      </section>
+	 </div>
+
+	   <div class="col-md-6 ">
+	      <p></p>
+	      <section class="panel panel-default">
+	        <div class="panel-heading font-bold">
+	        	<div align="left" style="float:left">Gastos</div>
+		        <div align="right"  style="float:right">
+					<a href="#" class="btn btn-sm btn-icon btn-danger" onclick="JsNewGasto();return false;"><i class="fa fa-plus"></i></a>
+				</div>
+				<div style="clear:both"></div>
+			</div> 
+	        <div class="panel-body">
+	          <div id="Gastos" style="height: 240px; padding: 0px; position: relative;">
+	           	<ul class="list-group alt"> 
+	           		<li class="list-group-item"> 
+                        <div class="media"> 
+                          <span class="pull-left thumb-sm"><img src="images/processing-file.png" class="img-circle"></span>                     
+                          <div class="media-body"> 
+                            <div><small class="text-muted"> <b>Concepto:</b> xxx</small></div> 
+                            <small class="text-muted">Fecha: 23/07/2016 | Monto: $1800</small> 
+                          </div> 
+                        </div> 
+                    </li> 
+                </ul>
+                <div>  <b>Gastos a la fecha</b> $000</div> 
+                <div>  <b>Utilidad</b> $00000000</div> 
+	          </div>
+	        </div> 
+	      </section>
+	 </div>
+
+
+
+
+	<div style="clear: both;">&nbsp;</div>
+	<div style="clear: both;">&nbsp;</div>
+	<div style="clear: both;">&nbsp;</div>
+
+
+
+
+
+
+
+<div id="pantalla_pagos" class="hidden">
+		<div style="position: relative;overflow: auto;margin: auto;padding: 30px;max-width: 550px;background-color: #f5f5f5;transition: top 0.5s;">
+		  <div id="documento" style="font-size: 15px;text-transform: uppercase;font-weight: bold;color: #000;">Nuevo Pago</div>
+		  <form  method="post" enctype="multipart/form-data" id="form_documentos"   onsubmit="validar_cargar_documento(<?php echo $idregistro ?>); return false">
+		   
+		       
+		              <hr></hr> 
+		              
+		              <label>Fecha (*)</label>
+		              <input type="text" id="fecha_pago" name="fecha_pago" class="form-control" data-required="true">
+		               <p></p>	
+		              <label>Monto (*)</label>
+		              <input type="text" id="monto" name="monto" class="form-control" data-required="true">
+
+		              <input type="hidden" id="id_registro" value="<?php echo $idregistro ?>">
+		              <p></p>	
+		    <div class="martop10">
+		      <button id="guardar" class="btn" style="color: white;background-color: #1AAE88;border: 1px solid #ccc;" >Guardar</button>
+		      <button class="btn" style="margin-left:10px;color: black;background-color: #f3f3f3;border: 1px solid #ccc;" onclick="hiddenPago();return false;">Cancelar</button>
+		    </div>
+		  </form>
+		</div>
+</div>
+
+
+<div id="pantalla_gasto" class="hidden">
+		<div style="position: relative;overflow: auto;margin: auto;padding: 30px;max-width: 550px;background-color: #f5f5f5;transition: top 0.5s;">
+		  <div id="documento" style="font-size: 15px;text-transform: uppercase;font-weight: bold;color: #000;">Nuevo Gasto</div>
+		  <form  method="post" enctype="multipart/form-data" id="form_documentos"   onsubmit="validar_cargar_documento(<?php echo $idregistro ?>); return false">
+		   
+		       
+		              <hr></hr> 
+		              
+		               <label>Concepto (*)</label>
+		              <input type="text" id="concepto" name="concepto" class="form-control" data-required="true">
+		              <label>Fecha (*)</label>
+		              <input type="text" id="fecha_gasto" name="fecha_gasto" class="form-control" data-required="true">
+		               <p></p>	
+		              <label>Monto (*)</label>
+		              <input type="text" id="monto" name="monto" class="form-control" data-required="true">
+
+		              <input type="hidden" id="id_registro" value="<?php echo $idregistro ?>">
+		              <p></p>	
+		    <div class="martop10">
+		      <button id="guardar" class="btn" style="color: white;background-color: #1AAE88;border: 1px solid #ccc;" >Guardar</button>
+		      <button class="btn" style="margin-left:10px;color: black;background-color: #f3f3f3;border: 1px solid #ccc;" onclick="hiddenGasto();return false;">Cancelar</button>
+		    </div>
+		  </form>
+		</div>
+</div>
+
+
+
+
+
+
+<script type="text/javascript">actionForm=1;</script>
+
