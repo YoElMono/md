@@ -97,7 +97,7 @@ class DocumentosController extends ControllerBase {
 	        return $response;
 		}
 		$Data = array("aaData" => array());
-		$Result = Documentos::find(array(
+		$Result = DocumentosBase::find(array(
 			"columns" => "id ,nombre,date(fecha) as fecha,fecha_edit,status",
 		    "conditions" => "status!=2",
 		   //"limit" => 4
@@ -193,11 +193,11 @@ class DocumentosController extends ControllerBase {
 				$name = explode('.', $_FILES['img']['name']);
 				$ext = $name[count($name)-1];
 				$name = $this->GeneraRuta($_POST["nombre"]).".".$ext;//'img_'.uniqid().'.'.$ext;
-				$_POST['img'] = $name;
+				$_POST['archivo'] = $name;
 			}	/**/			
 			
 			
-			$Tabla = new Documentos();
+			$Tabla = new DocumentosBase();
 			$Result = $Tabla->find(array(
 				"columns" => "id",
 			    "conditions" => "nombre=:nombre: and status=:status:",
@@ -259,7 +259,7 @@ public function editAction($id=""){
 		$this->view->contenido = "";
 		if($this->request->isPost()){
 
-			$Tabla = new Documentos();
+			$Tabla = new DocumentosBase();
 			$Result = $Tabla->find(array(
 				"columns" => "id",
 			    "conditions" => "nombre=:nombre: and status=:status: and id != :id:",
@@ -269,7 +269,7 @@ public function editAction($id=""){
 			));
 			if( count($Result) <= 0 ){
 			
-				$Tabla = Documentos::findFirst(array(
+				$Tabla = DocumentosBase::findFirst(array(
 					"columns" => "*",
 				    "conditions" => "id=:id:",
 				    "bind" => array("id" => $this->request->getPost("id" , "int")),
@@ -287,7 +287,7 @@ public function editAction($id=""){
 					$ext = $name[count($name)-1];
 					$name = $this->GeneraRuta($_POST["nombre"]).".".$ext;
 					//$name = 'img_'.uniqid().'.'.$ext;
-					$_POST['img'] = $name;
+					$_POST['archivo'] = $name;
 				}/**/
 							
 				
@@ -323,7 +323,7 @@ public function editAction($id=""){
 		$this->view->formAction = $this->Controller."/edit/" .$id;
 		//$this->view->Departamentos = $this->getDepartamentos();
 		$DataForm = array("data" => array());
-		$Tabla = new Documentos();
+		$Tabla = new DocumentosBase();
 		$Result = $Tabla->find(array(
 			"columns" => "*",
 		    "conditions" => "id=:id:",
@@ -375,7 +375,7 @@ public function editAction($id=""){
 		$_POST["id"] = $id;
 		$_POST["fecha_edit"] = date("Y-m-d H:i:s");
 		$_POST["id_usuario"] = $_SESSION["id"];
-		$Tabla = Documentos::findFirst(array(
+		$Tabla = DocumentosBase::findFirst(array(
 			"columns" => "*",
 		    "conditions" => "id=:id:",
 		    "bind" => array("id" => $this->request->getPost("id" , "string")),

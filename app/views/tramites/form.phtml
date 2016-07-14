@@ -12,6 +12,7 @@
 			    <div class="tab-pane active" id="tab1">
             <div class="panel-body">
               <div class="form-group pull-in clearfix">
+                <?php if($id_negocio == ""){ ?>
               <div class="col-sm-4">
                 <label>Empresa (*)</label>
                 <select class="form-control" id="id_empresa" name="id_empresa" data-required="true" <?php if($status != "") {echo "disabled";} ?>>
@@ -24,6 +25,7 @@
                   } ?>
                 </select>      
               </div>
+                <?php  } ?>
                    <?php if(empty($archivo_disolucion) and $edit and $fecha_disolucion){?> 
                   <div class="col-sm-4">
                           <label>Documento Base Acta disolucion </label>
@@ -73,12 +75,12 @@
                           <input onkeypress="return isNumberKey(event);" class="form-control" id="costo_tramite" name="costo_tramite" data-required="true">
                     </div>
                     <?php if($status != "") {?>
-                      <?php for ($i = $status; $i <= ($status+1); $i++) { ?>
+                      <?php for ($i = $status; $i <= ($status+1); $i++) { if(isset($Status[$i]) and $Status[$i] != ""){ ?>
                       <div class="col-sm-4">
                             <label><?php echo $status==$i?"Fin $Status[$i]":"Inicio $Status[$i]";?></label>
                             <input class="form-control" id="fecha<?php echo $i;?>" name='<?php echo $status==$i?"fin_$Status_Fechas[$i]":"inicio_$Status_Fechas[$i]";?>' readonly >      
                       </div>
-                      <?php } ?>
+                      <?php } } ?>
                     <?php }?>
                
                <!-- <textarea name="contenido" id="contenido"cols="" rows="" data-required="true"></textarea> -->
@@ -119,10 +121,9 @@
               <div class="col-sm-4">
                     <label>Estatus (*)</label>
                     <select class="form-control" id="status" name="status" data-required="true">
-                     <option value="" > --- </option>
-                     <?php for ($i = $status; $i <= ($status+1); $i++) { ?>
+                     <?php for ($i = ($status); $i <= ($status+1); $i++) { if(isset($Status[$i]) and $Status[$i] != ""){ ?>
                        <option value="<?php echo $i ?>" > <?php echo $Status[$i];?> </option>
-                    <?php } ?>
+                    <?php } } ?>
                     </select>      
               </div>
               <?php }?>

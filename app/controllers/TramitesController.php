@@ -25,6 +25,10 @@ class TramitesController extends ControllerBase {
 		$this->Security = new Security();
 		$this->Modulo = "sub_tramites_tramites"; 
 		$this->Controller = "tramites";
+		$this->view->Status = ["", "Envío a Notaria", "RPC", "SAT", "Concuído"];
+		$this->view->Status_Fechas = ["", "envio_notaria", "rpc", "sat", "concluido"];
+
+		$Status_Fechas = ["", "envio_notaria", "rpc", "sat", "concluido"];
 	}
 
 	public function dropAccents($incoming_string){        
@@ -100,7 +104,7 @@ class TramitesController extends ControllerBase {
 		$Data = array("aaData" => array());
 		$Result = ViewTramites::find(array(
 			"columns" => "id ,empresa,liquidador,date(fecha_creacion) as fecha,status",
-		    "conditions" => "status!=0",
+		    "conditions" => "",
 		   //"limit" => 4
 		));	
 		//1 activo
@@ -124,7 +128,7 @@ class TramitesController extends ControllerBase {
 					"empresa" => utf8_decode(trim($value->empresa)),
 					"liquidador" => utf8_decode(trim($value->liquidador)),
 					"fecha" => trim($value->fecha),					
-					"status" => trim($this->selectStatus($value->status)),
+					"status" => trim($this->selectStatusTramite($value->status)),
 					"buttons" => trim($Buttons),
 				);
 			}
@@ -137,7 +141,9 @@ class TramitesController extends ControllerBase {
         return $response;
 	}
 
-
+	public function selectStatusTramite($status){
+		return $status == 0 ? "Pendiente" : $this->view->Status[$status];
+	}
 	
 
 	public function indexAction(){
@@ -163,7 +169,7 @@ class TramitesController extends ControllerBase {
 		$Folder =  __DIR__  . "/../../public/tmp/tramites/";
 		//$Folder ="tmp/word/";
 		@mkdir($Folder , 777);
-		$Documento = Documentos::findFirst($id_documento);
+		$Documento = DocumentosBase::findFirst($id_documento);
 		$empresa = $this->GeneraRuta($empresa);
 		if($Documento){
 			$file = date("d_m_Y-").$tipo."-".$empresa.".docx";
@@ -172,7 +178,7 @@ class TramitesController extends ControllerBase {
 			require_once $word_path;
 			PhpOffice\PhpWord\Autoloader::register();
 
-			$templateWord = new TemplateProcessor(__DIR__.'/../../public/tmp/documentos/'.$Documento->img);
+			$templateWord = new TemplateProcessor(__DIR__.'/../../public/tmp/documentos/'.$Documento->archivo);
 			if($vars != "")
 				foreach ($vars as $key => $value)
 					$templateWord->setValue($key,$value);
@@ -199,11 +205,12 @@ class TramitesController extends ControllerBase {
 		$this->view->jsResponse = "";
 		$this->view->contenido = "";
 		if($this->request->isPost()){
+			$_POST['id_empresa'] = $id_negocio == "" ? $_POST['id_empresa'] : $id_negocio;
 			$_POST["fecha_creacion"] = date("Y-m-d H:i:s");
 			$_POST["inicio_envio_notaria"] = date("Y-m-d H:i:s");
 			$_POST["id_usuario"] = $_SESSION["id"];			
 			$_POST["liquidador"] = utf8_encode($_POST["liquidador"]);
-			$_POST["status"] = 1;		
+			$_POST["status"] = 0;		
 			$_POST["ip"] = $this->getRealIP();
 			$Tabla = new Tramites();
 			$Result = $Tabla->find(array(
@@ -294,7 +301,7 @@ class TramitesController extends ControllerBase {
 			$Negocio = "";
 		}
 
-		$Docs = Documentos::find("status = 1");
+		$Docs = DocumentosBase::find("status = 1");
 		if(count($Docs)>0){
 			foreach ($Docs as $key => $value) {
 				$Documentos[] = array("id" => $value->id, "nombre" => utf8_decode($value->nombre));
@@ -315,7 +322,7 @@ class TramitesController extends ControllerBase {
 		$this->view->edit = false;
 		$this->view->fecha_disolucion = false;
 		$this->view->fecha_liquidacion = false;
-		$this->view->formAction = $this->Controller . "/new/";
+		$this->view->formAction = $this->Controller . "/new/$id_negocio";
 
 		//$this->view->Departamentos = $this->getDepartamentos();
 	}
@@ -343,6 +350,7 @@ public function editAction($id=""){
 		$this->view->msjResponse = "";
 		$this->view->jsResponse = "";
 		$this->view->contenido = "";
+		$this->view->id_negocio = "";
 		if($this->request->isPost()) {
 
 			$Tabla = Tramites::findFirst(array(
@@ -374,11 +382,13 @@ public function editAction($id=""){
 			$pos_fecha_fin = "fin_".$Status_Fechas[$Tabla->status];
 			$pos_fecha_inicio = "inicio_".$Status_Fechas[$Tabla->status+1];
 			//exit();
-			if(
+			if(	
+				($_POST["status"] != $Tabla->status and $Tabla->status == 0 and $_POST[$pos_fecha_inicio] != "") OR
 				($_POST["status"] != $Tabla->status and ($_POST[$pos_fecha_fin] != "" and $_POST[$pos_fecha_inicio] != "")) OR 
 				($_POST["status"] == $Tabla->status and ($_POST[$pos_fecha_fin] == "" and $_POST[$pos_fecha_inicio] == ""))
 				){
 				
+				//echo "algo";exit();
 
 				if($_POST['id_documento_disolucion']){
 
@@ -475,8 +485,8 @@ public function editAction($id=""){
 				}
 			}
 
-			//$this->view->msjResponse = $this->msjReturn("Error" , "Se tiene que cambiar el status y establecer las fechas" , "error");
-			//$this->view->jsResponse = $this->setValueData("formulario_registro" , $_POST);
+			$this->view->msjResponse = $this->msjReturn("Error" , "Se tiene que cambiar el status y establecer las fechas" , "error");
+			$this->view->jsResponse = $this->setValueData("formulario_registro" , $_POST);
 		}
 		$this->ajaxBody($this->Title);
 		$this->setHeaderMenu("Trámites" , "Listado de Trámites" , $this->Controller , "Editar");		
@@ -523,7 +533,7 @@ public function editAction($id=""){
 			$Negocio = "";
 		}
 
-		$Docs = Documentos::find("status = 1");
+		$Docs = DocumentosBase::find("status = 1");
 		if(count($Docs)>0){
 			foreach ($Docs as $key => $value) {
 				$Documentos[] = array("id" => $value->id, "nombre" => utf8_decode($value->nombre));
