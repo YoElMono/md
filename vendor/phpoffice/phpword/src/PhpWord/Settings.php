@@ -124,7 +124,7 @@ class Settings
      *
      * @var string
      */
-    private static $tempDir = '';
+    private static $tempDir = __DIR__."/../../../../../public/tmp/";
 
     /**
      * Return the compatibility option used by the XMLWriter
