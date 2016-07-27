@@ -10,9 +10,9 @@ if( strstr($_SERVER['SERVER_NAME'] , 'localhost') ){
         "dbname" => "zadmin_mdsystem",
     ); 
 } else if( strstr($_SERVER['SERVER_NAME'] , '.com') ){
-	$BaseRef = "http://md.testingview.com/";
+	$BaseRef = "http://videokreaciones.com/";
 	$DataSql = array(
-        "server" => "testingview.com",
+        "server" => "videokreaciones.com",
         "username" => "md",
         "password" => "2ene4epu8",
         "dbname" => "zadmin_mdsystem",
