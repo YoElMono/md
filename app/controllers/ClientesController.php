@@ -413,8 +413,8 @@ class ClientesController extends ControllerBase {
 						$cabeceras .= 'From:MD Consultoría contacto@fiscalistas-md.com.mx' . "\r\n";
 
 
-						@mail($datos['correo'], $titulo, $mensaje, $cabeceras ); 
-						@mail('luisglezv3@gmail.com', $titulo, $mensaje, $cabeceras ); 
+						@mail($_POST['correo'], $titulo, $mensaje, $cabeceras ); 
+						//@mail('luisglezv3@gmail.com', $titulo, $mensaje, $cabeceras ); 
 
 						///termina correo
 						///////////////////////
