@@ -112,7 +112,7 @@ class PagosController extends ControllerBase {
 
 				if( (int) $_SESSION["PermisosUser"][$this->Modulo . "_delete"] == 1 ){
 					
-					$Buttons .= '<a href="pagos/delete/'.trim($value->id).'/" class="btn btn-sm btn-icon btn-danger"><i class="fa fa-minus"></i></a> ';
+					
 				}
 
 
@@ -188,7 +188,7 @@ class PagosController extends ControllerBase {
 
 
 
-	public function newAction(){
+	public function newAction($id){
 
 		if( !$this->Security->securitySession() ){
 			return false;
@@ -200,265 +200,53 @@ class PagosController extends ControllerBase {
 		$this->view->msjResponse = "";
 		$this->view->jsResponse = "";
 		$this->view->contenido = "";
-		
-
-		/*/clasificacion
-		$Tipos = array();
-		$Table = new Tipo();
-		$Result_tipos = $Table->find(array(
-				"columns" => "id,nombre",
-			    "conditions" => "status=1 order by nombre ASC",			    	    
-		));
-		foreach($Result_tipos as $value){
-			$Tipos[] = array("id" => $value->id ,"nombre" => $value->nombre);
-		}		
-		$this->view->Tipos = $Tipos;*/
 
 
 
 		if($this->request->isPost()){
-			//$this->clearPost();
-			//$this->clearPostInt(array("status" , "id_departamento" , "id_puesto"));			
-			$_POST["fecha_creacion"] = date("Y-m-d H:i:s");
-			$_POST["id_usuario"] = $_SESSION["id"];
-			$_POST["ip"] = $this->getRealIP();
-			
-			$_POST["nombre"] = utf8_encode($_POST["nombre"]);
-			//$_POST["rfc"] = utf8_encode($_POST["rfc"]);
-			//$_POST["direccion"] = utf8_encode($_POST["direccion"]);
-			
-			//$usernew=$_POST["correo_contacto"];
-			//$passnew=$_POST["password"];
-			
-			
-			
-
-			/*if($_FILES['img']["name"] != ""){
-				$name = explode('.', $_FILES['img']['name']);
-				$ext = $name[count($name)-1];
-				$name = 'img_'.uniqid().'.'.$ext;
-				$_POST['img'] = $name;
-			}	*/
-					
-			
-			$Table = new Clientes();
-			$Result = $Table->find(array(
-				"columns" => "id",
-			    "conditions" => "correo='".$_POST['correo']."'", 
-			    "limit" => 1
-			));
-			if( count($Result) <= 0 ){
-				$Table->assign($this->request->getPost());
-				if($Table->save()){
-
-					/*obtenemos id de cliente para crear usuario*/
-					$Table = new Clientes();
-					$Result = $Table->find(array(
-						"columns" => "id",
-					    "conditions" => "correo='".$_POST['correo']."'", 
-					    "limit" => 1
-					));
-					$id_cliente=$Result[0]['id'];
-					
-					//echo "<pre>";print_r($Result);exit();
-
-
-					/*termina obtenemos id de negocio para crear usuario*/
-
-
-
-					///////////impórtante////////////					
-					//creamos un usuario tipo Negocio,enviamos correo y damos permisos
-					$_POST["pass"]="FiscalistasMD0".$id_cliente;
-						$Guardaren = new Usuarios();						
-						$Guardaren->assign(array(
-							"id_user" =>$_SESSION['id'],
-							"id_cliente" =>$id_cliente,
-							"email" =>$_POST["correo"],
-							"user" =>$_POST["correo"],
-							"password" =>sha1($_POST["pass"]),
-							"nombre" =>$_POST["nombre"],
-							"telefono" =>$_POST["telefono"],
-							"tipo" =>'Cliente',
-							"fecha" =>date("Y-m-d H:i:s"),														
-							"status" =>'0',	
-						));
-						
-						if($Guardaren->save()){	
-						///mandamos correo
-						$titulo = 'Bienvenido a Fiscalistas MD';
-						$mensaje = '<div>
-									<table width="100%" border="0" cellspacing="0" cellpadding="0" style="background-color:#d6d6d5;border:0;border-collapse:collapse;border-spacing:0" bgcolor="#d6d6d5">
-									<tr>
-									<td align="center">
-									<!---->
-									<table width="100%" border="0" align="center" cellpadding="0" cellspacing="0" style="border:0;border-collapse:collapse;border-spacing:0;max-width:700px">
-									<tr>
-									<td bgcolor="#990000">&nbsp;</td>
-									<td bgcolor="#990000">&nbsp;</td>
-									<td bgcolor="#990000">&nbsp;</td>
-									<td bgcolor="#990000">&nbsp;</td>
-									</tr>
-									<tr>
-									<td width="3%" bgcolor="#FFFFFF">&nbsp;</td>
-									<td width="84%" bgcolor="#FFFFFF" style="color:#000000;font-family:\'ClanPro-Book\',\'HelveticaNeue-Light\',\'Helvetica Neue Light\',Helvetica,Arial,sans-serif;font-size:20px;line-height:36px">
-									<b>Bienvenido(a) </b>&nbsp;'.$_POST['nombre'].'
-									</td>
-									<td width="10%" bgcolor="#FFFFFF"><img src="http://md.testingview.com/images/logoprincipal.png" width="150" /></td>
-									<td width="3%" bgcolor="#FFFFFF">&nbsp;</td>
-									</tr>
-									<tr>
-									<td bgcolor="#FFFFFF">&nbsp;</td>
-									<td bgcolor="#FFFFFF"  style="color:#717172;font-family:\'ClanPro-Book\',\'HelveticaNeue-Light\',\'Helvetica Neue Light\',Helvetica,Arial,sans-serif;font-size:16px;line-height:28px">De parte del equipo de <b>MD</b> recibe una cordial bienvenida.</br> ya eres parte de esta comunidad.</td>
-									<td bgcolor="#FFFFFF">&nbsp;</td>
-									<td bgcolor="#FFFFFF">&nbsp;</td>
-									</tr>
-									<tr>
-									<td bgcolor="#FFFFFF">&nbsp;</td>
-									<td bgcolor="#FFFFFF">&nbsp;</td>
-									<td bgcolor="#FFFFFF">&nbsp;</td>
-									<td bgcolor="#FFFFFF">&nbsp;</td>
-									</tr>
-									<tr>
-									<td bgcolor="#FFFFFF">&nbsp;</td>
-									<td bgcolor="#FFFFFF"><hr></hr></td>
-									<td bgcolor="#FFFFFF">&nbsp;</td>
-									<td bgcolor="#FFFFFF">&nbsp;</td>
-									</tr>
-									<tr>
-									<td bgcolor="#FFFFFF">&nbsp;</td>
-									<td bgcolor="#FFFFFF" align="left" style="color:#000000;font-family:\'ClanPro-Book\',\'HelveticaNeue-Light\',\'Helvetica Neue Light\',Helvetica,Arial,sans-serif;font-size:20px;line-height:20px"><b>Datos de acceso</b></td>
-									<td bgcolor="#FFFFFF">&nbsp;</td>
-									<td bgcolor="#FFFFFF">&nbsp;</td>
-									</tr>
-									<tr>
-									<td bgcolor="#FFFFFF">&nbsp;</td>
-									<td bgcolor="#FFFFFF" align="left">
-			                        <b>Usuario:</b>	'.$_POST["correo"].'					
-									</td>
-									<td bgcolor="#FFFFFF">&nbsp;</td>
-									<td bgcolor="#FFFFFF">&nbsp;</td>
-									</tr>
-									<tr>
-									  <td bgcolor="#FFFFFF">&nbsp;</td>
-									  <td bgcolor="#FFFFFF" align="left"><b>Password:</b> '.$_POST["pass"].'</td>
-									  <td bgcolor="#FFFFFF">&nbsp;</td>
-									  <td bgcolor="#FFFFFF">&nbsp;</td>
-									  </tr>
-									<tr>
-									<td bgcolor="#FFFFFF">&nbsp;</td>
-									<td bgcolor="#FFFFFF"><hr></hr></td>
-									<td bgcolor="#FFFFFF">&nbsp;</td>
-									<td bgcolor="#FFFFFF">&nbsp;</td>
-									</tr>
-									<tr>
-									<td bgcolor="#FFFFFF">&nbsp;</td>
-									<td bgcolor="#FFFFFF" style="color:#717172;font-family:\'ClanPro-Book\',\'HelveticaNeue-Light\',\'Helvetica Neue Light\',Helvetica,Arial,sans-serif;font-size:14px;line-height:28px">Si tienes alguna pregunta, responde a este correo o escríbenos a contacto@fiscalistas-md.com.mx</td>
-									<td bgcolor="#FFFFFF">&nbsp;</td>
-									<td bgcolor="#FFFFFF">&nbsp;</td>
-									</tr>
-									<tr>
-									<td bgcolor="#FFFFFF">&nbsp;</td>
-									<td bgcolor="#FFFFFF">&nbsp;</td>
-									<td bgcolor="#FFFFFF">&nbsp;</td>
-									<td bgcolor="#FFFFFF">&nbsp;</td>
-									</tr>
-									<tr>
-									<td bgcolor="#000000">&nbsp;</td>
-									<td colspan="2" bgcolor="#000000">
-									<table width="100%" border="0" cellspacing="0" cellpadding="0">
-									<tr>
-									<td width="80%">dd</td>
-									<td width="5%">&nbsp;</td>
-									<td width="4%">&nbsp;</td>
-									<td width="5%">&nbsp;</td>
-									<td width="6%">&nbsp;</td>
-									</tr>
-									<tr>
-									<td><img src="http://md.testingview.com/images/logoprincipal_blanco.png" width="150" /></td>
-									<td align="center">&nbsp;</td>
-									<td align="center">&nbsp;</td>
-									<td align="center">&nbsp;</td>
-									<td align="center">&nbsp;</td>
-									</tr>
-									<tr>
-									<td>&nbsp;</td>
-									<td>&nbsp;</td>
-									<td>&nbsp;</td>
-									<td>&nbsp;</td>
-									<td>&nbsp;</td>
-									</tr>
-									</table>
-									</td>
-									<td bgcolor="#000000">&nbsp;</td>
-									</tr>
-									</table>
-									<!---->    
-									</td>
-									</tr>
-									</table>
-									</div>
-									';
-
-						  
-						$cabeceras  = 'MIME-Version: 1.0' . "\r\n";
-						$cabeceras .= 'Content-type: text/html; charset=UTF-8; format=flowed\n' . "\r\n";   
-						$cabeceras .= 'From:MD Consultoría contacto@fiscalistas-md.com.mx' . "\r\n";
-
-
-						@mail($datos['correo'], $titulo, $mensaje, $cabeceras ); 
-						@mail('luisglezv3@gmail.com', $titulo, $mensaje, $cabeceras ); 
-
-						///termina correo
-						///////////////////////
-						//damos permisos//////
-						//////////////////////
-
-						 $Usuarios = new Usuarios();
-						$Resultuser = $Usuarios->find(array(
-							"columns" => "id",
-						    "conditions" => "id_cliente='".$id_cliente."'", 
-						    "limit" => 1
-						));
-						$id_usuario=$Resultuser[0]['id'];
-							
-						
-							$Saveas = new Permisos();						
-							$Saveas->assign(array(
-								"id_usuario" =>$id_usuario,
-								"mod_home" =>1,
-								"sub_home_home" =>1,
-								"mod_areaclientes" =>1,
-								"sub_areaclientes_areaclientes" =>1,
-								"sub_areaclientes_areaclientes_new" =>1,
-								"mod_perfil" =>1,
-								"sub_perfil_perfil" =>1,
-								"sub_perfil_perfil_edit" =>1,					
-								
-							));
-							
-							$Saveas->save();
-						
-
-
-					}
-					
-					
-					///////////////////////
-					$this->session->set("mensajeReturn" , $this->msjReturn("&Eacute;xito" , "Se guardo el registro correctamente." , "success"));					
-					$this->response->redirect($this->Controller."/");
-					$this->view->disable();
-					return false;
-				}
-				$this->view->msjResponse = $this->msjReturn("Error" , "Ocurrio un error , intente de nuevo." , "error");
-				$this->view->jsResponse = $this->setValueData("formulario_registro" , $_POST);
-			} else {
-				$this->view->msjResponse = $this->msjReturn("Error" , "Existe un registro con los mismos datos." , "error");
-				$this->view->jsResponse = $this->setValueData("formulario_registro" , $_POST);
-				//$this->view->jsResponse .= '<script type="text/javascript">Puestos('.$_POST["id_puesto"].');</script>';
+			if(isset($_POST['concepto'])) $_POST['concepto'] = utf8_encode($_POST['concepto']);
+			else $_POST['concepto'] = '';
+			$_POST['fecha_creacion'] = date("Y-m-d H:i:s");
+			$_POST['id_user'] = $_SESSION['id'];
+			$_POST['status'] = 1;
+			$movimiento = new Movimientos();
+			$movimiento->assign($_POST);
+			if($movimiento->save()){
+				$response = ["status"=>1,"id"=>$movimiento->id,"monto"=>$_POST['monto'],"concepto"=>utf8_decode($_POST['concepto']),"fecha"=>$_POST['fecha']];
+			}else{
+				$response = ["status"=>0,"msj"=>"Error al guardar el registro"];
+			}
+			echo json_encode($response);exit();
+		}
+		$this->view->numero_tramite = $id;
+		$generales = ViewTramites::findFirst("id = $id");
+		$this->view->cliente = utf8_decode($generales->cliente);
+		$this->view->empresa = utf8_decode($generales->empresa);
+		$this->view->costo = $generales->costo;
+		$pagos = $gastos = [];
+		$total = $total_gastos = 0;
+		$Pagos = Movimientos::find("status=1 and tipo='Pago' and id_tramite=".(int) $id);
+		if(count($Pagos)>0){
+			foreach ($Pagos as $key => $value) {
+				$pagos[] = ["id"=>$value->id,"fecha"=>$value->fecha,"monto"=>$value->monto];
+				$total += $value->monto;
 			}
 		}
-		$this->view->img = '';
+		$restante = $generales->costo-$total;
+		$Gastos = Movimientos::find("status=1 and tipo='Gasto' and id_tramite=".(int) $id);
+		if(count($Gastos)>0){
+			foreach ($Gastos as $key => $value) {
+				$gastos[] = ["id"=>$value->id,"fecha"=>$value->fecha,"monto"=>$value->monto,"concepto"=>utf8_decode($concepto)];
+				$total_gastos += $value->monto;
+			}
+		}
+		$utilidad = $generales->costo-$total_gastos;
+		$this->view->pagos = $pagos;
+		$this->view->gastos = $gastos;
+		$this->view->total = $total;
+		$this->view->total_gastos = $total_gastos;
+		$this->view->restante = $restante;
+		$this->view->utilidad = $utilidad;
 		$this->ajaxBody($this->Title);
 		$this->setHeaderMenu("Pagos | Gatos" , "Nuevo Pago" , $this->Controller , "Registro");					
 		$this->view->textarea = "";
@@ -627,9 +415,8 @@ public function editAction($id=""){
 		}
 		$_POST["status"] = 2;
 		$_POST["id"] = $id;
-		$_POST["fecha_modificacion"] = date("Y-m-d H:i:s");
-		$_POST["id_usuario"] = $_SESSION["id"];
-		$Tabla = Clientes::findFirst(array(
+		$_POST["id_user"] = $_SESSION["id"];
+		$Tabla = Movimientos::findFirst(array(
 			"columns" => "*",
 		    "conditions" => "id=:id:",
 		    "bind" => array("id" => $this->request->getPost("id" , "string")),
