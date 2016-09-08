@@ -16,7 +16,7 @@ $loader->registerDirs(
 )
 ->registerClasses(
 	array(
-			//"DOMPDF" => '../vendor/dompdf/dompdf/dompdf_config.inc.php',
+			"DOMPDF" => '../vendor/dompdf/dompdf/dompdf_config.inc.php',
 			"WORD" => '../vendor/phpoffice/phpword/src/PhpWord/Autoloader.php',
 		)
 )->register();

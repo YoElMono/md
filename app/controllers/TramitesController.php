@@ -29,6 +29,7 @@ class TramitesController extends ControllerBase {
 		$this->view->Status_Fechas = ["", "envio_notaria", "rpc", "sat", "concluido"];
 
 		$Status_Fechas = ["", "envio_notaria", "rpc", "sat", "concluido"];
+		$this->meses = ["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"];
 	}
 
 	public function dropAccents($incoming_string){        
@@ -103,7 +104,7 @@ class TramitesController extends ControllerBase {
 		}
 		$Data = array("aaData" => array());
 		$Result = ViewTramites::find(array(
-			"columns" => "id ,empresa,liquidador,date(fecha_creacion) as fecha,status",
+			"columns" => "id ,empresa,liquidador,date(fecha_creacion) as fecha,status,archivo_pdf",
 		    "conditions" => "",
 		   //"limit" => 4
 		));	
@@ -119,6 +120,10 @@ class TramitesController extends ControllerBase {
 
 				if( (int) $_SESSION["PermisosUser"][$this->Modulo . "_delete"] == 1 ){
 					$Buttons .= '<a href="del/'.(int) trim($value->id).'/" class="delete_usuarios btn btn-sm btn-icon btn-danger"><i class="fa fa-trash-o"></i></a>';
+				}
+
+				if($value->archivo_pdf != '' && $value->archivo_pdf != null){
+					$Buttons .= '<a href="tmp/tramites/'.trim($value->archivo_pdf).'" target="_blank" class="btn btn-sm btn-icon btn-danger"><i class="fa fa-file-pdf-o"></i></a> ';
 				}
 
 				//$img="<img src='../tmp/tramites/".$value->img."' width=50 height=50 >";
@@ -189,7 +194,153 @@ class TramitesController extends ControllerBase {
 		}
 	}
 
-
+	public function crear_pdf($tramite){
+		$Folder =  __DIR__  . "/../../public/tmp/tramites/";
+		//$Folder ="tmp/word/";
+		@mkdir($Folder , 777);
+		//$tramite = Tramites::findFirst($Tramite->id);
+		$empresa = Negocios::findFirst($tramite->id_empresa);
+		if($empresa){
+			$activos = $caja = $pasivos = $capital_contable = $capital_social = 0;
+			$fecha = date('n')." de ".$this->meses[date('n')-1]." de ".date("Y");
+			$nombre_empresa = utf8_decode($empresa->razon_social)." $empresa->tipo_sociedad";
+			$rfc = $empresa->rfc;
+			$capital_social = $empresa->capital_total;
+			$liquidador = utf8_decode($tramite->liquidador);
+			$html = '<div>
+						<table width="100%" border="0" cellspacing="0" cellpadding="0" style="border:0;border-collapse:collapse;border-spacing:0">
+							<tr>
+								<td align="center">
+									<table width="100%" border="0" align="center" cellpadding="0" cellspacing="0" style="border:0;border-collapse:collapse;border-spacing:0;max-width:700px">
+										<tr>
+											<td width="100%" align="center" colspan="4" bgcolor="#FFFFFF" style="color:#000000;font-family:\'ClanPro-Book\',\'HelveticaNeue-Light\',\'Helvetica Neue Light\',Helvetica,Arial,sans-serif;font-size:15px;line-height:36px;text-transform: uppercase;">
+											<b>Balance general de liquidaci&oacute;n al '.$fecha.'</b>
+											</td>
+										</tr>
+										<tr>
+											<td width="100%" align="center" colspan="4" bgcolor="#FFFFFF" style="color:#000000;font-family:\'ClanPro-Book\',\'HelveticaNeue-Light\',\'Helvetica Neue Light\',Helvetica,Arial,sans-serif;font-size:15px;line-height:36px;text-transform: uppercase;">
+											<b>'.$nombre_empresa.'</b>
+											</td>
+										</tr>
+										<tr>
+											<td width="100%" align="center" colspan="4" bgcolor="#FFFFFF" style="color:#000000;font-family:\'ClanPro-Book\',\'HelveticaNeue-Light\',\'Helvetica Neue Light\',Helvetica,Arial,sans-serif;font-size:15px;line-height:36px;text-transform: uppercase;">
+											<b>R.F.C. '.$rfc.'</b>
+											</td>
+										</tr>
+										<tr>
+											<td bgcolor="#FFFFFF" colspan="4">
+												&nbsp;
+											</td>
+										</tr>
+										<tr>
+											<td width="100%" align="center" colspan="4" bgcolor="#FFFFFF" style="color:#000000;font-family:\'ClanPro-Book\',\'HelveticaNeue-Light\',\'Helvetica Neue Light\',Helvetica,Arial,sans-serif;font-size:15px;line-height:36px;text-transform: uppercase;">
+											<b>(importes en presos mexicanos)</b>
+											</td>
+										</tr>
+										<tr>
+											<td bgcolor="#FFFFFF" colspan="4">
+												&nbsp;
+											</td>
+										</tr>
+										<tr>
+											<td bgcolor="#FFFFFF" colspan="4">
+												&nbsp;
+											</td>
+										</tr>
+										<tr>
+											<td bgcolor="#FFFFFF">&nbsp;</td>
+											<td bgcolor="#FFFFFF" width="25%" style="font-family:\'ClanPro-Book\',\'HelveticaNeue-Light\',\'Helvetica Neue Light\',Helvetica,Arial,sans-serif;font-size:15px;line-height:28px;text-transform: uppercase;">
+												activos
+											</td>
+											<td bgcolor="#FFFFFF" width="25%" style="font-family:\'ClanPro-Book\',\'HelveticaNeue-Light\',\'Helvetica Neue Light\',Helvetica,Arial,sans-serif;font-size:15px;line-height:28px;text-transform: uppercase;">
+												$'.number_format($activos,2).'
+											</td>
+											<td bgcolor="#FFFFFF">&nbsp;</td>
+										</tr>
+										<tr>
+											<td bgcolor="#FFFFFF">&nbsp;</td>
+											<td bgcolor="#FFFFFF" width="25%" style="font-family:\'ClanPro-Book\',\'HelveticaNeue-Light\',\'Helvetica Neue Light\',Helvetica,Arial,sans-serif;font-size:15px;line-height:28px;text-transform: uppercase;">
+												caja
+											</td>
+											<td bgcolor="#FFFFFF" width="25%" style="font-family:\'ClanPro-Book\',\'HelveticaNeue-Light\',\'Helvetica Neue Light\',Helvetica,Arial,sans-serif;font-size:15px;line-height:28px;text-transform: uppercase;">
+												$'.number_format($caja,2).'
+											</td>
+											<td bgcolor="#FFFFFF">&nbsp;</td>
+										</tr>
+										<tr>
+											<td bgcolor="#FFFFFF">&nbsp;</td>
+											<td bgcolor="#FFFFFF" width="25%" style="font-family:\'ClanPro-Book\',\'HelveticaNeue-Light\',\'Helvetica Neue Light\',Helvetica,Arial,sans-serif;font-size:15px;line-height:28px;text-transform: uppercase;">
+												pasivos
+											</td>
+											<td bgcolor="#FFFFFF" width="25%" style="font-family:\'ClanPro-Book\',\'HelveticaNeue-Light\',\'Helvetica Neue Light\',Helvetica,Arial,sans-serif;font-size:15px;line-height:28px;text-transform: uppercase;">
+												$'.number_format($pasivos,2).'
+											</td>
+											<td bgcolor="#FFFFFF">&nbsp;</td>
+										</tr>
+										<tr>
+											<td bgcolor="#FFFFFF">&nbsp;</td>
+											<td bgcolor="#FFFFFF" width="25%" style="font-family:\'ClanPro-Book\',\'HelveticaNeue-Light\',\'Helvetica Neue Light\',Helvetica,Arial,sans-serif;font-size:15px;line-height:28px;text-transform: uppercase;">
+												capital contable
+											</td>
+											<td bgcolor="#FFFFFF" width="25%" style="font-family:\'ClanPro-Book\',\'HelveticaNeue-Light\',\'Helvetica Neue Light\',Helvetica,Arial,sans-serif;font-size:15px;line-height:28px;text-transform: uppercase;">
+												$'.number_format($capital_contable,2).'
+											</td>
+											<td bgcolor="#FFFFFF">&nbsp;</td>
+										</tr>
+										<tr>
+											<td bgcolor="#FFFFFF">&nbsp;</td>
+											<td bgcolor="#FFFFFF" width="25%" style="font-family:\'ClanPro-Book\',\'HelveticaNeue-Light\',\'Helvetica Neue Light\',Helvetica,Arial,sans-serif;font-size:15px;line-height:28px;text-transform: uppercase;">
+												capital social
+											</td>
+											<td bgcolor="#FFFFFF" width="25%" style="font-family:\'ClanPro-Book\',\'HelveticaNeue-Light\',\'Helvetica Neue Light\',Helvetica,Arial,sans-serif;font-size:15px;line-height:28px;text-transform: uppercase;">
+												$'.number_format($capital_social,2).'
+											</td>
+											<td bgcolor="#FFFFFF">&nbsp;</td>
+										</tr>
+										<tr>
+											<td bgcolor="#FFFFFF" colspan="4">
+												&nbsp;
+											</td>
+										</tr>
+										<tr>
+											<td width="100%" colspan="4" bgcolor="#FFFFFF" style="color:#000000;font-family:\'ClanPro-Book\',\'HelveticaNeue-Light\',\'Helvetica Neue Light\',Helvetica,Arial,sans-serif;font-size:15px;line-height:36px;text-transform: uppercase;">
+												a cada uno de los accionistas de la sociedad le corresponder&aacute; la parte proporcional.
+											</td>
+										</tr>
+										<tr>
+											<td bgcolor="#FFFFFF" colspan="4">
+												&nbsp;
+											</td>
+										</tr>
+										<tr>
+											<td width="100%" align="center" colspan="4" bgcolor="#FFFFFF" style="color:#000000;font-family:\'ClanPro-Book\',\'HelveticaNeue-Light\',\'Helvetica Neue Light\',Helvetica,Arial,sans-serif;font-size:15px;line-height:36px;text-transform: uppercase;">
+												C. '.$liquidador.'
+											</td>
+										</tr>
+										<tr>
+											<td width="100%" align="center" colspan="4" bgcolor="#FFFFFF" style="color:#000000;font-family:\'ClanPro-Book\',\'HelveticaNeue-Light\',\'Helvetica Neue Light\',Helvetica,Arial,sans-serif;font-size:15px;line-height:36px;text-transform: uppercase;">
+												liquidador
+											</td>
+										</tr>
+									</table>  
+								</td>
+							</tr>
+						</table>
+					</div>';
+			$dompdf = new DOMPDF();
+			$dompdf->load_html($html);
+			$dompdf->set_paper("letter","portrait");
+			$dompdf->render();
+			//$dompdf->stream("multa.pdf");
+			$pdf = $dompdf->output();
+			$empresa = $this->GeneraRuta($nombre_empresa);
+			$file = date("d_m_Y-")."-".$empresa.".pdf";
+			//$nombre = "tramite_".$this->get_random_name().'_'.uniqid().'.pdf';
+			@file_put_contents($Folder.$file, $pdf);
+			$tramite->archivo_pdf = $file;
+			$tramite->update();
+		}
+	}
 
 	public function newAction($id_negocio = ""){
 
@@ -266,9 +417,7 @@ class TramitesController extends ControllerBase {
 									@copy($_FILES['img']['tmp_name'],$Folder.$name);
 									$ruta=$Folder.$name;
 									$directorio='tipos';
-									$this->Miniaturas($ruta,50,$name,$directorio);		
-									
-
+									$this->Miniaturas($ruta,50,$name,$directorio);										
 								}*/					
 								//$this->setSlug($Tabla->id , $_POST["slug"]);
 								$this->session->set("mensajeReturn" , $this->msjReturn("&Eacute;xito" , "Se guardo el registro correctamente." , "success"));					
@@ -477,6 +626,10 @@ public function editAction($id=""){
 						//$this->Miniaturas($ruta,50,$name,$directorio);	
 					}	/**/
 
+					if($Tabla->status == 4){
+						$this->crear_pdf($Tabla);
+					}
+
 					//}			
 					$this->session->set("mensajeReturn" , $this->msjReturn("&Eacute;xito" , "Se edito el registro correctamente." , "success"));
 					$this->response->redirect($this->Controller."/");
@@ -598,7 +751,6 @@ public function editAction($id=""){
         $response->setContent(json_encode($Msj));
         return $response;
 	}
-
 
 
 
