@@ -2,7 +2,7 @@
 
 
 if( strstr($_SERVER['SERVER_NAME'] , 'localhost') ){
-	$BaseRef = "http://localhost:8080/md/";
+	$BaseRef = "http://localhost/md/";
 	$DataSql = array(
         "server" => "testingview.com",
         "username" => "md",
