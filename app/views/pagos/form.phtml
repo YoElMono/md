@@ -4,8 +4,8 @@
 
 </style>	
 	 <div>
-		 <div class="font-bold">Tramite No. xxx</div>
-		 <div><small class="text-muted"> Cliente: xxxx | Empresa: xxx | Costo: $000 </small></div>
+		 <div class="font-bold">Tramite No. <?php echo $numero_tramite;?></div>
+		 <div><small class="text-muted"> Cliente: <?php echo $cliente; ?> | Empresa: <?php echo $empresa?> | Costo: $<?php number_format($costo,2);?> </small></div>
 	 <div>
 	 <div class="col-md-6 ">
 	      <p></p>
@@ -18,34 +18,38 @@
 				<div style="clear:both"></div>
 			</div> 
 	        <div class="panel-body">
-	          <div id="Pagos" style="height: 240px; padding: 0px; position: relative;">
+	          <div id="Pagos" style="padding: 0px; position: relative;">
 	           <!-- -->
-	           <ul class="list-group alt"> 
+	           <ul class="list-group alt" id="pagos"> 
+	           		<?php foreach ($pagos as $key => $value) {?>
                       <li class="list-group-item"> 
                         <div class="media"> 
-                          <span class="pull-left thumb-sm"><img src="images/processing-file.png" class="img-circle"></span>                     
+                          <span class="pull-left thumb-sm"><img src="images/processing-file.png" class="img-circle"></span> 
+                          <span class="pull-right thumb-sm"><a href="delete/<?php echo trim($value['id']);?>/" class="btn btn-sm btn-icon btn-danger delete"><i class="fa fa-minus"></i></a> </span>                     
                           <div class="media-body"> 
-                            <div><small class="text-muted"> <b>Fecha:</b> 23/07/2016</small> | <small class="text-muted">Pago 01 $1800</small> </div>
-                          </div> 
+                            <div><small class="text-muted"> <b>Fecha:</b> <?php echo $value['fecha']?></small> | <small class="text-muted">Pago <?php echo ($key+1)." $".number_format($value['monto'],2)?></small> </div>
+                          </div>
                         </div> 
                       </li> 
+	           		<?php } ?>
 
-                      <li class="list-group-item"> 
+                     <!-- <li class="list-group-item"> 
                         <div class="media"> 
                           <span class="pull-left thumb-sm"><img src="images/processing-file.png" class="img-circle"></span>                     
                           <div class="media-body"> 
                             <div><small class="text-muted"> <b>Fecha:</b> 23/07/2016</small> | <small class="text-muted">Pago 01 $1800</small> </div>
                           </div> 
                         </div> 
-                      </li> 
+                      </li> -->
                 
                   </ul>
-                 <div>  <b>Pagos a la fecha</b> $000</div> 
-                 <div>  <b>Restante</b> $00000000</div> 
+                 <div id="total_pagos">  <b>Pagos a la fecha</b> $<?php echo number_format($total,2)?></div> 
+                 <div id="restante">  <b>Restante</b> $<?php echo number_format($restante,2);?></div>
                 <!-- -->      
 
 	          </div>
 	        </div> 
+                 <div style="clear:both;"></div> 
 	      </section>
 	 </div>
 
@@ -60,20 +64,23 @@
 				<div style="clear:both"></div>
 			</div> 
 	        <div class="panel-body">
-	          <div id="Gastos" style="height: 240px; padding: 0px; position: relative;">
-	           	<ul class="list-group alt"> 
+	          <div id="Gastos" style="padding: 0px; position: relative;">
+	           	<ul id="gastos" class="list-group alt"> 
+	           		<?php foreach ($gastos as $key => $value) { ?>
 	           		<li class="list-group-item"> 
                         <div class="media"> 
-                          <span class="pull-left thumb-sm"><img src="images/processing-file.png" class="img-circle"></span>                     
+                          <span class="pull-left thumb-sm"><img src="images/processing-file.png" class="img-circle"></span> 
+                          <span class="pull-right thumb-sm"><a href="delete/<?php echo trim($value['id']);?>/" class="btn btn-sm btn-icon btn-danger delete"><i class="fa fa-minus"></i></a> </span>                    
                           <div class="media-body"> 
-                            <div><small class="text-muted"> <b>Concepto:</b> xxx</small></div> 
-                            <small class="text-muted">Fecha: 23/07/2016 | Monto: $1800</small> 
+                            <div><small class="text-muted"> <b>Concepto:</b> <?php echo $value['concepto'];?></small></div> 
+                            <small class="text-muted">Fecha: <?php echo $value['fecha'];?> | Monto: $<?php echo number_format($value['monto'],2);?></small> 
                           </div> 
                         </div> 
                     </li> 
+	           		<?php } ?>
                 </ul>
-                <div>  <b>Gastos a la fecha</b> $000</div> 
-                <div>  <b>Utilidad</b> $00000000</div> 
+                <div id="total_gastos">  <b>Gastos a la fecha</b> $<?php echo number_format($total_gastos,2);?></div> 
+                <div id="utilidad">  <b>Utilidad</b> $<?php echo number_format($utilidad,2);?></div> 
 	          </div>
 	        </div> 
 	      </section>
@@ -95,18 +102,18 @@
 <div id="pantalla_pagos" class="hidden">
 		<div style="position: relative;overflow: auto;margin: auto;padding: 30px;max-width: 550px;background-color: #f5f5f5;transition: top 0.5s;">
 		  <div id="documento" style="font-size: 15px;text-transform: uppercase;font-weight: bold;color: #000;">Nuevo Pago</div>
-		  <form  method="post" enctype="multipart/form-data" id="form_documentos"   onsubmit="validar_cargar_documento(<?php echo $idregistro ?>); return false">
+		  <form  method="post" enctype="multipart/form-data" id="form_pagos"   onsubmit="new_pago(); return false">
 		   
 		       
 		              <hr></hr> 
 		              
 		              <label>Fecha (*)</label>
-		              <input type="text" id="fecha_pago" name="fecha_pago" class="form-control" data-required="true">
+		              <input type="text" readonly id="fecha" name="fecha" class="form-control" data-required="true">
 		               <p></p>	
 		              <label>Monto (*)</label>
-		              <input type="text" id="monto" name="monto" class="form-control" data-required="true">
+		              <input onkeypress="return isNumberKey(event);" type="text" id="monto" name="monto" class="form-control" data-required="true">
 
-		              <input type="hidden" id="id_registro" value="<?php echo $idregistro ?>">
+		             <input name="id_tramite" type="hidden" id="id_registro" value="<?php echo $numero_tramite; ?>">
 		              <p></p>	
 		    <div class="martop10">
 		      <button id="guardar" class="btn" style="color: white;background-color: #1AAE88;border: 1px solid #ccc;" >Guardar</button>
@@ -120,7 +127,7 @@
 <div id="pantalla_gasto" class="hidden">
 		<div style="position: relative;overflow: auto;margin: auto;padding: 30px;max-width: 550px;background-color: #f5f5f5;transition: top 0.5s;">
 		  <div id="documento" style="font-size: 15px;text-transform: uppercase;font-weight: bold;color: #000;">Nuevo Gasto</div>
-		  <form  method="post" enctype="multipart/form-data" id="form_documentos"   onsubmit="validar_cargar_documento(<?php echo $idregistro ?>); return false">
+		  <form  method="post" enctype="multipart/form-data" id="form_gastos"   onsubmit="new_gasto(); return false">
 		   
 		       
 		              <hr></hr> 
@@ -128,12 +135,12 @@
 		               <label>Concepto (*)</label>
 		              <input type="text" id="concepto" name="concepto" class="form-control" data-required="true">
 		              <label>Fecha (*)</label>
-		              <input type="text" id="fecha_gasto" name="fecha_gasto" class="form-control" data-required="true">
+		              <input type="text" readonly id="fecha1" name="fecha" class="form-control" data-required="true">
 		               <p></p>	
 		              <label>Monto (*)</label>
-		              <input type="text" id="monto" name="monto" class="form-control" data-required="true">
+		              <input onkeypress="return isNumberKey(event);" type="text" id="monto1" name="monto" class="form-control" data-required="true">
 
-		              <input type="hidden" id="id_registro" value="<?php echo $idregistro ?>">
+		              <input name="id_tramite" type="hidden" id="id_registro" value="<?php echo $numero_tramite; ?>">
 		              <p></p>	
 		    <div class="martop10">
 		      <button id="guardar" class="btn" style="color: white;background-color: #1AAE88;border: 1px solid #ccc;" >Guardar</button>
@@ -143,10 +150,12 @@
 		</div>
 </div>
 
+<div id="cargando" style="display:none;z-index:1000;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.8)">
+	<img src="images/gears.svg" style="position:fixed;left:50%;top:35%">
+</div>
 
 
 
 
-
-<script type="text/javascript">actionForm=1;</script>
+<script type="text/javascript">actionForm=1;total_pagos = <?php echo count($pagos);?>;total_gastos = <?php echo count($gastos);?>;restante = <?php echo $restante;?>;utilidad = <?php echo $utilidad;?>;valor_total_pagos = <?php echo $total;?>;valor_total_gastos = <?php echo $total_gastos;?>;</script>
 
